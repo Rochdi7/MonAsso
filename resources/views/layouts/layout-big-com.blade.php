@@ -12,7 +12,7 @@
   name="description"
   content="Light Able admin and dashboard template offer a variety of UI elements and pages, ensuring your admin panel is both fast and effective."
 />
-<meta name="author" content="phoenixcoded" />
+<meta name="author" content="MonAsso" />
 
     <!-- [Favicon] icon -->
     <link rel="icon" href="{{ URL::asset('build/images/favicon.svg') }}" type="image/x-icon">

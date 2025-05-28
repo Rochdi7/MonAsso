@@ -25,7 +25,7 @@ return new class extends Migration
 
         User::create([
             'name' => 'Admin',
-            'email' => 'admin@phoenixcoded.com',
+            'email' => 'admin@MonAsso.com',
             'password' => Hash::make(12345678),
         ]);
     }

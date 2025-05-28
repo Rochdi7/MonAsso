@@ -2,8 +2,8 @@
 =========================================================================
 =========================================================================
 Template Name: Light-able - Admin Template
-Author: Phoenixcoded
-Support: https://phoenixcoded.authordesk.app
+Author: MonAsso
+Support: https://MonAsso.authordesk.app
 File: multi-lang.js
 Description:  this file will contains snippet code
               about handling language change of the page.
