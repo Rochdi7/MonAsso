@@ -7,45 +7,60 @@
         <div class="card my-5">
             <div class="card-body">
                 <div class="text-center">
-                    <img src="{{ URL::asset('build/images/authentication/img-auth-login.png') }}" alt="images" class="img-fluid mb-3">
-                    <h4 class="f-w-500 mb-1">Login with your email</h4>
-                    <p class="mb-3">Don't have an Account? <a href="{{ route('register') }}"
-                            class="link-primary ms-1">Create Account</a></p>
+                    <img src="{{ URL::asset('build/images/authentication/img-auth-login.png') }}" alt="images"
+                        class="img-fluid mb-3">
+                    <h4 class="f-w-500 mb-1">Connectez-vous avec votre numéro</h4>
+                    <p class="mb-3">
+                        Vous n'avez pas encore de compte ?
+                        <a href="{{ route('register') }}" class="link-primary ms-1">Créer un compte</a>
+                    </p>
                 </div>
+
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
-                    <div class="form-group mb-3">
-                        <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="admin@MonAsso.com" required autocomplete="email" autofocus id="floatingInput" placeholder="Email Address">
-                        @error('email')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
+
+                    <div class="form-floating mb-3">
+                        <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" id="phone"
+                            placeholder="Numéro de téléphone" value="{{ old('phone') }}" required autofocus>
+                        <label for="phone">Numéro de téléphone</label>
+                        @error('phone')
+                            <span class="invalid-feedback d-block" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+
                     </div>
-                    <div class="form-group mb-3">
-                        <input type="password" type="password" class="form-control @error('password') is-invalid @enderror" value="12345678" name="password" required autocomplete="current-password" id="floatingInput1" placeholder="Password">
+
+                    <div class="form-floating mb-3">
+                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
+                            id="password" placeholder="Mot de passe" required>
+                        <label for="password">Mot de passe</label>
                         @error('password')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
+                            <span class="invalid-feedback d-block" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
                     </div>
+
                     <div class="d-flex mt-1 justify-content-between align-items-center">
                         <div class="form-check">
                             <input class="form-check-input input-primary" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                            <label class="form-check-label text-muted" for="remember">Remember me?</label>
+                            <label class="form-check-label text-muted" for="remember">Se souvenir de moi</label>
                         </div>
                         <a href="{{ route('password.request') }}">
-                            <h6 class="f-w-400 mb-0">Forgot Password?</h6>
+                            <h6 class="f-w-400 mb-0">Mot de passe oublié ?</h6>
                         </a>
                     </div>
+
                     <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-primary">Login</button>
+                        <button type="submit" class="btn btn-primary">Connexion</button>
                     </div>
                 </form>
+
                 <div class="saprator my-3">
-                    <span>Or continue with</span>
+                    <span>Ou continuer avec</span>
                 </div>
+
                 <div class="text-center">
                     <ul class="list-inline mx-auto mt-3 mb-0">
                         <li class="list-inline-item">
@@ -67,6 +82,7 @@
                         </li>
                     </ul>
                 </div>
+
             </div>
         </div>
     </div>
