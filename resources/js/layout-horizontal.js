@@ -2,8 +2,8 @@
 =========================================================================
 =========================================================================
 Template Name: Light-able - Admin Template
-Author: MonAsso
-Support: https://MonAsso.authordesk.app
+Author: Phoenixcoded
+Support: https://phoenixcoded.authordesk.app
 File: layout-horizontal.js
 Description:  this file will contains defining code for build horizontal layouts
               and handle funcnality of a horizontal layout in theme.

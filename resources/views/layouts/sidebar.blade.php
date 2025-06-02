@@ -16,7 +16,7 @@
                 <div class="card-body" style="background-image: url('/build/images/layout/nav-card-bg.svg')">
                     <h5 class="text-dark">Help Center</h5>
                     <p class="text-dark text-opacity-75">Please contact us for more questions.</p>
-                    <a href="https://MonAsso.support-hub.io/" class="btn btn-primary" target="_blank">Go to help
+                    <a href="https://phoenixcoded.support-hub.io/" class="btn btn-primary" target="_blank">Go to help
                         Center</a>
                 </div>
             </div>
@@ -34,8 +34,9 @@
                                 aria-expanded="false" data-bs-offset="0,20">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-grow-1 me-2">
-                                        <h6 class="mb-0">Jonh Smith</h6>
-                                        <small>Administrator</small>
+                                        <h6 class="mb-0">{{ Auth::user()->name }}</h6>
+                                        <small>{{ Auth::user()->role ?? 'User' }}</small>
+
                                     </div>
                                     <div class="flex-shrink-0">
                                         <div class="btn btn-icon btn-link-secondary avtar">
@@ -58,8 +59,7 @@
                                             <i class="ph-duotone ph-lock-key"></i>
                                             <span>Lock Screen</span>
                                         </a></li>
-                                    <li><a class="pc-user-links" href="{{ route('logout') }}"
-                                            onclick="event.preventDefault();
+                                    <li><a class="pc-user-links" href="{{ route('logout') }}" onclick="event.preventDefault();
                                               document.getElementById('logout-form').submit();">
                                             <i class="ph-duotone ph-power"></i>
                                             <span>Logout</span>

@@ -2,8 +2,8 @@
 =========================================================================
 =========================================================================
 Template Name: Light-able - Admin Template
-Author: MonAsso
-Support: https://MonAsso.authordesk.app
+Author: Phoenixcoded
+Support: https://phoenixcoded.authordesk.app
 File: themes.js
 Description:  this file will contains overall theme setup and handle
               behavior of live custumizer like Dark/Light, LTR/RTL,

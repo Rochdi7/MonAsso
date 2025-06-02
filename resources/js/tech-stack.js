@@ -2,8 +2,8 @@
 =========================================================================
 =========================================================================
 Template Name: Light Able - Bootstrap Admin Template
-Author: MonAsso
-Support: https://MonAsso.authordesk.app
+Author: Phoenixcoded
+Support: https://phoenixcoded.authordesk.app
 File: script.js
 Description:  this file will contains code for handling Buynow link.
 =========================================================================

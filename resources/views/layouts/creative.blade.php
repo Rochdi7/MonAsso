@@ -9,7 +9,7 @@
   name="description"
   content="Light Able admin and dashboard template offer a variety of UI elements and pages, ensuring your admin panel is both fast and effective."
 />
-<meta name="author" content="MonAsso" />
+<meta name="author" content="phoenixcoded" />
 
     <!-- Site Tiltle -->
     <title>@yield('title', 'Light Able Laravel 11 Admin & Dashboard Template')</title>
