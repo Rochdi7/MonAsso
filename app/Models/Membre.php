@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class Membre extends Authenticatable
 {
-    use HasFactory, HasUuids, Notifiable;
+    use HasFactory, HasUuids, Notifiable, HasRoles;
     protected $table = 'members';
 
     protected $fillable = [
@@ -31,11 +32,7 @@ class Membre extends Authenticatable
         'remember_token',
     ];
 
-    // Remove this if you now use the default password field
-    // public function getAuthPassword()
-    // {
-    //     return $this->mot_de_passe;
-    // }
+
 
     public function association()
     {

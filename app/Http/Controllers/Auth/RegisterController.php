@@ -50,7 +50,7 @@ class RegisterController extends Controller
                 'is_validated' => false,
             ]);
 
-            return Membre::create([
+            $member = Membre::create([
                 'id' => Str::uuid(),
                 'name' => $data['name'],
                 'phone' => $data['phone'],
@@ -60,6 +60,10 @@ class RegisterController extends Controller
                 'is_active' => true,
                 'association_id' => $association->id,
             ]);
+
+            $member->assignRole('admin');
+
+            return $member;
         });
     }
 
