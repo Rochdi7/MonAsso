@@ -2,30 +2,42 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
+use App\Http\Controllers\SuperAdmin\AssociationController;
+use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\CotisationController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Membre\DashboardController;
 
 Auth::routes();
 
-
-// Define a group of routes with 'auth' middleware applied
+// Routes that require authentication
 Route::middleware(['auth'])->group(function () {
-    // Define a GET route for the root URL ('/')
+
+    // Main dashboard view for all roles
     Route::get('/', function () {
-        // Return a view named 'index' when accessing the root URL
         return view('index');
     });
 
-    // Define a GET route with dynamic placeholders for route parameters
+    // Dashboard for all roles
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->middleware('role:membre|admin|super_admin')
+        ->name('dashboard');
+
+    // Routes only for Super Admin
+    Route::middleware(['role:super_admin'])->prefix('super-admin')->name('superadmin.')->group(function () {
+        Route::get('associations', [AssociationController::class, 'index'])->name('associations.index');
+        // You can add more routes here
+    });
+
+    // Routes for Admin and Super Admin
+    Route::middleware(['role:admin|super_admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::resource('evenements', EventController::class);
+        Route::resource('cotisations', CotisationController::class);
+        Route::resource('roles', RoleController::class);
+        Route::resource('permissions', PermissionController::class);
+    });
+
+    // Catch-all for dynamic content pages
     Route::get('{routeName}/{name?}', [HomeController::class, 'pageView']);
 });
