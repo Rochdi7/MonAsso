@@ -2,12 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\SuperAdmin\AssociationController;
+use App\Http\Controllers\Admin\AssociationController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\CotisationController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Membre\DashboardController;
+use App\Http\Controllers\Admin\MembreController;
+
+
 
 Auth::routes();
 
@@ -36,6 +39,9 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('cotisations', CotisationController::class);
         Route::resource('roles', RoleController::class);
         Route::resource('permissions', PermissionController::class);
+        Route::resource('associations', AssociationController::class);
+        Route::resource('membres', MembreController::class);
+
     });
 
     // Catch-all for dynamic content pages
