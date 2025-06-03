@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
-
-class Membre extends Authenticatable
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+class Membre extends Authenticatable implements HasMedia
 {
-    use HasFactory, HasUuids, Notifiable, HasRoles;
+    use HasFactory, HasUuids, Notifiable, HasRoles, InteractsWithMedia;
     protected $table = 'members';
 
     protected $fillable = [
@@ -25,6 +26,7 @@ class Membre extends Authenticatable
         'is_active',
         'is_admin',
         'association_id',
+        'profile_photo'
     ];
 
     protected $hidden = [
@@ -39,5 +41,5 @@ class Membre extends Authenticatable
         return $this->belongsTo(Association::class);
     }
 
-    
+
 }
