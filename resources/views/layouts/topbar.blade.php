@@ -170,10 +170,8 @@
                             <i class="ph-duotone ph-lock-key"></i>
                             <span>Lock Screen</span>
                         </a>
-                        <a href="{{ route('logout') }}"
-                            onclick="event.preventDefault();
-                                  document.getElementById('logout-form').submit();"
-                            class="dropdown-item">
+                        <a href="{{ route('logout') }}" onclick="event.preventDefault();
+                                  document.getElementById('logout-form').submit();" class="dropdown-item">
                             <i class="ph-duotone ph-power"></i>
                             <span>Logout</span>
                         </a>
@@ -204,8 +202,14 @@
                                     <p class="text-span">Today</p>
                                     <div class="d-flex">
                                         <div class="flex-shrink-0">
-                                            <img src="{{ URL::asset('build/images/user/avatar-2.jpg') }}"
-                                                alt="user-image" class="user-avtar avtar avtar-s" />
+                                            @php
+                                                $user = Auth::user();
+                                                $avatar = $user->getFirstMediaUrl('profile_photo') ?: asset('images/default-avatar.png');
+                                            @endphp
+
+                                            <img src="{{ $avatar }}" alt="{{ $user->name }}"
+                                                class="user-avtar avtar avtar-s" />
+
                                         </div>
                                         <div class="flex-grow-1 ms-3">
                                             <div class="d-flex">
@@ -367,8 +371,13 @@
                 <li class="dropdown pc-h-item header-user-profile">
                     <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
                         role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
-                        <img src="{{ URL::asset('build/images/user/avatar-2.jpg') }}" alt="user-image"
-                            class="user-avtar">
+                        @php
+                            $user = Auth::user();
+                            $avatar = $user->getFirstMediaUrl('profile_photo') ?: asset('images/default-avatar.png');
+                        @endphp
+
+                        <img src="{{ $avatar }}" alt="{{ $user->name }}" class="user-avtar avtar avtar-s" />
+
                     </a>
                     <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
                         <div class="dropdown-header d-flex align-items-center justify-content-between">
@@ -381,14 +390,29 @@
                                     <li class="list-group-item">
                                         <div class="d-flex align-items-center">
                                             <div class="flex-shrink-0">
-                                                <img src="{{ URL::asset('build/images/user/avatar-2.jpg') }}"
-                                                    alt="user-image" class="wid-50 rounded-circle" />
+                                                @php
+                                                    $user = Auth::user();
+                                                    $avatar = $user->getFirstMediaUrl('profile_photo') ?: asset('images/default-avatar.png');
+                                                @endphp
+
+                                                <img src="{{ $avatar }}" alt="{{ $user->name }}"
+                                                    class="user-avtar avtar avtar-s" />
+
                                             </div>
+                                            @php
+                                                $user = Auth::user();
+                                            @endphp
+
                                             <div class="flex-grow-1 mx-3">
-                                                <h5 class="mb-0">Carson Darrin</h5>
-                                                <a class="link-primary"
-                                                    href="mailto:carson.darrin@company.io">carson.darrin@company.io</a>
+                                                <h5 class="mb-0">{{ $user->name }}</h5>
+                                                @if($user->email)
+                                                    <a class="link-primary"
+                                                        href="mailto:{{ $user->email }}">{{ $user->email }}</a>
+                                                @else
+                                                    <span class="text-muted small">No email provided</span>
+                                                @endif
                                             </div>
+
                                             <span class="badge bg-primary">PRO</span>
                                         </div>
                                     </li>
@@ -492,8 +516,7 @@
                                                 <span>Add account</span>
                                             </span>
                                         </a>
-                                        <a href="{{ route('logout') }}"
-                                            onclick="event.preventDefault();
+                                        <a href="{{ route('logout') }}" onclick="event.preventDefault();
                                                       document.getElementById('logout-form').submit();"
                                             class="dropdown-item">
                                             <span class="d-flex align-items-center">

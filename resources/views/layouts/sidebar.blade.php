@@ -25,8 +25,13 @@
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-shrink-0">
-                        <img src="{{ URL::asset('build/images/user/avatar-1.jpg') }}" alt="user-image"
-                            class="user-avtar wid-45 rounded-circle">
+                        @php
+                            $user = Auth::user();
+                            $profilePhoto = $user->getFirstMediaUrl('profile_photo') ?: asset('images/default-avatar.png');
+                        @endphp
+
+                        <img src="{{ $profilePhoto }}" alt="user-image" class="user-avtar wid-45 rounded-circle">
+
                     </div>
                     <div class="flex-grow-1 ms-3">
                         <div class="dropdown">
