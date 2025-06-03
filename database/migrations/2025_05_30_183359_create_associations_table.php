@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('associations', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
+            $table->string(column: 'name');
             $table->string('address');
             $table->string('email')->unique();
-            $table->text('logo')->nullable();
             $table->text('announcement_status')->nullable();
             $table->date('creation_date')->nullable();
             $table->boolean('is_validated')->default(false);
