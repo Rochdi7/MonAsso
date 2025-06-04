@@ -10,21 +10,22 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+
 class Membre extends Authenticatable implements HasMedia
 {
     use HasFactory, HasUuids, Notifiable, HasRoles, InteractsWithMedia;
+
     protected $table = 'members';
 
     protected $fillable = [
         'id',
         'name',
+        'email',              
         'password',
         'phone',
-        'role',
         'availability',
         'skills',
         'is_active',
-        'is_admin',
         'association_id',
         'profile_photo'
     ];
@@ -34,12 +35,8 @@ class Membre extends Authenticatable implements HasMedia
         'remember_token',
     ];
 
-
-
     public function association()
     {
         return $this->belongsTo(Association::class);
     }
-
-
 }
