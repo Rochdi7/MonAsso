@@ -47,7 +47,7 @@
                     <div class="col-md-6">
                         <div class="form-floating">
                             <input type="email" name="association_email" class="form-control @error('association_email') is-invalid @enderror"
-                                id="association_email" placeholder="Email" value="{{ old('association_email') }}" required>
+                                id="association_email" placeholder="Association Email" value="{{ old('association_email') }}" required>
                             <label for="association_email">Association Email</label>
                             @error('association_email')
                                 <span class="invalid-feedback d-block"><strong>{{ $message }}</strong></span>
@@ -62,6 +62,18 @@
                                 id="name" placeholder="Owner Name" value="{{ old('name') }}" required>
                             <label for="name">Owner's Full Name</label>
                             @error('name')
+                                <span class="invalid-feedback d-block"><strong>{{ $message }}</strong></span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Personal Email --}}
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                                id="email" placeholder="Owner Email" value="{{ old('email') }}" required>
+                            <label for="email">Owner's Email</label>
+                            @error('email')
                                 <span class="invalid-feedback d-block"><strong>{{ $message }}</strong></span>
                             @enderror
                         </div>

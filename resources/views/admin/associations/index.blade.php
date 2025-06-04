@@ -55,12 +55,20 @@
                                 @forelse($associations as $association)
                                     <tr>
                                         <td>
-                                            @if($association->getFirstMediaUrl('logos'))
-                                                <img src="{{ $association->getFirstMediaUrl('logos') }}" alt="logo" width="40"
-                                                    height="40" class="rounded shadow-sm">
-                                            @else
-                                                <span class="text-muted">N/A</span>
-                                            @endif
+                                        @php
+    $media = $association->getFirstMedia('logos');
+@endphp
+
+@if ($media)
+    <img src="{{ route('media.custom', ['id' => $media->id, 'filename' => $media->file_name]) }}"
+         alt="logo"
+         width="40"
+         height="40"
+         class="rounded shadow-sm">
+@else
+    <span class="text-muted">N/A</span>
+@endif
+
                                         </td>
                                         <td>{{ $association->name }}</td>
                                         <td>{{ $association->email }}</td>
