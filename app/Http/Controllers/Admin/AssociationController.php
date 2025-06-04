@@ -36,22 +36,23 @@ class AssociationController extends Controller
         $validated['is_validated'] = $request->has('is_validated');
         $validated['validation_date'] = $request->has('is_validated') ? now() : null;
 
-
-        $validated['id'] = Str::uuid();
-
         $association = Association::create($validated);
 
         if ($request->hasFile('logo')) {
             $shortName = substr(Str::uuid(), 0, 8) . '.' . $request->file('logo')->getClientOriginalExtension();
 
-            $association
+            $media = $association
                 ->addMediaFromRequest('logo')
                 ->usingFileName($shortName)
                 ->toMediaCollection('logos');
+
+            session()->flash('uploaded_logo_media', $media);
         }
 
-        return redirect()->route('admin.associations.index')->with('success', 'Association created successfully.');
+        return redirect()->route('admin.associations.create')
+            ->with('success', 'Association created successfully.');
     }
+
 
     public function edit(Association $association)
     {

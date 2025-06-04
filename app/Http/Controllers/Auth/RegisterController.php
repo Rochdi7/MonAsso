@@ -25,22 +25,32 @@ class RegisterController extends Controller
         $this->middleware('guest');
     }
 
+    /**
+     * Validation rules for registration
+     */
     protected function validator(array $data)
     {
         return Validator::make($data, [
+            // Association info
             'association_name' => ['required', 'string', 'max:255'],
             'association_address' => ['required', 'string'],
             'association_email' => ['required', 'email', 'unique:associations,email'],
 
+            // Admin (membre) info
             'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:members,email'], // ✅ NEW
             'phone' => ['required', 'string', 'max:20', 'unique:members,phone'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
 
+    /**
+     * Create a new association and its first admin
+     */
     protected function create(array $data)
     {
         return DB::transaction(function () use ($data) {
+            // Create association
             $association = Association::create([
                 'id' => Str::uuid(),
                 'name' => $data['association_name'],
@@ -50,9 +60,11 @@ class RegisterController extends Controller
                 'is_validated' => false,
             ]);
 
+            // Create member (admin)
             $member = Membre::create([
                 'id' => Str::uuid(),
                 'name' => $data['name'],
+                'email' => $data['email'], // ✅ NEW
                 'phone' => $data['phone'],
                 'password' => Hash::make($data['password']),
                 'role' => 'admin',
@@ -67,6 +79,9 @@ class RegisterController extends Controller
         });
     }
 
+    /**
+     * Handle the registration request
+     */
     public function register(Request $request)
     {
         $this->validator($request->all())->validate();

@@ -3,19 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
-    use AuthenticatesUsers;
-
     /**
-     * Redirect users to this path after login.
-     *
-     * @var string
+     * Where to redirect users after login.
      */
     protected $redirectTo = '/dashboard';
 
@@ -28,15 +22,50 @@ class LoginController extends Controller
     }
 
     /**
-     * Use 'phone' instead of the default 'email' for login.
+     * Override default login method to accept email OR phone.
      */
-    public function username()
+    public function login(Request $request)
     {
-        return 'phone';
+        $request->validate([
+            'login' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        $loginType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+        if (Auth::attempt([$loginType => $request->login, 'password' => $request->password], $request->filled('remember'))) {
+            $request->session()->regenerate();
+            return redirect()->intended($this->redirectTo);
+        }
+
+        return back()->withErrors([
+            'login' => 'Identifiants invalides.',
+        ])->onlyInput('login');
     }
 
     /**
-     * Optional: Override guard if you're using a custom guard
+     * Log the user out of the application.
+     */
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login');
+    }
+
+    /**
+     * Show the login form.
+     */
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
+
+    /**
+     * Optional: custom guard
      */
     protected function guard()
     {
@@ -44,7 +73,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Ensure user is redirected to dashboard explicitly.
+     * Optional: explicit redirection after login (redundant in this case)
      */
     protected function authenticated(Request $request, $user)
     {

@@ -29,9 +29,9 @@ class MembreController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'required|string|unique:members,phone',
             'password' => 'required|string|min:6',
-            'role' => 'required|in:admin,membre,super_admin',
             'association_id' => 'required|exists:associations,id',
             'profile_photo' => 'nullable|image|max:2048',
+            'assign_role' => 'required|in:super_admin,admin,membre',
         ]);
 
         $membre = Membre::create([
@@ -39,20 +39,27 @@ class MembreController extends Controller
             'name' => $request->name,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
             'availability' => $request->availability,
             'skills' => $request->skills,
             'is_active' => $request->has('is_active'),
-            'is_admin' => $request->has('is_admin'),
             'association_id' => $request->association_id,
         ]);
 
         if ($request->hasFile('profile_photo')) {
-            $membre->addMediaFromRequest('profile_photo')->toMediaCollection('profile_photo');
+            $shortName = substr(Str::uuid(), 0, 8) . '.' . $request->file('profile_photo')->getClientOriginalExtension();
+
+            $media = $membre->addMediaFromRequest('profile_photo')
+                ->usingFileName($shortName)
+                ->toMediaCollection('profile_photo');
+
+            session()->flash('uploaded_profile_media', $media);
         }
+
+        $membre->assignRole($request->assign_role);
 
         return redirect()->route('admin.membres.index')->with('success', 'Membre created successfully.');
     }
+
 
     public function show(Membre $membre)
     {
@@ -70,14 +77,18 @@ class MembreController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|unique:members,phone,' . $membre->id,
-            'role' => 'required|in:admin,membre,super_admin',
             'association_id' => 'required|exists:associations,id',
             'profile_photo' => 'nullable|image|max:2048',
+            'assign_role' => 'required|in:super_admin,admin,membre',
         ]);
 
         $data = $request->only([
-            'name', 'phone', 'role', 'availability', 'skills',
-            'is_active', 'is_admin', 'association_id'
+            'name',
+            'phone',
+            'availability',
+            'skills',
+            'is_active',
+            'association_id'
         ]);
 
         if ($request->filled('password')) {
@@ -91,12 +102,15 @@ class MembreController extends Controller
             $membre->addMediaFromRequest('profile_photo')->toMediaCollection('profile_photo');
         }
 
+        // Update role via Spatie
+        $membre->syncRoles([$request->assign_role]);
+
         return redirect()->route('admin.membres.index')->with('success', 'Membre updated successfully.');
     }
 
     public function destroy(Membre $membre)
     {
-        $membre->clearMediaCollection('profile_photo'); 
+        $membre->clearMediaCollection('profile_photo');
         $membre->delete();
         return redirect()->route('admin.membres.index')->with('success', 'Membre deleted successfully.');
     }
