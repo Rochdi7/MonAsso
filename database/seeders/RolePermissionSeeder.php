@@ -14,9 +14,10 @@ class RolePermissionSeeder extends Seeder
 {
     public function run(): void
     {
+        // Clear cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Permissions
+        // Create permissions
         $permissions = [
             'manage associations',
             'manage events',
@@ -25,20 +26,20 @@ class RolePermissionSeeder extends Seeder
             'view dashboard',
         ];
 
-        foreach ($permissions as $perm) {
-            Permission::firstOrCreate(['name' => $perm]);
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
-        // Roles
-        $superAdmin = Role::firstOrCreate(['name' => 'super_admin']);
-        $admin = Role::firstOrCreate(['name' => 'admin']);
-        $membre = Role::firstOrCreate(['name' => 'membre']);
+        // Create roles and assign permissions
+        $superAdmin = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
+        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $membre = Role::firstOrCreate(['name' => 'membre', 'guard_name' => 'web']);
 
         $superAdmin->givePermissionTo(Permission::all());
         $admin->givePermissionTo(['manage events', 'manage cotisations', 'view dashboard']);
         $membre->givePermissionTo(['participate events', 'view dashboard']);
 
-        // Associations
+        // Create Associations
         $asso1 = Association::firstOrCreate(
             ['email' => 'super@asso.com'],
             [
@@ -78,14 +79,13 @@ class RolePermissionSeeder extends Seeder
             ]
         );
 
-        // Membres
+        // Create Membres and assign roles
         $super = Membre::firstOrCreate(
             ['phone' => '0600000001'],
             [
                 'id' => Str::uuid(),
                 'name' => 'Super Admin',
                 'password' => Hash::make('password'),
-                'role' => 'super_admin',
                 'association_id' => $asso1->id,
             ]
         );
@@ -97,7 +97,6 @@ class RolePermissionSeeder extends Seeder
                 'id' => Str::uuid(),
                 'name' => 'Association Admin',
                 'password' => Hash::make('password'),
-                'role' => 'admin',
                 'association_id' => $asso2->id,
             ]
         );
@@ -109,7 +108,6 @@ class RolePermissionSeeder extends Seeder
                 'id' => Str::uuid(),
                 'name' => 'Regular Member',
                 'password' => Hash::make('password'),
-                'role' => 'membre',
                 'association_id' => $asso3->id,
             ]
         );
