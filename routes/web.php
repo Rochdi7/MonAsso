@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Response;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\AssociationController;
 use App\Http\Controllers\Admin\EventController;
@@ -10,9 +12,17 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Membre\DashboardController;
 use App\Http\Controllers\Admin\MembreController;
 
-
-
 Auth::routes();
+
+Route::get('/media/{id}/{filename}', function ($id, $filename) {
+    $media = Media::findOrFail($id);
+
+    if ($media->file_name !== $filename) {
+        abort(404);
+    }
+
+    return Response::file($media->getPath());
+})->where(['id' => '[0-9]+', 'filename' => '.*'])->name('media.custom');
 
 // Routes that require authentication
 Route::middleware(['auth'])->group(function () {
@@ -41,7 +51,6 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('permissions', PermissionController::class);
         Route::resource('associations', AssociationController::class);
         Route::resource('membres', MembreController::class);
-
     });
 
     // Catch-all for dynamic content pages
