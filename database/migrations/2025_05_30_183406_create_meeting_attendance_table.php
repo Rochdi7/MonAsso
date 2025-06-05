@@ -12,14 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('meeting_attendance', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('meeting_id');
-            $table->uuid('member_id');
+            $table->id();
+            $table->unsignedBigInteger('meeting_id');
+            $table->unsignedBigInteger('member_id');
             $table->boolean('is_present')->default(false);
             $table->foreign('meeting_id')->references('id')->on('meetings')->onDelete('cascade');
-            $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
+            $table->foreign('member_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamp('created_at')->nullable();
         });
+        
     }
 
     /**

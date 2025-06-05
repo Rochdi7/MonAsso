@@ -12,15 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('meetings', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->string('title');
             $table->timestamp('scheduled_at');
             $table->string('location');
             $table->text('agenda')->nullable();
-            $table->uuid('association_id');
+            $table->unsignedBigInteger('association_id');
             $table->foreign('association_id')->references('id')->on('associations')->onDelete('cascade');
             $table->timestamp('created_at')->nullable();
         });
+        
     }
 
     /**

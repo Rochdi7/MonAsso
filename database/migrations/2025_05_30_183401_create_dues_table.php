@@ -12,15 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('dues', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('member_id');
+            $table->id();
+            $table->unsignedBigInteger('member_id');
             $table->decimal('amount', 8, 2);
             $table->date('payment_date');
             $table->integer('year');
             $table->string('payment_method');
-            $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
+            $table->foreign('member_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamp('created_at')->nullable();
         });
+        
     }
 
     /**

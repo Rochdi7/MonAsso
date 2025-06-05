@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('associations', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string(column: 'name');
+            $table->id();
+            $table->string('name');
             $table->string('address');
             $table->string('email')->unique();
             $table->text('announcement_status')->nullable();
@@ -22,6 +22,7 @@ return new class extends Migration
             $table->timestamp('validation_date')->nullable();
             $table->timestamps();
         });
+        
     }
 
     /**

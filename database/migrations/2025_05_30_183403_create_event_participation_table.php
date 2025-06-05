@@ -12,14 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('event_participation', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('member_id');
-            $table->uuid('event_id');
+            $table->id();
+            $table->unsignedBigInteger('member_id');
+            $table->unsignedBigInteger('event_id');
             $table->string('event_role')->nullable();
-            $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
+            $table->foreign('member_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade');
             $table->timestamp('created_at')->nullable();
         });
+        
     }
 
     /**
