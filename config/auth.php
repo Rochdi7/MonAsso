@@ -17,12 +17,12 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Membre::class, // your custom table 'members'
+            'model' => App\Models\User::class,
         ],
     ],
 
     'passwords' => [
-        'users' => [ // match with provider 'users'
+        'users' => [ 
             'provider' => 'users',
             'table' => 'password_reset_tokens',
             'expire' => 60,
