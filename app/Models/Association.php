@@ -4,16 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Association extends Model implements HasMedia
 {
-    use HasFactory, HasUuids, InteractsWithMedia;
+    use HasFactory, InteractsWithMedia; 
 
     protected $fillable = [
-        'id',
         'name',
         'address',
         'email',
@@ -25,7 +23,6 @@ class Association extends Model implements HasMedia
 
     public function membres()
     {
-        return $this->hasMany(Membre::class);
+        return $this->hasMany(User::class); 
     }
-    
 }
