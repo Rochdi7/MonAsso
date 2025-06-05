@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\CotisationController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Membre\DashboardController;
-use App\Http\Controllers\Admin\MembreController;
+use App\Http\Controllers\Admin\UserController;
 
 Auth::routes();
 
@@ -50,7 +50,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('roles', RoleController::class);
         Route::resource('permissions', PermissionController::class);
         Route::resource('associations', AssociationController::class);
-        Route::resource('membres', MembreController::class);
+        Route::resource('membres', UserController::class); // renamed controller
     });
 
     // Catch-all for dynamic content pages
