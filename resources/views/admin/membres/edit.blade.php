@@ -54,9 +54,19 @@
                             </div>
 
                             <div class="mb-3 col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                                    value="{{ old('email', $membre->email) }}" required>
+                                <div class="invalid-feedback">
+                                    @error('email') {{ $message }} @else Please enter a valid email address. @enderror
+                                </div>
+                            </div>
+
+                            <div class="mb-3 col-md-6">
                                 <label for="role" class="form-label">Role</label>
-                                <select name="assign_role" class="form-select @error('assign_role') is-invalid @enderror" required>
-                                <option value="">Choose...</option>
+                                <select name="assign_role" class="form-select @error('assign_role') is-invalid @enderror"
+                                    required>
+                                    <option value="">Choose...</option>
                                     <option value="super_admin" @selected(old('role', $membre->role) == 'super_admin')>Super
                                         Admin</option>
                                     <option value="admin" @selected(old('role', $membre->role) == 'admin')>Admin</option>

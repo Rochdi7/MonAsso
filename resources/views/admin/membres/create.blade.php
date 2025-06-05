@@ -53,22 +53,45 @@
                             </div>
 
                             <div class="mb-3 col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                                    value="{{ old('email') }}" required>
+                                <div class="invalid-feedback">
+                                    @error('email') {{ $message }} @else Please enter a valid email address. @enderror
+                                </div>
+                            </div>
+
+                            <div class="mb-3 col-md-6">
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" name="password"
                                     class="form-control @error('password') is-invalid @enderror" required>
                                 <div class="invalid-feedback">
-                                    @error('password') {{ $message }} @else Please enter a password (min 6 characters). @enderror
+                                    @error('password') {{ $message }} @else Please enter a password (min 6 characters).
+                                    @enderror
                                 </div>
                             </div>
 
                             <div class="mb-3 col-md-6">
                                 <label for="assign_role" class="form-label">Role</label>
-                                <select name="assign_role" class="form-select @error('assign_role') is-invalid @enderror" required>
+                                <select name="assign_role" class="form-select @error('assign_role') is-invalid @enderror"
+                                    required>
                                     <option value="">Choose...</option>
-                                    <option value="super_admin" @selected(old('assign_role') == 'super_admin')>Super Admin</option>
-                                    <option value="admin" @selected(old('assign_role') == 'admin')>Admin</option>
-                                    <option value="membre" @selected(old('assign_role') == 'membre')>Membre</option>
+                                    @php
+                                        $assignableRoles = \Spatie\Permission\Models\Role::where('name', '!=', 'super_admin')->get();
+
+                                        if (auth()->user()?->hasRole('super_admin')) {
+                                            $assignableRoles = \Spatie\Permission\Models\Role::all();
+                                        }
+                                    @endphp
+
+                                    @foreach($assignableRoles as $role)
+                                        <option value="{{ $role->name }}" @selected(old('assign_role') == $role->name)>
+                                            {{ ucfirst(str_replace('_', ' ', $role->name)) }}
+                                        </option>
+                                    @endforeach
+
                                 </select>
+
                                 @error('assign_role')
                                     <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
