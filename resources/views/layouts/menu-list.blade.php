@@ -56,3 +56,14 @@
 </li>
 @endrole
 
+{{-- Meetings CRUD: For super_admin and admin --}}
+@role('super_admin|admin')
+<li class="pc-item">
+  <a href="{{ url('/admin/meetings') }}" class="pc-link">
+    <span class="pc-micon">
+      <i class="ph-duotone ph-calendar-blank"></i>
+    </span>
+    <span class="pc-mtext" data-i18n="Meetings">Manage Meetings</span>
+  </a>
+</li>
+@endrole
