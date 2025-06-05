@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,15 +13,19 @@ return new class extends Migration
         Schema::create('meetings', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->timestamp('scheduled_at');
-            $table->string('location');
-            $table->text('agenda')->nullable();
-            $table->unsignedBigInteger('association_id');
-            $table->foreign('association_id')->references('id')->on('associations')->onDelete('cascade');
-            $table->timestamp('created_at')->nullable();
+            $table->text('description')->nullable();
+            $table->dateTime('datetime');
+            $table->tinyInteger('status')->default(0);
+            $table->string('location')->nullable();
+
+            $table->foreignId('association_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('organizer_id')->constrained('users')->cascadeOnDelete(); // Corrected
+
+            $table->timestamps();
+            $table->softDeletes();
         });
-        
     }
+
 
     /**
      * Reverse the migrations.
