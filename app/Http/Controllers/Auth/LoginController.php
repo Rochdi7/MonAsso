@@ -22,7 +22,15 @@ class LoginController extends Controller
     }
 
     /**
-     * Override default login method to accept email OR phone.
+     * Show the login form.
+     */
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
+
+    /**
+     * Handle login with either email or phone number.
      */
     public function login(Request $request)
     {
@@ -31,9 +39,14 @@ class LoginController extends Controller
             'password' => 'required|string',
         ]);
 
-        $loginType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
-        if (Auth::attempt([$loginType => $request->login, 'password' => $request->password], $request->filled('remember'))) {
+        $credentials = [
+            $loginField => $request->login,
+            'password' => $request->password,
+        ];
+
+        if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
             return redirect()->intended($this->redirectTo);
         }
@@ -44,7 +57,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Log the user out of the application.
+     * Handle logout.
      */
     public function logout(Request $request)
     {
@@ -57,15 +70,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Show the login form.
-     */
-    public function showLoginForm()
-    {
-        return view('auth.login');
-    }
-
-    /**
-     * Optional: custom guard
+     * Optional: Use default guard
      */
     protected function guard()
     {
@@ -73,10 +78,11 @@ class LoginController extends Controller
     }
 
     /**
-     * Optional: explicit redirection after login (redundant in this case)
+     * Optional: What to do after login
      */
     protected function authenticated(Request $request, $user)
     {
-        return redirect($this->redirectTo);
+        // You can remove this if not needed.
+        // dd($user->getRoleNames());
     }
 }

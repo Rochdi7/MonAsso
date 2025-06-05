@@ -4,13 +4,12 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Association;
-use App\Models\Membre;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -36,23 +35,22 @@ class RegisterController extends Controller
             'association_address' => ['required', 'string'],
             'association_email' => ['required', 'email', 'unique:associations,email'],
 
-            // Admin (membre) info
+            // Admin (user) info
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:members,email'], // ✅ NEW
-            'phone' => ['required', 'string', 'max:20', 'unique:members,phone'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'phone' => ['required', 'string', 'max:20', 'unique:users,phone'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
 
     /**
-     * Create a new association and its first admin
+     * Create a new association and its first admin user
      */
     protected function create(array $data)
     {
         return DB::transaction(function () use ($data) {
-            // Create association
+            // Create association (auto-incrementing ID)
             $association = Association::create([
-                'id' => Str::uuid(),
                 'name' => $data['association_name'],
                 'address' => $data['association_address'],
                 'email' => $data['association_email'],
@@ -60,22 +58,19 @@ class RegisterController extends Controller
                 'is_validated' => false,
             ]);
 
-            // Create member (admin)
-            $member = Membre::create([
-                'id' => Str::uuid(),
+            // Create user (admin)
+            $user = User::create([
                 'name' => $data['name'],
-                'email' => $data['email'], // ✅ NEW
+                'email' => $data['email'],
                 'phone' => $data['phone'],
                 'password' => Hash::make($data['password']),
-                'role' => 'admin',
-                'is_admin' => true,
                 'is_active' => true,
                 'association_id' => $association->id,
             ]);
 
-            $member->assignRole('admin');
+            $user->assignRole('admin');
 
-            return $member;
+            return $user;
         });
     }
 
@@ -86,9 +81,9 @@ class RegisterController extends Controller
     {
         $this->validator($request->all())->validate();
 
-        $member = $this->create($request->all());
+        $user = $this->create($request->all());
 
-        Auth::login($member);
+        Auth::login($user);
 
         return redirect($this->redirectPath());
     }
