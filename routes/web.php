@@ -50,7 +50,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('roles', RoleController::class);
         Route::resource('permissions', PermissionController::class);
         Route::resource('associations', AssociationController::class);
-        Route::resource('membres', UserController::class); // renamed controller
+        Route::resource('membres', UserController::class);
+        Route::resource('meetings', \App\Http\Controllers\Admin\MeetingController::class); // ✅ NEW LINE
     });
 
     // Catch-all for dynamic content pages
