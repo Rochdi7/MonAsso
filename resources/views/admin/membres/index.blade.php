@@ -52,35 +52,39 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($membres as $membre)
+                            @forelse($users as $user)
                             <tr>
                                 <td>
-                                    @if($membre->getFirstMediaUrl('profile_photo'))
-                                        <img src="{{ $membre->getFirstMediaUrl('profile_photo') }}" alt="photo" width="40" height="40" class="rounded-circle shadow-sm">
+                                    @if($user->getFirstMediaUrl('profile_photo'))
+                                        <img src="{{ $user->getFirstMediaUrl('profile_photo') }}" alt="photo" width="40" height="40" class="rounded-circle shadow-sm">
                                     @else
                                         <span class="text-muted">N/A</span>
                                     @endif
                                 </td>
-                                <td>{{ $membre->name }}</td>
-                                <td>{{ $membre->phone }}</td>
-                                <td><span class="badge bg-secondary text-uppercase">{{ $membre->role }}</span></td>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->phone }}</td>
                                 <td>
-                                    @if($membre->is_active)
+                                    <span class="badge bg-secondary text-uppercase">
+                                        {{ $user->getRoleNames()->first() ?? 'N/A' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @if($user->is_active)
                                         <span class="text-success">✔ Active</span>
                                     @else
                                         <span class="text-danger">✘ Inactive</span>
                                     @endif
                                 </td>
-                                <td>{{ $membre->association?->name ?? 'N/A' }}</td>
+                                <td>{{ $user->association?->name ?? 'N/A' }}</td>
                                 <td>
-                                    <a href="{{ route('admin.membres.edit', $membre) }}"
+                                    <a href="{{ route('admin.membres.edit', $user) }}"
                                         class="avtar avtar-xs btn-link-secondary me-2" title="Edit">
                                         <i class="ti ti-edit f-20"></i>
                                     </a>
-                                    <form action="{{ route('admin.membres.destroy', $membre) }}" method="POST" style="display:inline-block;">
+                                    <form action="{{ route('admin.membres.destroy', $user) }}" method="POST" style="display:inline-block;">
                                         @csrf @method('DELETE')
                                         <button class="avtar avtar-xs btn-link-secondary border-0 bg-transparent p-0"
-                                            onclick="return confirm('Delete this membre?')" title="Delete">
+                                            onclick="return confirm('Delete this user?')" title="Delete">
                                             <i class="ti ti-trash f-20"></i>
                                         </button>
                                     </form>
@@ -88,7 +92,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="text-center text-muted">No membres found.</td>
+                                <td colspan="7" class="text-center text-muted">No users found.</td>
                             </tr>
                             @endforelse
                         </tbody>

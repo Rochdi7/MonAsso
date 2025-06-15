@@ -98,18 +98,35 @@
                             </div>
 
                             <div class="mb-3 col-md-6">
-                                <label for="association_id" class="form-label">Association</label>
-                                <select name="association_id"
-                                    class="form-select @error('association_id') is-invalid @enderror" required>
-                                    <option value="">Select Association</option>
-                                    @foreach($associations as $id => $name)
-                                        <option value="{{ $id }}" @selected(old('association_id') == $id)>{{ $name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('association_id')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
+    <label for="association_id" class="form-label">Association</label>
+    <select name="association_id"
+        class="form-select @error('association_id') is-invalid @enderror" required
+        {{ auth()->user()->hasRole('admin') ? 'readonly disabled' : '' }}>
+        
+        @if(auth()->user()->hasRole('super_admin'))
+            <option value="">Select Association</option>
+            @foreach($associations as $id => $name)
+                <option value="{{ $id }}" @selected(old('association_id') == $id)>{{ $name }}</option>
+            @endforeach
+        @elseif(auth()->user()->hasRole('admin'))
+            @php
+                $adminAssociationId = auth()->user()->association_id;
+                $adminAssociationName = $associations[$adminAssociationId] ?? 'Unknown Association';
+            @endphp
+            <option value="{{ $adminAssociationId }}" selected>{{ $adminAssociationName }}</option>
+        @endif
+
+    </select>
+    @error('association_id')
+        <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+</div>
+
+{{-- hidden input to make sure the value is submitted when disabled --}}
+@if(auth()->user()->hasRole('admin'))
+    <input type="hidden" name="association_id" value="{{ auth()->user()->association_id }}">
+@endif
+
 
                             <div class="mb-3 col-md-6">
                                 <label for="profile_photo" class="form-label">Profile Photo</label>
