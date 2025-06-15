@@ -11,7 +11,7 @@ class UserAndAssociationSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create associations without setting 'id'
+        // Create Associations
         $asso1 = Association::create([
             'name' => 'Asso Super',
             'email' => 'super@asso.com',
@@ -36,7 +36,7 @@ class UserAndAssociationSeeder extends Seeder
             'creation_date' => now(),
         ]);
 
-        // Create users
+        // Create Users and assign roles
         $super = User::create([
             'name' => 'Super Admin',
             'email' => 'super@asso.com',
