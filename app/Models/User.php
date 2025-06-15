@@ -59,28 +59,4 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->belongsTo(Association::class);
     }
-
-    /**
-     * Relationship: User has many dues (if applicable).
-     */
-    public function dues()
-    {
-        return $this->hasMany(Due::class, 'member_id');
-    }
-
-    /**
-     * Relationship: User has many event participations.
-     */
-    public function eventParticipations()
-    {
-        return $this->hasMany(EventParticipation::class, 'member_id');
-    }
-
-    /**
-     * Relationship: User has many meeting attendances.
-     */
-    public function meetingAttendances()
-    {
-        return $this->hasMany(MeetingAttendance::class, 'member_id');
-    }
 }
