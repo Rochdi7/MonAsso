@@ -8,6 +8,7 @@ class MeetingDocument extends Model
 {
     protected $fillable = ['meeting_id', 'name', 'path'];
 
+    // Relationship
     public function meeting()
     {
         return $this->belongsTo(Meeting::class);

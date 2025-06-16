@@ -15,6 +15,7 @@ class Cotisation extends Model
         'approved_by',
         'year',
         'amount',
+        'paid_at',
         'status',
         'paid_at',
         'receipt_number',

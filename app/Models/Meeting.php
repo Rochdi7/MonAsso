@@ -35,4 +35,9 @@ class Meeting extends Model implements HasMedia
     {
         return $this->belongsTo(User::class, 'organizer_id');
     }
+
+    public function documents()
+    {
+        return $this->hasMany(MeetingDocument::class);
+    }
 }
