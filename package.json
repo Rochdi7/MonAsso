@@ -3,7 +3,9 @@
     "type": "module",
     "scripts": {
         "clean": "rimraf public/build",
-        "build": "npm run clean && vite build"
+        "build": "npm run clean && vite build",
+        "dev": "vite"
+
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",
