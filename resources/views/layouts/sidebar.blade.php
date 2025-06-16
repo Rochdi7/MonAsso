@@ -27,7 +27,7 @@
                     <div class="flex-shrink-0">
                         @php
                             $user = Auth::user();
-                            $profilePhoto = $user->getFirstMediaUrl('profile_photo') ?: asset('images/default-avatar.png');
+                            $profilePhoto = $user->getFirstMediaUrl('profile_photo') ?: asset('assets/images/user/avatar-1.jpg');
                         @endphp
 
                         <img src="{{ $profilePhoto }}" alt="user-image" class="user-avtar wid-45 rounded-circle">

@@ -10,6 +10,16 @@
   </li>
   @endhasanyrole
 
+  {{-- Statistiques: available for all roles --}}
+  @hasanyrole('super_admin|admin|membre')
+  <li class="pc-item">
+    <a href="{{ route('admin.statistics.index') }}" class="pc-link">
+      <span class="pc-micon"><i class="ph-duotone ph-chart-bar"></i></span>
+      <span class="pc-mtext" data-i18n="Statistics">Statistics</span>
+    </a>
+  </li>
+  @endhasanyrole
+
   {{-- Roles Management: super_admin only --}}
   @role('super_admin')
   <li class="pc-item">

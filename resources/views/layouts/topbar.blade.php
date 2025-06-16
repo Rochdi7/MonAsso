@@ -204,7 +204,7 @@
                                         <div class="flex-shrink-0">
                                             @php
                                                 $user = Auth::user();
-                                                $avatar = $user->getFirstMediaUrl('profile_photo') ?: asset('images/default-avatar.png');
+                                                $avatar = $user->getFirstMediaUrl('profile_photo') ?: asset('assets/images/user/avatar-1.jpg');
                                             @endphp
 
                                             <img src="{{ $avatar }}" alt="{{ $user->name }}"
@@ -373,7 +373,7 @@
                         role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
                         @php
                             $user = Auth::user();
-                            $avatar = $user->getFirstMediaUrl('profile_photo') ?: asset('images/default-avatar.png');
+                            $avatar = $user->getFirstMediaUrl('profile_photo') ?: asset('assets/images/user/avatar-1.jpg');
                         @endphp
 
                         <img src="{{ $avatar }}" alt="{{ $user->name }}" class="user-avtar avtar avtar-s" />
@@ -392,7 +392,7 @@
                                             <div class="flex-shrink-0">
                                                 @php
                                                     $user = Auth::user();
-                                                    $avatar = $user->getFirstMediaUrl('profile_photo') ?: asset('images/default-avatar.png');
+                                                    $avatar = $user->getFirstMediaUrl('profile_photo') ?: asset('assets/images/user/avatar-1.jpg');
                                                 @endphp
 
                                                 <img src="{{ $avatar }}" alt="{{ $user->name }}"
@@ -417,48 +417,31 @@
                                         </div>
                                     </li>
                                     <li class="list-group-item">
+                                    <a href="{{ route('profile.index') }}" class="dropdown-item">
+                                            <span class="d-flex align-items-center">
+                                                <i class="ph-duotone ph-user-circle"></i>
+                                                <span>Edit profile</span>
+                                            </span>
+                                        </a>
+
+
                                         <a href="#" class="dropdown-item">
                                             <span class="d-flex align-items-center">
-                                                <i class="ph-duotone ph-key"></i>
-                                                <span>Change password</span>
+                                                <i class="ph-duotone ph-star text-warning"></i>
+                                                <span>Upgrade account</span>
+                                                <span
+                                                    class="badge bg-light-success border border-success ms-2">NEW</span>
                                             </span>
                                         </a>
                                         <a href="#" class="dropdown-item">
                                             <span class="d-flex align-items-center">
-                                                <i class="ph-duotone ph-envelope-simple"></i>
-                                                <span>Recently mail</span>
-                                            </span>
-                                            <div class="user-group">
-                                                <img src="{{ URL::asset('build/images/user/avatar-1.jpg') }}"
-                                                    alt="user-image" class="avtar" />
-                                                <img src="{{ URL::asset('build/images/user/avatar-2.jpg') }}"
-                                                    alt="user-image" class="avtar" />
-                                                <img src="{{ URL::asset('build/images/user/avatar-3.jpg') }}"
-                                                    alt="user-image" class="avtar" />
-                                            </div>
-                                        </a>
-                                        <a href="#" class="dropdown-item">
-                                            <span class="d-flex align-items-center">
-                                                <i class="ph-duotone ph-calendar-blank"></i>
-                                                <span>Schedule meetings</span>
+                                                <i class="ph-duotone ph-bell"></i>
+                                                <span>Notifications</span>
                                             </span>
                                         </a>
+                                      
                                     </li>
-                                    <li class="list-group-item">
-                                        <a href="#" class="dropdown-item">
-                                            <span class="d-flex align-items-center">
-                                                <i class="ph-duotone ph-heart"></i>
-                                                <span>Favorite</span>
-                                            </span>
-                                        </a>
-                                        <a href="#" class="dropdown-item">
-                                            <span class="d-flex align-items-center">
-                                                <i class="ph-duotone ph-arrow-circle-down"></i>
-                                                <span>Download</span>
-                                            </span>
-                                            <span class="avtar avtar-xs rounded-circle bg-danger text-white">10</span>
-                                        </a>
-                                    </li>
+                                   
                                     <li class="list-group-item">
                                         <div class="dropdown-item">
                                             <span class="d-flex align-items-center">
@@ -474,48 +457,11 @@
                                                 </select>
                                             </span>
                                         </div>
-                                        <a href="#" class="dropdown-item">
-                                            <span class="d-flex align-items-center">
-                                                <i class="ph-duotone ph-flag"></i>
-                                                <span>Country</span>
-                                            </span>
-                                        </a>
+                                       
                                     </li>
+                                    
                                     <li class="list-group-item">
-                                        <a href="#" class="dropdown-item">
-                                            <span class="d-flex align-items-center">
-                                                <i class="ph-duotone ph-user-circle"></i>
-                                                <span>Edit profile</span>
-                                            </span>
-                                        </a>
-                                        <a href="#" class="dropdown-item">
-                                            <span class="d-flex align-items-center">
-                                                <i class="ph-duotone ph-star text-warning"></i>
-                                                <span>Upgrade account</span>
-                                                <span
-                                                    class="badge bg-light-success border border-success ms-2">NEW</span>
-                                            </span>
-                                        </a>
-                                        <a href="#" class="dropdown-item">
-                                            <span class="d-flex align-items-center">
-                                                <i class="ph-duotone ph-bell"></i>
-                                                <span>Notifications</span>
-                                            </span>
-                                        </a>
-                                        <a href="#" class="dropdown-item">
-                                            <span class="d-flex align-items-center">
-                                                <i class="ph-duotone ph-gear-six"></i>
-                                                <span>Settings</span>
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="#" class="dropdown-item">
-                                            <span class="d-flex align-items-center">
-                                                <i class="ph-duotone ph-plus-circle"></i>
-                                                <span>Add account</span>
-                                            </span>
-                                        </a>
+                                       
                                         <a href="{{ route('logout') }}" onclick="event.preventDefault();
                                                       document.getElementById('logout-form').submit();"
                                             class="dropdown-item">
