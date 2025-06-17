@@ -31,10 +31,12 @@ class CotisationController extends Controller
         return view('admin.cotisations.index', compact('cotisations'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $this->authorize('create cotisation');
         $authUser = auth()->user();
+
+        $selectedUserId = $request->get('user_id'); // On récupère s'il est passé en paramètre
 
         if ($authUser->hasRole('super_admin')) {
             $users = User::all();
@@ -46,8 +48,9 @@ class CotisationController extends Controller
             abort(403);
         }
 
-        return view('admin.cotisations.create', compact('users', 'associations'));
+        return view('admin.cotisations.create', compact('users', 'associations', 'selectedUserId'));
     }
+
 
     public function store(Request $request)
     {
@@ -59,13 +62,13 @@ class CotisationController extends Controller
             'association_id' => 'required|exists:associations,id',
             'year' => 'required|integer|min:1900|max:' . (now()->year + 1),
             'amount' => 'required|numeric|min:0',
-            'status' => 'required|in:0,1,2,3',
+            'status' => 'required|in:0,1',
             'paid_at' => 'nullable|date',
             'receipt_number' => 'nullable|string|unique:cotisations,receipt_number',
             'approved_by' => 'nullable|exists:users,id',
         ]);
 
-        // Additional security check: Admin cannot assign users outside his association
+        // Extra security for admins
         if ($authUser->hasRole('admin')) {
             $user = User::find($validated['user_id']);
             if ($user->association_id != $authUser->association_id || $validated['association_id'] != $authUser->association_id) {
@@ -73,6 +76,7 @@ class CotisationController extends Controller
             }
         }
 
+        // Prevent duplicate for same year
         $exists = Cotisation::where('user_id', $validated['user_id'])
             ->where('year', $validated['year'])
             ->exists();
@@ -119,13 +123,12 @@ class CotisationController extends Controller
             'association_id' => 'required|exists:associations,id',
             'year' => 'required|integer|min:1900|max:' . (now()->year + 1),
             'amount' => 'required|numeric|min:0',
-            'status' => 'required|in:0,1,2,3',
+            'status' => 'required|in:0,1',
             'paid_at' => 'nullable|date',
             'receipt_number' => 'nullable|string|unique:cotisations,receipt_number,' . $cotisation->id,
             'approved_by' => 'nullable|exists:users,id',
         ]);
 
-        // Extra protection for admin
         if ($authUser->hasRole('admin')) {
             $user = User::find($validated['user_id']);
             if ($user->association_id != $authUser->association_id || $validated['association_id'] != $authUser->association_id) {
