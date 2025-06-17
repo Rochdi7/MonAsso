@@ -40,10 +40,8 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Organizer</th>
-                                    <th>Association</th>
                                     <th>Date & Time</th>
                                     <th>Status</th>
-                                    <th>Location</th>
                                     <th>Documents</th>
                                     <th>Actions</th>
                                 </tr>
@@ -53,7 +51,6 @@
                                     <tr>
                                         <td>{{ $meeting->title }}</td>
                                         <td>{{ $meeting->organizer->name ?? 'N/A' }}</td>
-                                        <td>{{ $meeting->association->name ?? 'N/A' }}</td>
                                         <td>{{ \Carbon\Carbon::parse($meeting->datetime)->format('Y-m-d H:i') }}</td>
                                         <td>
                                             @if($meeting->status === 1)
@@ -64,7 +61,6 @@
                                                 <span class="badge bg-light-warning text-warning">⏳ Pending</span>
                                             @endif
                                         </td>
-                                        <td>{{ $meeting->location ?? 'N/A' }}</td>
                                         <td>
                                             @forelse($meeting->getMedia('documents') as $doc)
                                                 <a href="{{ route('media.custom', ['id' => $doc->id, 'filename' => rawurlencode($doc->file_name)]) }}"
@@ -94,7 +90,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="text-center text-muted">No meetings found.</td>
+                                        <td colspan="6" class="text-center text-muted">No meetings found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

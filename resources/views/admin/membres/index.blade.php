@@ -5,12 +5,12 @@
 @section('breadcrumb-item-active', 'Manage Membres')
 
 @section('css')
-    <link rel="stylesheet" href="{{ URL::asset('build/css/plugins/style.css') }}">
+<link rel="stylesheet" href="{{ URL::asset('build/css/plugins/style.css') }}">
 @endsection
 
 @section('content')
 
-@if(session('toast') || session('success') || session('error'))
+@if(session()->has('toast') || session()->has('success') || session()->has('error'))
 <div class="position-fixed top-0 end-0 p-3" style="z-index: 99999">
     <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
@@ -29,14 +29,11 @@
 <div class="row">
     <div class="col-12">
         <div class="card table-card">
-            <div class="card-header">
-                <div class="d-sm-flex align-items-center justify-content-between">
-                    <h5 class="mb-3 mb-sm-0">Membres List</h5>
-                    <div>
-                        <a href="{{ route('admin.membres.create') }}" class="btn btn-primary">Add Membre</a>
-                    </div>
-                </div>
+            <div class="card-header d-sm-flex align-items-center justify-content-between">
+                <h5 class="mb-3 mb-sm-0">Membres List</h5>
+                <a href="{{ route('admin.membres.create') }}" class="btn btn-primary">Add Membre</a>
             </div>
+
             <div class="card-body pt-3">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle" id="pc-dt-simple">
@@ -62,29 +59,20 @@
                                     @endif
                                 </td>
                                 <td>{{ $user->name }}</td>
-                                <td>{{ $user->phone }}</td>
-                                <td>
-                                    <span class="badge bg-secondary text-uppercase">
-                                        {{ $user->getRoleNames()->first() ?? 'N/A' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    @if($user->is_active)
-                                        <span class="text-success">✔ Active</span>
-                                    @else
-                                        <span class="text-danger">✘ Inactive</span>
-                                    @endif
-                                </td>
+                                <td>{{ $user->phone ?? '-' }}</td>
+                                <td><span class="badge bg-secondary text-uppercase">{{ $user->getRoleNames()->first() ?? 'N/A' }}</span></td>
+                                <td>{!! $user->is_active ? '<span class="text-success">✔ Active</span>' : '<span class="text-danger">✘ Inactive</span>' !!}</td>
                                 <td>{{ $user->association?->name ?? 'N/A' }}</td>
                                 <td>
-                                    <a href="{{ route('admin.membres.edit', $user) }}"
-                                        class="avtar avtar-xs btn-link-secondary me-2" title="Edit">
+                                    <a href="{{ route('admin.membres.show', $user->id) }}" class="avtar avtar-xs btn-link-secondary" title="View">
+                                        <i class="ti ti-eye f-20"></i>
+                                    </a>
+                                    <a href="{{ route('admin.membres.edit', $user->id) }}" class="avtar avtar-xs btn-link-secondary" title="Edit">
                                         <i class="ti ti-edit f-20"></i>
                                     </a>
-                                    <form action="{{ route('admin.membres.destroy', $user) }}" method="POST" style="display:inline-block;">
+                                    <form action="{{ route('admin.membres.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Delete this user?')" style="display:inline;">
                                         @csrf @method('DELETE')
-                                        <button class="avtar avtar-xs btn-link-secondary border-0 bg-transparent p-0"
-                                            onclick="return confirm('Delete this user?')" title="Delete">
+                                        <button type="submit" class="avtar avtar-xs btn-link-secondary border-0 bg-transparent p-0" title="Delete">
                                             <i class="ti ti-trash f-20"></i>
                                         </button>
                                     </form>
@@ -99,6 +87,7 @@
                     </table>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

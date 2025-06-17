@@ -10,13 +10,13 @@
 @section('content')
 
 <div class="row justify-content-center">
-  <div class="col-md-8 col-xl-5"> <!-- width increased slightly -->
-    <div class="card user-card shadow-sm">
+  <div class="col-md-8 col-xl-6">
+    <div class="card user-card">
       <div class="card-body">
 
         <!-- User Cover -->
-        <div class="user-cover-bg rounded">
-          <img src="{{ URL::asset('build/images/application/img-user-cover-1.jpg') }}" alt="cover" class="img-fluid rounded" />
+        <div class="user-cover-bg">
+          <img src="{{ URL::asset('build/images/application/img-user-cover-1.jpg') }}" alt="cover" class="img-fluid" />
           <div class="cover-data">
             <div class="d-inline-flex align-items-center">
               <i class="ph-duotone ph-star text-warning me-1"></i>
@@ -35,31 +35,30 @@
           <i class="chat-badge {{ $user->is_active ? 'bg-success' : 'bg-danger' }}"></i>
         </div>
 
-        <!-- User Info -->
-        <div class="d-flex mb-3">
+        <!-- Name + Info -->
+        <div class="d-flex">
           <div class="flex-grow-1 ms-2 text-center">
             <h5 class="mb-1">{{ $user->name }}</h5>
             <p class="text-muted text-sm mb-0">{{ $user->email }}</p>
             <p class="text-muted text-sm mb-0">📞 {{ $user->phone ?? '-' }}</p>
-            <p class="text-muted text-sm mb-0">
-              <strong>Association:</strong> {{ $user->association?->name ?? 'N/A' }}
-            </p>
-          </div>
-          <div class="flex-shrink-0">
-            <a href="{{ route('admin.membres.edit', $user->id) }}" class="btn btn-primary btn-sm">Edit</a>
+            <p class="text-muted text-sm mb-0"><strong>Association:</strong> {{ $user->association?->name ?? 'N/A' }}</p>
           </div>
         </div>
 
-        <!-- Actions -->
-        <div class="saprator my-3"><span>Actions</span></div>
-        <div class="d-grid gap-2">
-          <a href="{{ route('admin.cotisations.create', ['user_id' => $user->id]) }}" class="btn btn-outline-primary w-100">
-            <i data-feather="plus"></i> Add Cotisation
-          </a>
-          <a href="{{ route('admin.membres.index') }}" class="btn btn-outline-dark w-100">
-            ← Back to List
-          </a>
-        </div>
+        <!-- Extra Actions -->
+        <div class="saprator my-2"><span>Actions</span></div>
+        <div class="d-flex justify-content-center gap-2">
+    <a href="{{ route('admin.cotisations.create', ['user_id' => $user->id]) }}" class="btn btn-outline-primary">
+        ➕ Add Cotisation
+    </a>
+    <a href="{{ route('admin.membres.edit', $user->id) }}" class="btn btn-outline-secondary">
+        ✎ Edit
+    </a>
+    <a href="{{ route('admin.membres.index') }}" class="btn btn-outline-dark">
+        ← Back to List
+    </a>
+</div>
+
 
       </div>
     </div>

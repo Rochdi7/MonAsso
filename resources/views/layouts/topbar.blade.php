@@ -42,54 +42,7 @@
         <!-- [Mobile Media Block end] -->
         <div class="ms-auto">
             <ul class="list-unstyled">
-                <li class="dropdown pc-h-item d-none d-md-inline-flex">
-                    <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
-                        role="button" aria-haspopup="false" aria-expanded="false">
-                        <i class="ph-duotone ph-circles-four"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-qta dropdown-menu-end pc-h-dropdown">
-                        <div class="overflow-hidden">
-                            <div class="qta-links m-n1">
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ph-duotone ph-shopping-cart"></i>
-                                    <span>E-commerce</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ph-duotone ph-lifebuoy"></i>
-                                    <span>Helpdesk</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ph-duotone ph-scroll"></i>
-                                    <span>Invoice</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ph-duotone ph-books"></i>
-                                    <span>Online Courses</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ph-duotone ph-envelope-open"></i>
-                                    <span>Mail</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ph-duotone ph-identification-badge"></i>
-                                    <span>Membership</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ph-duotone ph-chats-circle"></i>
-                                    <span>Chat</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ph-duotone ph-currency-circle-dollar"></i>
-                                    <span>Plans</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ph-duotone ph-user-circle"></i>
-                                    <span>Users</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </li>
+
                 <li class="dropdown pc-h-item d-none d-md-inline-flex">
                     <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
                         role="button" aria-haspopup="false" aria-expanded="false">
@@ -394,15 +347,12 @@
                                                     $user = Auth::user();
                                                     $avatar = $user->getFirstMediaUrl('profile_photo') ?: asset('assets/images/user/avatar-1.jpg');
                                                 @endphp
-
                                                 <img src="{{ $avatar }}" alt="{{ $user->name }}"
                                                     class="user-avtar avtar avtar-s" />
-
                                             </div>
                                             @php
                                                 $user = Auth::user();
                                             @endphp
-
                                             <div class="flex-grow-1 mx-3">
                                                 <h5 class="mb-0">{{ $user->name }}</h5>
                                                 @if($user->email)
@@ -412,18 +362,16 @@
                                                     <span class="text-muted small">No email provided</span>
                                                 @endif
                                             </div>
-
                                             <span class="badge bg-primary">PRO</span>
                                         </div>
                                     </li>
                                     <li class="list-group-item">
-                                    <a href="{{ route('profile.index') }}" class="dropdown-item">
+                                        <a href="{{ route('profile.index') }}" class="dropdown-item">
                                             <span class="d-flex align-items-center">
                                                 <i class="ph-duotone ph-user-circle"></i>
                                                 <span>Edit profile</span>
                                             </span>
                                         </a>
-
 
                                         <a href="#" class="dropdown-item">
                                             <span class="d-flex align-items-center">
@@ -439,9 +387,25 @@
                                                 <span>Notifications</span>
                                             </span>
                                         </a>
-                                      
                                     </li>
-                                   
+
+                                    <!-- Added items from the first code block -->
+                                    <li class="list-group-item">
+                                       
+                                        <a href="#!" class="dropdown-item">
+                                            <span class="d-flex align-items-center">
+                                                <i class="ph-duotone ph-lifebuoy"></i>
+                                                <span>Support</span>
+                                            </span>
+                                        </a>
+                                        <a href="#!" class="dropdown-item">
+                                            <span class="d-flex align-items-center">
+                                                <i class="ph-duotone ph-lock-key"></i>
+                                                <span>Lock Screen</span>
+                                            </span>
+                                        </a>
+                                    </li>
+
                                     <li class="list-group-item">
                                         <div class="dropdown-item">
                                             <span class="d-flex align-items-center">
@@ -457,14 +421,11 @@
                                                 </select>
                                             </span>
                                         </div>
-                                       
                                     </li>
-                                    
+
                                     <li class="list-group-item">
-                                       
                                         <a href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                      document.getElementById('logout-form').submit();"
-                                            class="dropdown-item">
+                              document.getElementById('logout-form').submit();" class="dropdown-item">
                                             <span class="d-flex align-items-center">
                                                 <i class="ph-duotone ph-power"></i>
                                                 <span>Logout</span>
@@ -479,9 +440,10 @@
                             </div>
                         </div>
                     </div>
-                </li>
-            </ul>
         </div>
+        </li>
+        </ul>
+    </div>
     </div>
 </header>
 <!-- [ Header ] end -->
