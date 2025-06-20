@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\Cotisation;
 
 class UserController extends Controller
 {
@@ -55,11 +56,18 @@ class UserController extends Controller
         return redirect()->route('admin.membres.index')->with('success', 'User created successfully.');
     }
 
+
     public function show(User $user)
     {
         $this->authorize('view', $user);
-        return view('admin.membres.show', compact('user'));
+
+        $cotisations = Cotisation::where('user_id', $user->id)
+            ->latest()
+            ->get();
+
+        return view('admin.membres.show', compact('user', 'cotisations'));
     }
+
 
     public function edit(User $user)
     {

@@ -35,8 +35,7 @@ class CotisationController extends Controller
     {
         $this->authorize('create cotisation');
         $authUser = auth()->user();
-
-        $selectedUserId = $request->get('user_id'); // On récupère s'il est passé en paramètre
+        $selectedUserId = $request->get('user_id');
 
         if ($authUser->hasRole('super_admin')) {
             $users = User::all();
@@ -45,7 +44,11 @@ class CotisationController extends Controller
             $users = User::where('association_id', $authUser->association_id)->get();
             $associations = Association::where('id', $authUser->association_id)->get();
         } else {
-            abort(403);
+            abort(403, 'Unauthorized');
+        }
+
+        if ($selectedUserId && !$users->pluck('id')->contains($selectedUserId)) {
+            $selectedUserId = null;
         }
 
         return view('admin.cotisations.create', compact('users', 'associations', 'selectedUserId'));
