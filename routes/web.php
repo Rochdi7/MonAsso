@@ -70,11 +70,16 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('permissions', PermissionController::class);
         Route::resource('associations', AssociationController::class);
         Route::resource('membres', UserController::class)->parameters(['membres' => 'user']);
-        Route::resource('meetings', MeetingController::class);
         Route::resource('cotisations', CotisationController::class);
+
+        Route::resource('meetings', MeetingController::class)->except(['show']);
+        Route::get('meetings/{meeting}', [MeetingController::class, 'show'])->name('meetings.show');
+
+        Route::delete('meetings/{meeting}/media/{media}', [MeetingController::class, 'removeMedia'])->name('meetings.removeMedia');
+
         Route::get('statistics', [StatisticsController::class, 'index'])->name('statistics.index');
     });
 
-    // Dynamic CMS pages
+    // Dynamic CMS pages — placed at the bottom to avoid overriding defined routes
     Route::get('{routeName}/{name?}', [HomeController::class, 'pageView']);
 });
