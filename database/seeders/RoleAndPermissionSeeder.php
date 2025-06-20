@@ -23,6 +23,7 @@ class RoleAndPermissionSeeder extends Seeder
             'delete cotisation',
             'approve cotisation',
             'view cotisations',
+            'view meetings', 
         ];
 
         foreach ($permissions as $permission) {
@@ -33,8 +34,10 @@ class RoleAndPermissionSeeder extends Seeder
         $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         $membre = Role::firstOrCreate(['name' => 'membre', 'guard_name' => 'web']);
 
+        // Super admin gets everything
         $superAdmin->syncPermissions(Permission::all());
 
+        // Admin gets these permissions
         $admin->syncPermissions([
             'manage events',
             'manage cotisations',
@@ -43,8 +46,10 @@ class RoleAndPermissionSeeder extends Seeder
             'delete cotisation',
             'approve cotisation',
             'view dashboard',
+            'view meetings', 
         ]);
 
+        // Membre gets limited permissions
         $membre->syncPermissions([
             'participate events',
             'view dashboard',
