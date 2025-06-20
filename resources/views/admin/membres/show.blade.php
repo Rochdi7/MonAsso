@@ -5,15 +5,15 @@
 @section('breadcrumb-item-active', 'User Card')
 
 @section('css')
+<link rel="stylesheet" href="{{ URL::asset('build/css/plugins/style.css') }}">
 @endsection
 
 @section('content')
-
-<div class="row justify-content-center">
-  <div class="col-md-8 col-xl-5"> <!-- width increased slightly -->
+<div class="row">
+  <!-- Left: User Card -->
+  <div class="col-md-5">
     <div class="card user-card shadow-sm">
       <div class="card-body">
-
         <!-- User Cover -->
         <div class="user-cover-bg rounded">
           <img src="{{ URL::asset('build/images/application/img-user-cover-1.jpg') }}" alt="cover" class="img-fluid rounded" />
@@ -60,10 +60,65 @@
             ← Back to List
           </a>
         </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- Right: Cotisation History Table -->
+  <div class="col-md-7">
+    <div class="card table-card shadow-sm">
+      <div class="card-header d-flex align-items-center justify-content-between py-3">
+        <h5 class="mb-0">Cotisation History</h5>
+      </div>
+
+      <div class="card-body">
+        @if($cotisations->isEmpty())
+          <p class="text-muted">No cotisations found for this user.</p>
+        @else
+          <div class="table-responsive">
+            <table class="table table-hover" id="cotisation-history-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Date/Time</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach($cotisations->sortByDesc('created_at')->values() as $index => $cotisation)
+                  <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>
+                      {{ $cotisation->created_at->format('Y/m/d') }}
+                      <span class="text-muted text-sm d-block">{{ $cotisation->created_at->format('h:i A') }}</span>
+                    </td>
+                    <td>{{ number_format($cotisation->amount, 2) }} MAD</td>
+                    <td>
+                      @if($cotisation->status === 'paid')
+                        <span class="badge text-bg-success">Paid</span>
+                      @else
+                        <span class="badge text-bg-warning">Not Paid</span>
+                      @endif
+                    </td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+        @endif
       </div>
     </div>
   </div>
 </div>
+@endsection
 
+@section('scripts')
+<script src="{{ URL::asset('build/js/plugins/simple-datatables.js') }}"></script>
+<script>
+  const dataTable = new simpleDatatables.DataTable('#cotisation-history-table', {
+    perPage: 5,
+    sortable: true
+  });
+</script>
 @endsection

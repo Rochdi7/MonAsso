@@ -33,61 +33,59 @@
 
                 <div class="card-body">
                     <div class="row">
+                        @php
+                            $authUser = auth()->user();
+                        @endphp
 
-                        {{-- User select --}}
-                        <div class="mb-3 col-md-6">
-    <label for="user_id" class="form-label">User</label>
-    <select name="user_id" class="form-select @error('user_id') is-invalid @enderror" required>
-        <option value="">Select user...</option>
-        @foreach($users as $user)
-            <option value="{{ $user->id }}"
-                @if(old('user_id', $selectedUserId ?? '') == $user->id) selected @endif>
-                {{ $user->name }}
-            </option>
-        @endforeach
-    </select>
-    @error('user_id')
-        <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-</div>
-
+                        {{-- User --}}
+                        @if(isset($selectedUserId))
+                            <input type="hidden" name="user_id" value="{{ $selectedUserId }}">
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label">User</label>
+                                <input type="text" class="form-control" value="{{ $users->find($selectedUserId)?->name }}" disabled readonly>
+                            </div>
+                        @else
+                            <div class="mb-3 col-md-6">
+                                <label for="user_id" class="form-label">User</label>
+                                <select name="user_id" class="form-select @error('user_id') is-invalid @enderror" required>
+                                    <option value="">Select user...</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}" @selected(old('user_id') == $user->id)>
+                                            {{ $user->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('user_id')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        @endif
 
                         {{-- Association --}}
-                        @php $authUser = auth()->user(); @endphp
-                        <div class="mb-3 col-md-6">
-                            <label for="association_id" class="form-label">Association</label>
-                            <select name="association_id" class="form-select @error('association_id') is-invalid @enderror" required
-                                {{ $authUser->hasRole('admin') ? 'disabled readonly' : '' }}>
-
-                                <option value="">Select association...</option>
-
-                                @if ($authUser->hasRole('super_admin'))
+                        @if($authUser->hasRole('super_admin'))
+                            <div class="mb-3 col-md-6">
+                                <label for="association_id" class="form-label">Association</label>
+                                <select name="association_id" class="form-select @error('association_id') is-invalid @enderror" required>
+                                    <option value="">Select association...</option>
                                     @foreach($associations as $association)
-                                        <option value="{{ $association->id }}" 
-                                            @selected(old('association_id') == $association->id)>
+                                        <option value="{{ $association->id }}" @selected(old('association_id') == $association->id)>
                                             {{ $association->name }}
                                         </option>
                                     @endforeach
-                                @elseif ($authUser->hasRole('admin'))
-                                    @php $adminAssociation = $associations->firstWhere('id', $authUser->association_id); @endphp
-                                    <option value="{{ $adminAssociation->id }}" selected>{{ $adminAssociation->name }}</option>
-                                @endif
-                            </select>
-
-                            @if ($authUser->hasRole('admin'))
-                                <input type="hidden" name="association_id" value="{{ $authUser->association_id }}">
-                            @endif
-
-                            @error('association_id')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                                </select>
+                                @error('association_id')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        @else
+                            <input type="hidden" name="association_id" value="{{ $authUser->association_id }}">
+                        @endif
 
                         {{-- Year --}}
                         <div class="mb-3 col-md-6">
                             <label for="year" class="form-label">Year</label>
                             <input type="number" name="year" class="form-control @error('year') is-invalid @enderror"
-                                value="{{ old('year', now()->year) }}" required>
+                                   value="{{ old('year', now()->year) }}" required>
                             @error('year')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
@@ -97,7 +95,7 @@
                         <div class="mb-3 col-md-6">
                             <label for="amount" class="form-label">Amount (MAD)</label>
                             <input type="number" step="0.01" name="amount" class="form-control @error('amount') is-invalid @enderror"
-                                value="{{ old('amount') }}" required>
+                                   value="{{ old('amount') }}" required>
                             @error('amount')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
@@ -108,8 +106,8 @@
                             <label for="status" class="form-label">Status</label>
                             <select name="status" class="form-select @error('status') is-invalid @enderror" required>
                                 <option value="">Select status...</option>
-                                <option value="1" @selected(old('status') == 1)>Paid</option>
-                                <option value="0" @selected(old('status') == 0)>Not Paid</option>
+                                <option value="paid" @selected(old('status') == 'paid')>Paid</option>
+                                <option value="pending" @selected(old('status') == 'pending')>Not Paid</option>
                             </select>
                             @error('status')
                                 <div class="text-danger mt-1">{{ $message }}</div>
@@ -120,7 +118,7 @@
                         <div class="mb-3 col-md-6">
                             <label for="paid_at" class="form-label">Paid At</label>
                             <input type="datetime-local" name="paid_at" class="form-control @error('paid_at') is-invalid @enderror"
-                                value="{{ old('paid_at') }}">
+                                   value="{{ old('paid_at') }}">
                             @error('paid_at')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
@@ -130,7 +128,7 @@
                         <div class="mb-3 col-md-6">
                             <label for="receipt_number" class="form-label">Receipt Number</label>
                             <input type="text" name="receipt_number" class="form-control @error('receipt_number') is-invalid @enderror"
-                                value="{{ old('receipt_number') }}">
+                                   value="{{ old('receipt_number') }}">
                             @error('receipt_number')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
@@ -153,7 +151,6 @@
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
                         </div>
-
                     </div>
                 </div>
 
