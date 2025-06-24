@@ -9,32 +9,61 @@ class UserPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $auth)
-    {
-        return $auth->hasAnyRole(['super_admin', 'admin']);
-    }
+    // public function viewAny(User $auth): bool
+    // {
+    //     return $auth->hasAnyRole(['superadmin', 'admin', 'board', 'supervisor']);
+    // }
 
-    public function view(User $auth, User $user)
-    {
-        if ($auth->hasRole('super_admin')) return true;
-        if ($auth->hasRole('admin')) return $user->association_id === $auth->association_id;
-        return false;
-    }
+    // public function view(User $auth, User $user): bool
+    // {
+    //     if ($auth->hasRole('superadmin'))
+    //         return true;
+    //     return $auth->association_id === $user->association_id;
+    // }
 
-    public function create(User $auth)
-    {
-        return $auth->hasAnyRole(['super_admin', 'admin']);
-    }
+    // public function create(User $auth): bool
+    // {
+    //     return $auth->hasAnyRole(['superadmin', 'admin', 'board', 'supervisor']);
+    // }
 
-    public function update(User $auth, User $user)
-    {
-        if ($auth->hasRole('super_admin')) return true;
-        if ($auth->hasRole('admin')) return $user->association_id === $auth->association_id;
-        return false;
-    }
+    // public function update(User $auth, User $user): bool
+    // {
+    //     // Superadmin can edit anyone
+    //     if ($auth->hasRole('superadmin'))
+    //         return true;
 
-    public function delete(User $auth, User $user)
-    {
-        return $this->update($auth, $user);
-    }
+    //     // Users can only edit others in their same association
+    //     if ($auth->association_id !== $user->association_id)
+    //         return false;
+
+    //     // Admin can edit members, board, and supervisors (but not other admins)
+    //     if ($auth->hasRole('admin')) {
+    //         return $user->hasAnyRole(['member', 'board', 'supervisor']);
+    //     }
+
+    //     // Board can edit members and supervisors
+    //     if ($auth->hasRole('board')) {
+    //         return $user->hasAnyRole(['member', 'supervisor']);
+    //     }
+
+    //     // Supervisor can only edit members
+    //     if ($auth->hasRole('supervisor')) {
+    //         return $user->hasRole('member');
+    //     }
+
+    //     // Members cannot edit anyone (including themselves via UI)
+    //     return false;
+    // }
+    // public function delete(User $auth, User $user): bool
+    // {
+    //     if ($auth->hasRole('superadmin') && $auth->id !== $user->id)
+    //         return true;
+    //     if ($auth->id === $user->id)
+    //         return false;
+    //     if ($auth->association_id !== $user->association_id)
+    //         return false;
+    //     if ($auth->hasRole('admin') && !$user->hasAnyRole(['admin', 'superadmin']))
+    //         return true;
+    //     return false;
+    // }
 }
