@@ -30,7 +30,7 @@
                         </form>
                     </div>
                 </li>
-                
+
             </ul>
         </div>
         <!-- [Mobile Media Block end] -->
@@ -57,8 +57,8 @@
                         </a>
                     </div>
                 </li>
-                
-               
+
+
                 <li class="dropdown pc-h-item header-user-profile">
                     <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
                         role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
@@ -119,25 +119,8 @@
                                                     class="badge bg-light-success border border-success ms-2">NEW</span>
                                             </span>
                                         </a>
-                                        
-                                    </li>
 
-                                    <!-- Added items from the first code block -->
-                                    <li class="list-group-item">
-                                       
-                                        <a href="#!" class="dropdown-item">
-                                            <span class="d-flex align-items-center">
-                                                <i class="ph-duotone ph-lifebuoy"></i>
-                                                <span>Support</span>
-                                            </span>
-                                        </a>
-                                        <a href="#!" class="dropdown-item">
-                                            <span class="d-flex align-items-center">
-                                                <i class="ph-duotone ph-lock-key"></i>
-                                                <span>Lock Screen</span>
-                                            </span>
-                                        </a>
-                                    </li>
+                                                                        </li>
 
                                     <li class="list-group-item">
                                         <a href="{{ route('logout') }}" onclick="event.preventDefault();
