@@ -71,61 +71,51 @@
                                 </div>
                             </div>
 
+                            {{-- ROLE DROPDOWN --}}
                             <div class="mb-3 col-md-6">
                                 <label for="assign_role" class="form-label">Role</label>
                                 <select name="assign_role" class="form-select @error('assign_role') is-invalid @enderror"
                                     required>
                                     <option value="">Choose...</option>
                                     @php
-                                        $assignableRoles = \Spatie\Permission\Models\Role::where('name', '!=', 'super_admin')->get();
-
-                                        if (auth()->user()?->hasRole('super_admin')) {
-                                            $assignableRoles = \Spatie\Permission\Models\Role::all();
-                                        }
+                                        // Define exactly which roles should be available
+                                        $allowedRoles = ['supervisor', 'admin', 'member', 'board'];
+                                        // Filter the roles to only include these
+                                        $filteredRoles = array_intersect($roles, $allowedRoles);
                                     @endphp
 
-                                    @foreach($assignableRoles as $role)
-                                        <option value="{{ $role->name }}" @selected(old('assign_role') == $role->name)>
-                                            {{ ucfirst(str_replace('_', ' ', $role->name)) }}
+                                    @foreach($filteredRoles as $role)
+                                        <option value="{{ $role }}" @selected(old('assign_role') == $role)>
+                                            {{ ucfirst($role) }}
                                         </option>
                                     @endforeach
-
                                 </select>
-
                                 @error('assign_role')
                                     <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="mb-3 col-md-6">
-    <label for="association_id" class="form-label">Association</label>
-    <select name="association_id"
-        class="form-select @error('association_id') is-invalid @enderror" required
-        {{ auth()->user()->hasRole('admin') ? 'readonly disabled' : '' }}>
-        
-        @if(auth()->user()->hasRole('super_admin'))
-            <option value="">Select Association</option>
-            @foreach($associations as $id => $name)
-                <option value="{{ $id }}" @selected(old('association_id') == $id)>{{ $name }}</option>
-            @endforeach
-        @elseif(auth()->user()->hasRole('admin'))
-            @php
-                $adminAssociationId = auth()->user()->association_id;
-                $adminAssociationName = $associations[$adminAssociationId] ?? 'Unknown Association';
-            @endphp
-            <option value="{{ $adminAssociationId }}" selected>{{ $adminAssociationName }}</option>
-        @endif
-
-    </select>
-    @error('association_id')
-        <div class="text-danger mt-1">{{ $message }}</div>
-    @enderror
-</div>
-
-{{-- hidden input to make sure the value is submitted when disabled --}}
-@if(auth()->user()->hasRole('admin'))
-    <input type="hidden" name="association_id" value="{{ auth()->user()->association_id }}">
-@endif
+                            {{-- ASSOCIATION FIELD --}}
+                            @php $auth = auth()->user(); @endphp
+                            @if($auth->hasRole('superadmin'))
+                                <div class="mb-3 col-md-6">
+                                    <label for="association_id" class="form-label">Association</label>
+                                    <select name="association_id"
+                                        class="form-select @error('association_id') is-invalid @enderror" required>
+                                        <option value="">Select Association</option>
+                                        @foreach($associations as $id => $name)
+                                            <option value="{{ $id }}" @selected(old('association_id', $auth->association_id) == $id)>
+                                                {{ $name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('association_id')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            @else
+                                <input type="hidden" name="association_id" value="{{ $auth->association_id }}">
+                            @endif
 
 
                             <div class="mb-3 col-md-6">

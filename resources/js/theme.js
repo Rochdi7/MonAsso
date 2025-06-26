@@ -2,7 +2,7 @@
 =========================================================================
 =========================================================================
 Template Name: Light-able - Admin Template
-Author: Phoenixcoded
+Author: Rochdi & Halima
 Support: https://phoenixcoded.authordesk.app
 File: themes.js
 Description:  this file will contains overall theme setup and handle
@@ -15,6 +15,7 @@ Description:  this file will contains overall theme setup and handle
 
 var rtl_flag = false;
 var dark_flag = false;
+const logoPath = '/assets/images/logo/monasso.png';
 
 function layout_change_default() {
   // Determine the initial layout based on the user's system preference for color scheme
@@ -95,7 +96,7 @@ function layout_sidebar_change(value) {
       control.classList.remove('active'); // Remove active class from current button
     }
     if (document.querySelector('.pc-sidebar .m-header .logo-lg')) {
-      document.querySelector('.pc-sidebar .m-header .logo-lg').setAttribute('src', '../build/images/logo-white.svg');
+      document.querySelector('.pc-sidebar .m-header .logo-lg').setAttribute('src', logoPath);
     }
 
     // Add the active class to the button representing the dark theme
@@ -113,7 +114,7 @@ function layout_sidebar_change(value) {
       control.classList.remove('active'); // Remove active class from current button
     }
     if (document.querySelector('.pc-sidebar .m-header .logo-lg')) {
-      document.querySelector('.pc-sidebar .m-header .logo-lg').setAttribute('src', '../build/images/logo-dark.svg');
+      document.querySelector('.pc-sidebar .m-header .logo-lg').setAttribute('src', logoPath);
     }
 
     // Add the active class to the button representing the light theme
@@ -196,20 +197,20 @@ function layout_change(layout) {
   if (layout == 'dark') {
     dark_flag = true;
     if (document.querySelector('.pc-sidebar .m-header .logo-lg')) {
-      document.querySelector('.pc-sidebar .m-header .logo-lg').setAttribute('src', '../build/images/logo-white.svg');
+      document.querySelector('.pc-sidebar .m-header .logo-lg').setAttribute('src', logoPath);
     }
 
     if (document.querySelector('.navbar-brand .logo-lg')) {
-      document.querySelector('.navbar-brand .logo-lg').setAttribute('src', '../build/images/logo-white.svg');
+      document.querySelector('.navbar-brand .logo-lg').setAttribute('src', logoPath);
     }
     if (document.querySelector('.landing-logo')) {
-      document.querySelector('.landing-logo').setAttribute('src', '../build/images/logo-white.svg');
+      document.querySelector('.landing-logo').setAttribute('src', logoPath);
     }
     if (document.querySelector('.auth-main.v1 .auth-sidefooter')) {
-      document.querySelector('.auth-main.v1 .auth-sidefooter img').setAttribute('src', '../build/images/logo-white.svg');
+      document.querySelector('.auth-main.v1 .auth-sidefooter img').setAttribute('src', logoPath);
     }
     if (document.querySelector('.footer-top .footer-logo')) {
-      document.querySelector('.footer-top .footer-logo').setAttribute('src', '../build/images/logo-white.svg');
+      document.querySelector('.footer-top .footer-logo').setAttribute('src', logoPath);
     }
     var control = document.querySelector('.theme-layout .btn.active');
     if (control) {
@@ -219,20 +220,20 @@ function layout_change(layout) {
   } else {
     dark_flag = false;
     if (document.querySelector('.pc-sidebar .m-header .logo-lg')) {
-      document.querySelector('.pc-sidebar .m-header .logo-lg').setAttribute('src', '../build/images/logo-dark.svg');
+      document.querySelector('.pc-sidebar .m-header .logo-lg').setAttribute('src', logoPath);
     }
     if (document.querySelector('.navbar-brand .logo-lg')) {
-      document.querySelector('.navbar-brand .logo-lg').setAttribute('src', '../build/images/logo-dark.svg');
+      document.querySelector('.navbar-brand .logo-lg').setAttribute('src', logoPath);
     }
 
     if (document.querySelector('.landing-logo')) {
-      document.querySelector('.landing-logo').setAttribute('src', '../build/images/logo-dark.svg');
+      document.querySelector('.landing-logo').setAttribute('src', logoPath);
     }
     if (document.querySelector('.auth-main.v1 .auth-sidefooter')) {
-      document.querySelector('.auth-main.v1 .auth-sidefooter img').setAttribute('src', '../build/images/logo-dark.svg');
+      document.querySelector('.auth-main.v1 .auth-sidefooter img').setAttribute('src', logoPath);
     }
     if (document.querySelector('.footer-top .footer-logo')) {
-      document.querySelector('.footer-top .footer-logo').setAttribute('src', '../build/images/logo-dark.svg');
+      document.querySelector('.footer-top .footer-logo').setAttribute('src', logoPath);
     }
     var control = document.querySelector('.theme-layout .btn.active');
     if (control) {

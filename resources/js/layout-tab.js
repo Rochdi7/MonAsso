@@ -2,7 +2,7 @@
 =========================================================================
 =========================================================================
 Template Name: Light-able - Admin Template
-Author: Phoenixcoded
+Author: Rochdi & Halima
 Support: https://phoenixcoded.authordesk.app
 File: layout-tab.js
 Description:  this file will contains defining code for build tab layouts

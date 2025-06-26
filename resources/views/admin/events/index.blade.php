@@ -9,7 +9,8 @@
 @endsection
 
 @php
-    $isClient = auth()->user()->hasRole('membre');
+    $user = auth()->user();
+    $isMember = $user->hasRole('member'); // Corrected role name
 @endphp
 
 @section('content')
@@ -33,10 +34,10 @@
         <div class="col-12">
             <div class="card table-card">
                 <div class="card-header d-sm-flex align-items-center justify-content-between">
-                    <h5 class="mb-3 mb-sm-0">{{ $isClient ? 'My Events' : 'Events List' }}</h5>
-                    @unless($isClient)
+                    <h5 class="mb-3 mb-sm-0">{{ $isMember ? 'My Events' : 'Events List' }}</h5>
+                    @if (!$isMember && $user->hasAnyRole(['admin', 'superadmin', 'board']))
                         <a href="{{ route('admin.events.create') }}" class="btn btn-primary">Add Event</a>
-                    @endunless
+                    @endif
                 </div>
                 <div class="card-body pt-3">
                     <div class="table-responsive">
@@ -48,8 +49,10 @@
                                     <th>Start</th>
                                     <th>End</th>
                                     <th>Status</th>
-                                    @unless($isClient)
-                                        <th>Actions</th>
+                                    @unless($isMember)
+                                        @if ($user->hasAnyRole(['admin', 'superadmin', 'board']))
+                                            <th>Actions</th>
+                                        @endif
                                     @endunless
                                 </tr>
                             </thead>
@@ -69,27 +72,33 @@
                                                 <span class="badge bg-light-warning text-warning">Pending</span>
                                             @endif
                                         </td>
-                                        @unless($isClient)
-                                            <td>
-                                                <a href="{{ route('admin.events.edit', $event) }}"
-                                                    class="avtar avtar-xs btn-link-secondary me-2" title="Edit">
-                                                    <i class="ti ti-edit f-20"></i>
-                                                </a>
-                                                <form action="{{ route('admin.events.destroy', $event) }}" method="POST"
-                                                    style="display:inline-block;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="avtar avtar-xs btn-link-secondary border-0 bg-transparent p-0"
-                                                        onclick="return confirm('Delete this event?')" title="Delete">
-                                                        <i class="ti ti-trash f-20"></i>
-                                                    </button>
-                                                </form>
-                                            </td>
+                                        @unless($isMember)
+                                            @if ($user->hasAnyRole(['admin', 'superadmin', 'board']))
+                                                <td>
+                                                    @if ($user->hasAnyRole(['admin', 'superadmin', 'board']) && ($user->hasRole('superadmin') || (int)$event->association_id === (int)$user->association_id))
+                                                    <a href="{{ route('admin.events.edit', $event) }}"
+                                                        class="avtar avtar-xs btn-link-secondary me-2" title="Edit">
+                                                        <i class="ti ti-edit f-20"></i>
+                                                    </a>
+                                                    @endif
+                                                    @if ($user->hasAnyRole(['admin', 'superadmin']) && ($user->hasRole('superadmin') || (int)$event->association_id === (int)$user->association_id)) {{-- Board cannot delete, so removed 'board' from hasAnyRole --}}
+                                                    <form action="{{ route('admin.events.destroy', $event) }}" method="POST"
+                                                        style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="avtar avtar-xs btn-link-secondary border-0 bg-transparent p-0"
+                                                            onclick="return confirm('Delete this event?')" title="Delete">
+                                                            <i class="ti ti-trash f-20"></i>
+                                                        </button>
+                                                    </form>
+                                                    @endif
+                                                </td>
+                                            @endif
                                         @endunless
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="{{ $isClient ? 5 : 6 }}" class="text-center text-muted">No events found.</td>
+                                        <td colspan="{{ $isMember ? 5 : 6 }}" class="text-center text-muted">No events found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

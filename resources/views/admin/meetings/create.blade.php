@@ -87,8 +87,8 @@
                             </div>
 
                             <div class="mb-3 col-md-6">
-                                <label for="association_id" class="form-label">Association</label>
-                                @if(auth()->user()->hasRole('super_admin'))
+                                @if(auth()->user()->hasRole('superadmin'))
+                                    <label for="association_id" class="form-label">Association</label>
                                     <select name="association_id"
                                         class="form-select @error('association_id') is-invalid @enderror" required>
                                         <option value="">Select association...</option>
@@ -99,19 +99,17 @@
                                             </option>
                                         @endforeach
                                     </select>
+                                    @error('association_id')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 @else
                                     <input type="hidden" name="association_id" value="{{ auth()->user()->association_id }}">
-                                    <input type="text" class="form-control" value="{{ auth()->user()->association->name }}"
-                                        disabled>
                                 @endif
-                                @error('association_id')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
-                                @enderror
                             </div>
 
                             <div class="mb-3 col-md-6">
-                                <label for="organizer_id" class="form-label">Organizer</label>
-                                @if(auth()->user()->hasRole('super_admin'))
+                                @if(auth()->user()->hasRole('superadmin'))
+                                    <label for="organizer_id" class="form-label">Organizer</label>
                                     <select name="organizer_id" class="form-select @error('organizer_id') is-invalid @enderror"
                                         required>
                                         <option value="">Select organizer...</option>
@@ -121,13 +119,12 @@
                                             </option>
                                         @endforeach
                                     </select>
+                                    @error('organizer_id')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 @else
                                     <input type="hidden" name="organizer_id" value="{{ auth()->id() }}">
-                                    <input type="text" class="form-control" value="{{ auth()->user()->name }}" disabled>
                                 @endif
-                                @error('organizer_id')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
-                                @enderror
                             </div>
 
 

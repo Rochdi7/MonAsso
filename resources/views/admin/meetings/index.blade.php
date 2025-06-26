@@ -31,7 +31,9 @@
         <div class="card table-card">
             <div class="card-header d-sm-flex align-items-center justify-content-between">
                 <h5 class="mb-3 mb-sm-0">Meetings List</h5>
-                <a href="{{ route('admin.meetings.create') }}" class="btn btn-primary">Add Meeting</a>
+                @if (auth()->user()->hasAnyRole(['admin', 'superadmin', 'board', 'supervisor']))
+                    <a href="{{ route('admin.meetings.create') }}" class="btn btn-primary">Add Meeting</a>
+                @endif
             </div>
             <div class="card-body pt-3">
                 <div class="table-responsive">
@@ -43,7 +45,9 @@
                                 <th>Date & Time</th>
                                 <th>Status</th>
                                 <th>Documents</th>
-                                <th>Actions</th>
+                                @if (auth()->user()->hasAnyRole(['admin', 'superadmin', 'board', 'supervisor', 'member']))
+                                    <th>Actions</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -63,29 +67,39 @@
                                     </td>
                                     <td>
                                         @if($meeting->getMedia('documents')->isNotEmpty())
-                                            <span class="text-success">There is documents</span>
+                                            <span class="text-success">There are documents</span>
                                         @else
                                             <span class="text-muted">—</span>
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('admin.meetings.show', $meeting) }}"
-                                           class="avtar avtar-xs btn-link-secondary me-2" title="View">
-                                            <i class="ti ti-eye f-20"></i>
-                                        </a>
-                                        <a href="{{ route('admin.meetings.edit', $meeting) }}"
-                                           class="avtar avtar-xs btn-link-secondary me-2" title="Edit">
-                                            <i class="ti ti-edit f-20"></i>
-                                        </a>
-                                        <form action="{{ route('admin.meetings.destroy', $meeting) }}" method="POST"
-                                              style="display:inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="avtar avtar-xs btn-link-secondary border-0 bg-transparent p-0"
-                                                    onclick="return confirm('Delete this meeting?')" title="Delete">
-                                                <i class="ti ti-trash f-20"></i>
-                                            </button>
-                                        </form>
+                                        @if (auth()->user()->hasAnyRole(['admin', 'superadmin', 'board', 'supervisor', 'member']))
+                                            <a href="{{ route('admin.meetings.show', $meeting) }}"
+                                               class="avtar avtar-xs btn-link-secondary me-2" title="View">
+                                                <i class="ti ti-eye f-20"></i>
+                                            </a>
+                                        @endif
+
+                                        @if (auth()->user()->hasAnyRole(['admin', 'superadmin', 'board', 'supervisor']))
+                                            <a href="{{ route('admin.meetings.edit', $meeting) }}"
+                                               class="avtar avtar-xs btn-link-secondary me-2" title="Edit">
+                                                <i class="ti ti-edit f-20"></i>
+                                            </a>
+                                        @endif
+
+                                        @if (auth()->user()->hasAnyRole(['admin', 'superadmin']))
+                                            <form action="{{ route('admin.meetings.destroy', $meeting) }}" method="POST"
+                                                  class="d-inline-block"
+                                                  onsubmit="return confirm('Are you sure you want to delete this meeting?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        class="avtar avtar-xs btn-link-secondary border-0 bg-transparent p-0"
+                                                        title="Delete">
+                                                    <i class="ti ti-trash f-20"></i>
+                                                </button>
+                                            </form>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty
@@ -100,7 +114,6 @@
         </div>
     </div>
 </div>
-
 @endsection
 
 @section('scripts')

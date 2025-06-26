@@ -7,11 +7,12 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ URL::asset('build/css/plugins/style.css') }}">
-    <link rel="stylesheet" href="{{ URL::asset('build/css/plugins/datepicker-bs5.min.css') }}">
     <link rel="stylesheet" href="{{ URL::asset('build/css/plugins/animate.min.css') }}">
 @endsection
 
 @section('content')
+@php $auth = auth()->user(); @endphp
+
 <div class="row">
     <div class="col-md-12">
         @if ($errors->any())
@@ -24,7 +25,8 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.meetings.update', $meeting->id) }}" enctype="multipart/form-data" method="POST" class="needs-validation" novalidate>
+        <form action="{{ route('admin.meetings.update', $meeting) }}" enctype="multipart/form-data" method="POST"
+              class="needs-validation" novalidate>
             @csrf
             @method('PUT')
 
@@ -38,7 +40,8 @@
                         {{-- Title --}}
                         <div class="mb-3 col-md-6">
                             <label for="title" class="form-label">Title</label>
-                            <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', $meeting->title) }}" required>
+                            <input type="text" name="title" class="form-control @error('title') is-invalid @enderror"
+                                   value="{{ old('title', $meeting->title) }}" required>
                             <div class="invalid-feedback">
                                 @error('title') {{ $message }} @else Please enter the title. @enderror
                             </div>
@@ -47,7 +50,10 @@
                         {{-- Date & Time --}}
                         <div class="mb-3 col-md-6">
                             <label for="datetime" class="form-label">Date & Time</label>
-                            <input type="datetime-local" class="form-control @error('datetime') is-invalid @enderror" id="datetime" name="datetime" value="{{ old('datetime', \Carbon\Carbon::parse($meeting->datetime)->format('Y-m-d\TH:i')) }}" required>
+                            <input type="datetime-local" class="form-control @error('datetime') is-invalid @enderror"
+                                   id="datetime" name="datetime"
+                                   value="{{ old('datetime', \Carbon\Carbon::parse($meeting->datetime)->format('Y-m-d\TH:i')) }}"
+                                   required>
                             @error('datetime')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
@@ -55,8 +61,9 @@
 
                         {{-- Documents Upload --}}
                         <div class="mb-3 col-md-12">
-                            <label for="documents" class="form-label">Attach Documents</label>
-                            <input type="file" name="documents[]" multiple class="form-control @error('documents.*') is-invalid @enderror">
+                            <label for="documents" class="form-label">Attach New Documents</label>
+                            <input type="file" name="documents[]" multiple
+                                   class="form-control @error('documents.*') is-invalid @enderror">
                             @error('documents.*')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
@@ -69,13 +76,13 @@
                                         @foreach($documents as $doc)
                                             <li class="d-flex justify-content-between align-items-center mb-2">
                                                 <a href="{{ $doc->getUrl() }}" target="_blank">📎 {{ $doc->file_name }}</a>
-                                                <form action="{{ route('admin.meetings.removeMedia', ['meeting' => $meeting->id, 'media' => $doc->id]) }}" method="POST" class="d-inline-block ms-2" onsubmit="return confirm('Remove this document?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger d-flex align-items-center gap-1">
-                                                        <i data-feather="trash-2"></i> 
+                                                @if ($auth->hasAnyRole(['admin', 'superadmin', 'board', 'supervisor']) && ($auth->hasRole('superadmin') || (int) $meeting->association_id === (int) $auth->association_id))
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-danger d-flex align-items-center gap-1"
+                                                            onclick="event.preventDefault(); document.getElementById('delete-doc-{{ $doc->id }}').submit();">
+                                                        <i data-feather="trash-2"></i>
                                                     </button>
-                                                </form>
+                                                @endif
                                             </li>
                                         @endforeach
                                     </ul>
@@ -100,7 +107,9 @@
                         {{-- Location --}}
                         <div class="mb-3 col-md-6">
                             <label for="location" class="form-label">Location</label>
-                            <input type="text" name="location" class="form-control @error('location') is-invalid @enderror" value="{{ old('location', $meeting->location) }}">
+                            <input type="text" name="location"
+                                   class="form-control @error('location') is-invalid @enderror"
+                                   value="{{ old('location', $meeting->location) }}">
                             @error('location')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
@@ -108,36 +117,49 @@
 
                         {{-- Association --}}
                         <div class="mb-3 col-md-6">
-                            <label for="association_id" class="form-label">Association</label>
-                            <select name="association_id" class="form-select @error('association_id') is-invalid @enderror">
-                                <option value="">Select association...</option>
-                                @foreach($associations as $association)
-                                    <option value="{{ $association->id }}" @selected(old('association_id', $meeting->association_id) == $association->id)>{{ $association->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('association_id')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
+                            @if($auth->hasRole('superadmin'))
+                                <label for="association_id" class="form-label">Association</label>
+                                <select name="association_id" class="form-select @error('association_id') is-invalid @enderror">
+                                    <option value="">Select association...</option>
+                                    @foreach($associations as $association)
+                                        <option value="{{ $association->id }}" @selected(old('association_id', $meeting->association_id) == $association->id)>
+                                            {{ $association->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('association_id')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            @else
+                                <input type="hidden" name="association_id" value="{{ $meeting->association_id }}">
+                            @endif
                         </div>
 
                         {{-- Organizer --}}
                         <div class="mb-3 col-md-6">
-                            <label for="organizer_id" class="form-label">Organizer</label>
-                            <select name="organizer_id" class="form-select @error('organizer_id') is-invalid @enderror">
-                                <option value="">Select organizer...</option>
-                                @foreach($users as $user)
-                                    <option value="{{ $user->id }}" @selected(old('organizer_id', $meeting->organizer_id) == $user->id)>{{ $user->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('organizer_id')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
+                            @if($auth->hasRole('superadmin'))
+                                <label for="organizer_id" class="form-label">Organizer</label>
+                                <select name="organizer_id" class="form-select @error('organizer_id') is-invalid @enderror" required>
+                                    <option value="">Select organizer...</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}" @selected(old('organizer_id', $meeting->organizer_id) == $user->id)>
+                                            {{ $user->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('organizer_id')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            @else
+                                <input type="hidden" name="organizer_id" value="{{ $auth->id }}">
+                            @endif
                         </div>
 
                         {{-- Description --}}
                         <div class="mb-3 col-md-12">
                             <label for="description" class="form-label">Description</label>
-                            <textarea name="description" rows="4" class="form-control @error('description') is-invalid @enderror">{{ old('description', $meeting->description) }}</textarea>
+                            <textarea name="description" rows="4"
+                                      class="form-control @error('description') is-invalid @enderror">{{ old('description', $meeting->description) }}</textarea>
                             @error('description')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
@@ -146,26 +168,31 @@
                 </div>
 
                 <div class="card-footer text-end">
-                    <a href="{{ route('admin.meetings.index') }}" class="btn btn-secondary" onclick="rollOutCard(event, this, 'meeting-form-card')">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Update Meeting</button>
+                    <a href="{{ route('admin.meetings.index') }}" class="btn btn-secondary"
+                       onclick="rollOutCard(event, this, 'meeting-form-card')">Cancel</a>
+                    @if ($auth->hasAnyRole(['admin', 'superadmin', 'board', 'supervisor']) && ($auth->hasRole('superadmin') || (int) $meeting->association_id === (int) $auth->association_id))
+                        <button type="submit" class="btn btn-primary">Update Meeting</button>
+                    @endif
                 </div>
             </div>
         </form>
+
+        {{-- Document delete forms OUTSIDE --}}
+        @foreach($documents as $doc)
+            <form id="delete-doc-{{ $doc->id }}" method="POST"
+                  action="{{ route('admin.meetings.removeMedia', ['meeting' => $meeting->id, 'media' => $doc->id]) }}"
+                  style="display: none;">
+                @csrf
+                @method('DELETE')
+            </form>
+        @endforeach
     </div>
 </div>
 @endsection
 
 @section('scripts')
-<script src="{{ URL::asset('build/js/plugins/datepicker-full.min.js') }}"></script>
 <script>
     feather.replace();
-
-    new Datepicker(document.querySelector('#datetime_picker'), {
-        format: 'yyyy-mm-dd HH:ii',
-        autohide: true,
-        pickTime: true,
-        minuteStep: 15
-    });
 
     (function () {
         'use strict';
@@ -187,7 +214,7 @@
         event.preventDefault();
         const card = document.getElementById(cardId);
         if (!card) return;
-        card.classList.remove('animate__rollIn', 'animate__zoomIn', 'animate__fadeInUp');
+        card.classList.remove('animate__rollIn', 'animate__fadeInUp', 'animate__zoomIn');
         card.classList.add('animate__animated', 'animate__rollOut');
         setTimeout(() => {
             window.location.href = link.href;

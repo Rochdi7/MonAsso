@@ -2,7 +2,7 @@
 =========================================================================
 =========================================================================
 Template Name: Light Able - Bootstrap Admin Template
-Author: Phoenixcoded
+Author: Rochdi & Halima
 Support: https://phoenixcoded.authordesk.app
 File: script.js
 Description:  this file will contains code for handling Buynow link.
