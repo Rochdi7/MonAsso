@@ -26,8 +26,15 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'skills',
         'is_active',
         'association_id',
-        'profile_photo',
     ];
+
+    // Add this to properly handle the media conversions
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('profile_photo')
+            ->singleFile()
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif']);
+    }
     protected $hidden = [
         'password',
         'remember_token',
@@ -42,5 +49,10 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function association()
     {
         return $this->belongsTo(Association::class);
+    }
+
+    public function cotisations()
+    {
+        return $this->hasMany(Cotisation::class);
     }
 }
