@@ -123,9 +123,10 @@
             <div class="flex-grow-1 me-3">
             <h4 class="alert-heading">Change Your Password</h4>
             <p class="mb-2">For your security, we recommend changing your password regularly.</p>
-            <a href="#user-set-password" class="alert-link" data-bs-toggle="pill">
+            <a href="#user-set-password" class="alert-link update-password-tab" role="tab">
               <u>Update your password now</u>
             </a>
+
             </div>
             <div class="flex-shrink-0">
             <img src="{{ URL::asset('build/images/application/img-accout-password-alert.png') }}"
@@ -300,4 +301,46 @@
   </div>
   <!-- [ Main Content ] end -->
 
+
+@endsection
+
+@section('scripts')
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const updateLink = document.querySelector('.update-password-tab');
+
+    if (updateLink) {
+      updateLink.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      // Show the password tab
+      const tabTrigger = document.querySelector('#user-set-password-tab');
+      if (tabTrigger) {
+        const bsTab = new bootstrap.Tab(tabTrigger);
+        bsTab.show();
+
+        // Update the URL hash without reloading
+        history.pushState(null, null, '#user-set-password');
+
+        // Optional: Scroll to the tab content
+        setTimeout(() => {
+        const pane = document.querySelector('#user-set-password');
+        if (pane) {
+          pane.scrollIntoView({ behavior: 'smooth' });
+        }
+        }, 150);
+      }
+      });
+    }
+
+    // Auto-activate tab if URL already contains the hash
+    if (window.location.hash === '#user-set-password') {
+      const tabTrigger = document.querySelector('#user-set-password-tab');
+      if (tabTrigger) {
+      const bsTab = new bootstrap.Tab(tabTrigger);
+      bsTab.show();
+      }
+    }
+    });
+  </script>
 @endsection
