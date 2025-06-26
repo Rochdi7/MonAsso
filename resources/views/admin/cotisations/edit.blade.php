@@ -23,8 +23,8 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.cotisations.update', $cotisation->id) }}" method="POST"
-                class="needs-validation" novalidate>
+            <form action="{{ route('admin.cotisations.update', $cotisation) }}" method="POST" class="needs-validation"
+                novalidate>
                 @csrf
                 @method('PUT')
 
@@ -53,7 +53,8 @@
 
                             <div class="mb-3 col-md-6">
                                 <label for="association_id" class="form-label">Association</label>
-                                <select name="association_id" class="form-select @error('association_id') is-invalid @enderror" required>
+                                <select name="association_id"
+                                    class="form-select @error('association_id') is-invalid @enderror" required>
                                     <option value="">Select association...</option>
                                     @foreach($associations as $association)
                                         <option value="{{ $association->id }}" @selected(old('association_id', $cotisation->association_id) == $association->id)>
@@ -77,7 +78,8 @@
 
                             <div class="mb-3 col-md-6">
                                 <label for="amount" class="form-label">Amount (MAD)</label>
-                                <input type="number" step="0.01" name="amount" class="form-control @error('amount') is-invalid @enderror"
+                                <input type="number" step="0.01" name="amount"
+                                    class="form-control @error('amount') is-invalid @enderror"
                                     value="{{ old('amount', $cotisation->amount) }}" required>
                                 @error('amount')
                                     <div class="text-danger mt-1">{{ $message }}</div>
@@ -100,7 +102,8 @@
 
                             <div class="mb-3 col-md-6">
                                 <label for="paid_at" class="form-label">Paid At</label>
-                                <input type="datetime-local" name="paid_at" class="form-control @error('paid_at') is-invalid @enderror"
+                                <input type="datetime-local" name="paid_at"
+                                    class="form-control @error('paid_at') is-invalid @enderror"
                                     value="{{ old('paid_at', optional($cotisation->paid_at)->format('Y-m-d\TH:i')) }}">
                                 @error('paid_at')
                                     <div class="text-danger mt-1">{{ $message }}</div>
@@ -109,27 +112,38 @@
 
                             <div class="mb-3 col-md-6">
                                 <label for="receipt_number" class="form-label">Receipt Number</label>
-                                <input type="text" name="receipt_number" class="form-control @error('receipt_number') is-invalid @enderror"
+                                <input type="text" name="receipt_number"
+                                    class="form-control @error('receipt_number') is-invalid @enderror"
                                     value="{{ old('receipt_number', $cotisation->receipt_number) }}">
                                 @error('receipt_number')
                                     <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
 
+                            @php $authUser = auth()->user(); @endphp
+
                             <div class="mb-3 col-md-6">
                                 <label for="approved_by" class="form-label">Approved By</label>
-                                <select name="approved_by" class="form-select @error('approved_by') is-invalid @enderror">
-                                    <option value="">(Optional)</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->id }}" @selected(old('approved_by', $cotisation->approved_by) == $user->id)>
-                                            {{ $user->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+
+                                @if($authUser->hasRole('superadmin'))
+                                    <select name="approved_by" class="form-select @error('approved_by') is-invalid @enderror">
+                                        <option value="">(Optional)</option>
+                                        @foreach($users as $user)
+                                            <option value="{{ $user->id }}" @selected(old('approved_by', $cotisation->approved_by) == $user->id)>
+                                                {{ $user->name }} @if($user->hasRole('superadmin')) (Super Admin) @endif
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <input type="hidden" name="approved_by" value="{{ $authUser->id }}">
+                                    <input type="text" class="form-control" value="{{ $authUser->name }}" readonly disabled>
+                                @endif
+
                                 @error('approved_by')
                                     <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
+
 
                         </div>
                     </div>
@@ -137,7 +151,9 @@
                     <div class="card-footer text-end">
                         <a href="{{ route('admin.cotisations.index') }}" class="btn btn-secondary"
                             onclick="rollOutCard(event, this, 'cotisation-form-card')">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Update Cotisation</button>
+                        @if (auth()->user()->hasAnyRole(['admin', 'superadmin', 'board']) && (auth()->user()->hasRole('superadmin') || (int) $cotisation->association_id === (int) auth()->user()->association_id))
+                            <button type="submit" class="btn btn-primary">Update Cotisation</button>
+                        @endif
                     </div>
                 </div>
             </form>
@@ -147,7 +163,6 @@
 
 @section('scripts')
     <script>
-        // Bootstrap validation
         (function () {
             'use strict';
             window.addEventListener('load', function () {
@@ -161,10 +176,9 @@
                         form.classList.add('was-validated');
                     }, false);
                 });
-            }, false);
+            });
         })();
 
-        // RollOut animation on cancel
         function rollOutCard(event, link, cardId = 'cotisation-form-card') {
             event.preventDefault();
             const card = document.getElementById(cardId);

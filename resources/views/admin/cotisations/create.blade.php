@@ -62,7 +62,7 @@
                         @endif
 
                         {{-- Association --}}
-                        @if($authUser->hasRole('super_admin'))
+                        @if($authUser->hasRole('superadmin'))
                             <div class="mb-3 col-md-6">
                                 <label for="association_id" class="form-label">Association</label>
                                 <select name="association_id" class="form-select @error('association_id') is-invalid @enderror" required>
@@ -105,10 +105,11 @@
                         <div class="mb-3 col-md-6">
                             <label for="status" class="form-label">Status</label>
                             <select name="status" class="form-select @error('status') is-invalid @enderror" required>
-                                <option value="">Select status...</option>
-                                <option value="paid" @selected(old('status') == 'paid')>Paid</option>
-                                <option value="pending" @selected(old('status') == 'pending')>Not Paid</option>
-                            </select>
+    <option value="">Select status...</option>
+    <option value="1" @selected(old('status') == '1')>Paid</option>
+    <option value="0" @selected(old('status') == '0')>Not Paid</option>
+</select>
+
                             @error('status')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
@@ -134,23 +135,32 @@
                             @enderror
                         </div>
 
-                        {{-- Approved By --}}
-                        <div class="mb-3 col-md-6">
-                            <label for="approved_by" class="form-label">Approved By</label>
-                            <select name="approved_by" class="form-select @error('approved_by') is-invalid @enderror">
-                                <option value="">(Optional)</option>
-                                @foreach($users as $user)
-                                    @if($user->hasRole('admin') && $user->association_id == $authUser->association_id)
-                                        <option value="{{ $user->id }}" @selected(old('approved_by') == $user->id)>
-                                            {{ $user->name }}
-                                        </option>
-                                    @endif
-                                @endforeach
-                            </select>
-                            @error('approved_by')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+                      @php $authUser = auth()->user(); @endphp
+
+{{-- Approved By --}}
+<div class="mb-3 col-md-6">
+    <label for="approved_by" class="form-label">Approved By</label>
+
+    @if($authUser->hasRole('superadmin'))
+        <select name="approved_by" class="form-select @error('approved_by') is-invalid @enderror">
+            <option value="">(Optional)</option>
+            @foreach($users as $user)
+                <option value="{{ $user->id }}" @selected(old('approved_by', $cotisation->approved_by ?? '') == $user->id)>
+                    {{ $user->name }} @if($user->hasRole('superadmin')) (Super Admin) @endif
+                </option>
+            @endforeach
+        </select>
+    @else
+        <input type="hidden" name="approved_by" value="{{ $authUser->id }}">
+        <input type="text" class="form-control" value="{{ $authUser->name }}" readonly disabled>
+    @endif
+
+    @error('approved_by')
+        <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+</div>
+
+
                     </div>
                 </div>
 
