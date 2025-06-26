@@ -56,29 +56,28 @@
                                 @enderror
                             </div>
 
-                            @php $auth = Auth::user(); @endphp
+                            @php $auth = $authUser; @endphp
 
-                            <div class="mb-3 col-md-6">
-                                <label for="association_id" class="form-label">Association</label>
-                                @if($auth->hasRole('super_admin'))
-                                    <select name="association_id"
-                                        class="form-select @error('association_id') is-invalid @enderror" required>
-                                        <option value="">Choose association...</option>
-                                        @foreach($associations as $association)
-                                            <option value="{{ $association->id }}"
-                                                @selected(old('association_id') == $association->id)>
-                                                {{ $association->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                @else
-                                    <input type="hidden" name="association_id" value="{{ $auth->association_id }}">
-                                    <input type="text" class="form-control" value="{{ $auth->association->name ?? 'N/A' }}" disabled>
-                                @endif
-                                @error('association_id')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
+@if($auth->hasRole('superadmin'))
+    <div class="mb-3 col-md-6">
+        <label for="association_id" class="form-label">Association</label>
+        <select name="association_id"
+                class="form-select @error('association_id') is-invalid @enderror" required>
+            <option value="">Choose association...</option>
+            @foreach($associations as $id => $name)
+                <option value="{{ $id }}" @selected(old('association_id') == $id)>
+                    {{ $name }}
+                </option>
+            @endforeach
+        </select>
+        @error('association_id')
+            <div class="text-danger mt-1">{{ $message }}</div>
+        @enderror
+    </div>
+@else
+    <input type="hidden" name="association_id" value="{{ $auth->association_id }}">
+@endif
+
 
                             <div class="mb-3 col-md-6">
                                 <label for="received_at" class="form-label">Received At</label>
@@ -115,7 +114,6 @@
 
 @section('scripts')
     <script>
-        // Bootstrap validation
         (function () {
             'use strict';
             window.addEventListener('load', function () {
