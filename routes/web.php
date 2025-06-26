@@ -20,10 +20,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\ContributionController;
 use App\Http\Controllers\Admin\ExpenseController;
 
-// Auth routes with email verification
 Auth::routes(['verify' => true]);
 
-// Media route (protected custom file access)
 Route::get('/media/{id}/{filename}', function ($id, $filename) {
     $media = Media::findOrFail($id);
     if ($media->file_name !== $filename) {
@@ -32,7 +30,6 @@ Route::get('/media/{id}/{filename}', function ($id, $filename) {
     return Response::file($media->getPath());
 })->where(['id' => '[0-9]+', 'filename' => '.*'])->name('media.custom');
 
-// Resend email verification link
 Route::post('/email/verification-notification', function (Request $request) {
     if ($request->user()->hasVerifiedEmail()) {
         return redirect()->intended('/dashboard');
@@ -42,59 +39,74 @@ Route::post('/email/verification-notification', function (Request $request) {
     return back()->with('success', 'Verification link sent!');
 })->middleware(['auth'])->name('verification.send');
 
-// Protected routes
+Route::get('/user-guide', function () {
+    return view('user-guide');
+})->name('user-guide')->middleware(['auth']);
+
 Route::middleware(['auth'])->group(function () {
 
-    // Homepage
     Route::get('/', fn() => view('index'))->name('home');
 
-    // Personal profile routes
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::post('/', [ProfileController::class, 'update'])->name('update');
         Route::post('/password', [ProfileController::class, 'updatePassword'])->name('updatePassword');
     });
 
-    // Dashboard for all roles
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->middleware('role:superadmin|admin|board|supervisor|member')
         ->name('dashboard');
+    Route::get('/statistics', [StatisticsController::class, 'index'])
+        ->middleware('role:superadmin|admin|board|supervisor|member')
+        ->name('statistics');
 
-    // === Super Admin Only ===
-    Route::prefix('super-admin')->name('superadmin.')->middleware('role:superadmin')->group(function () {
-        Route::get('associations', [AssociationController::class, 'index'])->name('associations.index');
+    Route::prefix('admin')->name('admin.')->group(function () {
+
+        // Superadmin only routes
+        Route::middleware('role:superadmin')->group(function () {
+            Route::resource('roles', RoleController::class);
+            Route::resource('permissions', PermissionController::class);
+            Route::resource('associations', AssociationController::class);
+        });
+
+        // Admin + Superadmin + Board routes
+        Route::middleware('role:admin|superadmin|board')->group(function () {
+            Route::resource('expenses', ExpenseController::class);
+            Route::resource('cotisations', CotisationController::class);
+            Route::resource('events', EventController::class);
+            Route::resource('contributions', ContributionController::class);
+            Route::get('statistics', [StatisticsController::class, 'index'])->name('statistics.index');
+        });
+
+        // Admin + Superadmin + Board + Supervisor + Member routes
+        Route::middleware('role:admin|superadmin|board|supervisor|member')->group(function () {
+            // Explicit model binding for membres resource
+            Route::resource('membres', UserController::class, [
+                'parameters' => [
+                    'membres' => 'user:id' // Explicit binding with ID
+                ]
+            ]);
+
+            Route::resource('meetings', MeetingController::class)->except(['show']);
+            Route::get('meetings/{meeting}', [MeetingController::class, 'show'])->name('meetings.show');
+            Route::delete('meetings/{meeting}/media/{media}', [MeetingController::class, 'removeMedia'])->name('meetings.removeMedia');
+        });
     });
 
-    // === Admin + Superadmin ===
-    Route::prefix('admin')->name('admin.')->middleware('role:admin|superadmin')->group(function () {
-        Route::resource('roles', RoleController::class);
-        Route::resource('permissions', PermissionController::class);
-        Route::resource('associations', AssociationController::class);
-        Route::resource('expenses', ExpenseController::class);
-    });
-
-    // === Admin + Superadmin + Board ===
-    Route::prefix('admin')->name('admin.')->middleware('role:admin|superadmin|board')->group(function () {
-        Route::resource('membres', UserController::class)->parameters(['membres' => 'user']);
-        Route::resource('cotisations', CotisationController::class);
-        Route::resource('events', EventController::class);
-        Route::resource('contributions', ContributionController::class);
-        Route::get('statistics', [StatisticsController::class, 'index'])->name('statistics.index');
-    });
-
-    // === Admin + Superadmin + Supervisor + Board ===
-    Route::prefix('admin')->name('admin.')->middleware('role:admin|superadmin|supervisor|board')->group(function () {
-        Route::resource('meetings', MeetingController::class)->except(['show']);
-        Route::get('meetings/{meeting}', [MeetingController::class, 'show'])->name('meetings.show');
-        Route::delete('meetings/{meeting}/media/{media}', [MeetingController::class, 'removeMedia'])->name('meetings.removeMedia');
-    });
-
-    // === Member-specific views ===
+    // Member-specific views
     Route::middleware('role:member')->group(function () {
         Route::get('/my-events', [EventController::class, 'index'])->name('membre.events.index');
         Route::get('/cotisations', [CotisationController::class, 'index'])->name('membre.cotisations.index');
     });
 
-    // === CMS fallback ===
+    // CMS fallback
     Route::get('{routeName}/{name?}', [HomeController::class, 'pageView']);
 });
+Route::get('/test-error', function () {
+    abort(500);
+});
+// === Fallback for 404 Not Found ===
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
+});
+
