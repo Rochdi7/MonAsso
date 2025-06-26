@@ -22,14 +22,13 @@ return new class extends Migration
             $table->text('skills')->nullable();
             $table->boolean('is_active')->default(true);
             $table->string('profile_photo')->nullable();
-            $table->unsignedBigInteger('association_id');
+            $table->foreignId('association_id')
+                ->nullable()
+                ->constrained('associations')
+                ->onDelete('cascade'); // Change 'caascade' to 'cascade'
+            
             $table->rememberToken();
             $table->timestamps();
-
-            $table->foreign('association_id')
-                ->references('id')
-                ->on('associations')
-                ->onDelete('cascade');
         });
 
         Schema::create('sessions', function (Blueprint $table) {
@@ -48,7 +47,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('sessions');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('users');
     }
 };
