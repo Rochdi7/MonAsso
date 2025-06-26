@@ -11,19 +11,14 @@ use App\Models\Association;
 
 class RoleAndPermissionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Clear cached roles/permissions from Spatie package.
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Define ALL possible permissions that will be created in the system.
         $permissions = [
-            'manage roles', // For Superadmin only to manage roles
-            'manage permissions', // For Superadmin only to manage permissions
-            'manage associations', // For Superadmin only to manage associations
+            'manage roles',
+            'manage permissions',
+            'manage associations',
 
             'view events',
             'create events',
@@ -57,18 +52,17 @@ class RoleAndPermissionSeeder extends Seeder
             'edit expenses',
             'delete expenses',
 
-            'view dashboard', // General dashboard access
+            'view dashboard',
+            'view statistics',
         ];
 
-        // Create or find each defined permission.
         foreach ($permissions as $permission) {
             Permission::firstOrCreate([
                 'name' => $permission,
-                'guard_name' => 'web', // Default guard for web authentication
+                'guard_name' => 'web',
             ]);
         }
 
-        // Define roles that will be created in the system.
         $roles = [
             'superadmin',
             'admin',
@@ -77,21 +71,15 @@ class RoleAndPermissionSeeder extends Seeder
             'member',
         ];
 
-        // Create or find each defined role.
         foreach ($roles as $role) {
             Role::firstOrCreate([
                 'name' => $role,
-                'guard_name' => 'web', // Default guard for web authentication
+                'guard_name' => 'web',
             ]);
         }
 
-        // Assign permissions to roles
-        // -----------------------------
-
-        // 1. Super Admin: Can do everything.
         Role::findByName('superadmin')->syncPermissions(Permission::all());
 
-        // 2. Admin: Can manage only his association's data (full CRUD).
         Role::findByName('admin')->syncPermissions([
             'view dashboard',
             'view events', 'create events', 'edit events', 'delete events', 'participate events',
@@ -100,39 +88,35 @@ class RoleAndPermissionSeeder extends Seeder
             'view members', 'create members', 'edit members', 'delete members',
             'view contributions', 'create contributions', 'edit contributions', 'delete contributions',
             'view expenses', 'create expenses', 'edit expenses', 'delete expenses',
+            'view statistics',
         ]);
 
-        // 3. Board: Same as admin but WITHOUT deleting data (can add and edit).
         Role::findByName('board')->syncPermissions([
             'view dashboard',
-            'view events', 'create events', 'edit events', 'participate events', // No 'delete events'
-            'view cotisations', 'create cotisation', 'edit cotisation', 'approve cotisation', // No 'delete cotisation'
-            'view meetings', 'create meetings', 'edit meetings', // No 'delete meetings'
-            'view members', 'create members', 'edit members', // No 'delete members'
-            'view contributions', 'create contributions', 'edit contributions', // No 'delete contributions'
-            'view expenses', 'create expenses', 'edit expenses', // No 'delete expenses'
+            'view events', 'create events', 'edit events', 'participate events',
+            'view cotisations', 'create cotisation', 'edit cotisation', 'approve cotisation',
+            'view meetings', 'create meetings', 'edit meetings',
+            'view members', 'create members', 'edit members',
+            'view contributions', 'create contributions', 'edit contributions',
+            'view expenses', 'create expenses', 'edit expenses',
+            'view statistics',
         ]);
 
-        // 4. Supervisor: Can only add members & meetings (and view dashboard).
         Role::findByName('supervisor')->syncPermissions([
             'view dashboard',
-            'view members', 'create members', // Can view and create members
-            'view meetings', 'create meetings', // Can view and create meetings
+            'view members', 'create members',
+            'view meetings', 'create meetings',
+            'view statistics',
         ]);
 
-        // 5. Member: Can view only his cotisations, events, and meetings.
         Role::findByName('member')->syncPermissions([
             'view dashboard',
             'view cotisations',
             'view events',
             'participate events',
             'view meetings',
+            'view statistics',
         ]);
-
-        // -----------------------------
-        // Ensure core associations and users are seeded.
-        // This part can be shared or split with UserAndAssociationSeeder as per your preference.
-        // For simplicity and to avoid duplicates, I'm keeping primary users here.
 
         $association = Association::firstOrCreate(
             ['id' => 1],
@@ -161,13 +145,10 @@ class RoleAndPermissionSeeder extends Seeder
                     'email_verified_at' => now(),
                     'is_active' => true,
                     'phone' => '0600000000',
-                    'association_id' => $association->id, // Assign to default association
+                    'association_id' => $association->id,
                 ]
             );
             $user->assignRole($role);
         }
-
-        // Example: Create additional admins/users for other associations in UserAndAssociationSeeder
-        // (as provided in the previous turn)
     }
 }
