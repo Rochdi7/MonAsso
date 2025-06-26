@@ -9,20 +9,15 @@ use Illuminate\Http\Request;
 
 class ContributionController extends Controller
 {
-    // Removed the __construct() that called authorizeResource()
-    // Authorization logic will now be handled directly in Blade or manually in methods if needed.
-
     public function index()
     {
-        // Data scoping still applies based on roles, but without policy enforcement here.
         if (auth()->user()->hasRole('superadmin')) {
             $contributions = Contribution::with('association')->latest()->get();
         } else {
-            // Admin and Board can only see contributions from their own association
             $contributions = Contribution::with('association')
-                                ->where('association_id', auth()->user()->association_id)
-                                ->latest()
-                                ->get();
+                ->where('association_id', auth()->user()->association_id)
+                ->latest()
+                ->get();
         }
 
         return view('admin.contributions.index', compact('contributions'));
@@ -30,27 +25,21 @@ class ContributionController extends Controller
 
     public function create()
     {
-        // No explicit authorization check here without policies.
-        // Frontend will be responsible for showing/hiding the button based on roles.
-        $associations = auth()->user()->hasRole('superadmin')
-                        ? Association::pluck('name', 'id')
-                        : Association::where('id', auth()->user()->association_id)->pluck('name', 'id');
+        $user = auth()->user()->load('association');
 
-        return view('admin.contributions.create', compact('associations'));
+        $associations = $user->hasRole('superadmin')
+            ? Association::pluck('name', 'id')
+            : collect();
+
+        return view('admin.contributions.create', [
+            'authUser' => $user,
+            'associations' => $associations,
+        ]);
     }
+
 
     public function store(Request $request)
     {
-        // Manual authorization check would be needed here if not using policies
-        // Example (simplified and less robust than a policy):
-        // if (!auth()->user()->hasAnyRole(['admin', 'board', 'superadmin'])) {
-        //     abort(403, 'Unauthorized action.');
-        // }
-        // if (!auth()->user()->hasRole('superadmin') && $request->association_id !== auth()->user()->association_id) {
-        //     abort(403, 'You can only create contributions for your own association.');
-        // }
-
-
         $validated = $request->validate([
             'type' => 'required|in:1,2',
             'amount' => 'required|numeric|min:0',
@@ -70,42 +59,27 @@ class ContributionController extends Controller
 
     public function show(Contribution $contribution)
     {
-        // Manual authorization check would be needed here if not using policies
-        // if (!auth()->user()->hasRole('superadmin') && $contribution->association_id !== auth()->user()->association_id) {
-        //     abort(403, 'You can only view contributions from your own association.');
-        // }
-
         return view('admin.contributions.show', compact('contribution'));
     }
 
     public function edit(Contribution $contribution)
     {
-        // Manual authorization check would be needed here if not using policies
-        // if (!auth()->user()->hasAnyRole(['admin', 'board', 'superadmin'])) {
-        //     abort(403, 'Unauthorized action.');
-        // }
-        // if (!auth()->user()->hasRole('superadmin') && $contribution->association_id !== auth()->user()->association_id) {
-        //     abort(403, 'You can only edit contributions for your own association.');
-        // }
+        $user = auth()->user()->load('association');
 
-        $associations = auth()->user()->hasRole('superadmin')
-                        ? Association::pluck('name', 'id')
-                        : Association::where('id', auth()->user()->association_id)->pluck('name', 'id');
+        $associations = $user->hasRole('superadmin')
+            ? Association::pluck('name', 'id')
+            : collect(); 
 
-        return view('admin.contributions.edit', compact('contribution', 'associations'));
+        return view('admin.contributions.edit', [
+            'contribution' => $contribution,
+            'authUser' => $user,
+            'associations' => $associations,
+        ]);
     }
+
 
     public function update(Request $request, Contribution $contribution)
     {
-        // Manual authorization check would be needed here if not using policies
-        // if (!auth()->user()->hasAnyRole(['admin', 'board', 'superadmin'])) {
-        //     abort(403, 'Unauthorized action.');
-        // }
-        // if (!auth()->user()->hasRole('superadmin') && $contribution->association_id !== auth()->user()->association_id) {
-        //     abort(403, 'You can only update contributions for your own association.');
-        // }
-
-
         $validated = $request->validate([
             'type' => 'required|in:1,2',
             'amount' => 'required|numeric|min:0',
@@ -125,15 +99,8 @@ class ContributionController extends Controller
 
     public function destroy(Contribution $contribution)
     {
-        // Manual authorization check would be needed here if not using policies
-        // if (!auth()->user()->hasRole('admin') && !auth()->user()->hasRole('superadmin')) { // Board is excluded here
-        //     abort(403, 'Unauthorized action.');
-        // }
-        // if (!auth()->user()->hasRole('superadmin') && $contribution->association_id !== auth()->user()->association_id) {
-        //     abort(403, 'You can only delete contributions from your own association.');
-        // }
-
         $contribution->delete();
+
         return redirect()->route('admin.contributions.index')->with('success', 'Contribution deleted successfully.');
     }
 }

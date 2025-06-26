@@ -12,11 +12,11 @@ class EventController extends Controller
 {
     public function index()
     {
-        $auth = Auth::user();
+        $authUser = Auth::user();
 
         $events = Event::with('association')
-            ->when(!$auth->hasRole('super_admin'), function ($query) use ($auth) {
-                $query->where('association_id', $auth->association_id);
+            ->when(!$authUser->hasRole('superadmin'), function ($query) use ($authUser) {
+                $query->where('association_id', $authUser->association_id);
             })
             ->latest()
             ->get();
@@ -26,17 +26,26 @@ class EventController extends Controller
 
     public function create()
     {
-        $auth = Auth::user();
-        $associations = $auth->hasRole('super_admin')
-            ? Association::all()
-            : Association::where('id', $auth->association_id)->get();
+        $authUser = Auth::user();
 
-        return view('admin.events.create', compact('associations'));
+        if (!$authUser->hasAnyRole(['admin', 'superadmin', 'board'])) {
+            abort(403);
+        }
+
+        $associations = $authUser->hasRole('superadmin')
+            ? Association::pluck('name', 'id')
+            : Association::where('id', $authUser->association_id)->pluck('name', 'id');
+
+        return view('admin.events.create', compact('authUser', 'associations'));
     }
 
     public function store(Request $request)
     {
-        $auth = Auth::user();
+        $authUser = Auth::user();
+
+        if (!$authUser->hasAnyRole(['admin', 'superadmin', 'board'])) {
+            abort(403);
+        }
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -48,9 +57,11 @@ class EventController extends Controller
             'status' => 'required|in:0,1,2',
         ]);
 
-        // Force association_id if not super_admin
-        if (!$auth->hasRole('super_admin')) {
-            $validated['association_id'] = $auth->association_id;
+        if (!$authUser->hasRole('superadmin')) {
+            if ((int)$validated['association_id'] !== (int)$authUser->association_id) {
+                abort(403);
+            }
+            $validated['association_id'] = $authUser->association_id;
         }
 
         Event::create($validated);
@@ -60,24 +71,32 @@ class EventController extends Controller
 
     public function edit(Event $event)
     {
-        $auth = Auth::user();
+        $authUser = Auth::user();
 
-        if (!$auth->hasRole('super_admin') && $event->association_id !== $auth->association_id) {
+        if (!$authUser->hasAnyRole(['admin', 'superadmin', 'board'])) {
             abort(403);
         }
 
-        $associations = $auth->hasRole('super_admin')
-            ? Association::all()
-            : Association::where('id', $auth->association_id)->get();
+        if (!$authUser->hasRole('superadmin') && (int)$event->association_id !== (int)$authUser->association_id) {
+            abort(403);
+        }
 
-        return view('admin.events.edit', compact('event', 'associations'));
+        $associations = $authUser->hasRole('superadmin')
+            ? Association::pluck('name', 'id')
+            : Association::where('id', $authUser->association_id)->pluck('name', 'id');
+
+        return view('admin.events.edit', compact('authUser', 'event', 'associations'));
     }
 
     public function update(Request $request, Event $event)
     {
-        $auth = Auth::user();
+        $authUser = Auth::user();
 
-        if (!$auth->hasRole('super_admin') && $event->association_id !== $auth->association_id) {
+        if (!$authUser->hasAnyRole(['admin', 'superadmin', 'board'])) {
+            abort(403);
+        }
+
+        if (!$authUser->hasRole('superadmin') && (int)$event->association_id !== (int)$authUser->association_id) {
             abort(403);
         }
 
@@ -91,8 +110,11 @@ class EventController extends Controller
             'status' => 'required|in:0,1,2',
         ]);
 
-        if (!$auth->hasRole('super_admin')) {
-            $validated['association_id'] = $auth->association_id;
+        if (!$authUser->hasRole('superadmin')) {
+            if ((int)$validated['association_id'] !== (int)$event->association_id) {
+                abort(403);
+            }
+            $validated['association_id'] = $event->association_id;
         }
 
         $event->update($validated);
@@ -102,13 +124,17 @@ class EventController extends Controller
 
     public function destroy(Event $event)
     {
-        $auth = Auth::user();
+        $authUser = Auth::user();
 
-        if ($auth->hasRole('board')) {
-            abort(403, 'Board members are not allowed to delete events.');
+        if ($authUser->hasRole('board')) {
+            abort(403);
         }
 
-        if (!$auth->hasRole('super_admin') && $event->association_id !== $auth->association_id) {
+        if (!$authUser->hasAnyRole(['admin', 'superadmin'])) {
+            abort(403);
+        }
+
+        if (!$authUser->hasRole('superadmin') && (int)$event->association_id !== (int)$authUser->association_id) {
             abort(403);
         }
 
@@ -116,6 +142,4 @@ class EventController extends Controller
 
         return redirect()->route('admin.events.index')->with('success', 'Event deleted successfully.');
     }
-
-
 }

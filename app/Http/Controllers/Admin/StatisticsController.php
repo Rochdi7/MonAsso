@@ -15,20 +15,18 @@ class StatisticsController extends Controller
 {
     public function index()
     {
-        // --- This variable was missing. It's for the "Profit" card and "Earnings" card total. ---
+        $auth = auth()->user();
+
+        // Global Metrics (can be used in any view)
         $totalPaidCotisations = Cotisation::where('status', Cotisation::STATUS_PAID)->sum('amount');
-        
-        // --- This variable was also missing. It's for the "Invoiced" card. ---
         $totalCotisationsAllStatus = Cotisation::whereIn('status', [
             Cotisation::STATUS_PAID,
             Cotisation::STATUS_PENDING,
             Cotisation::STATUS_OVERDUE
         ])->sum('amount');
 
-        // --- This is for the "Member Growth" card. ---
         $newRegistrations = User::where('created_at', '>=', Carbon::now()->subDays(30))->count();
 
-        // --- Data for the dynamic "Monthly Income" chart ---
         $cashflowData = Cotisation::select(
                 DB::raw('SUM(amount) as total'),
                 DB::raw("DATE_FORMAT(paid_at, '%b') as month")
@@ -38,10 +36,10 @@ class StatisticsController extends Controller
             ->groupBy('month')
             ->orderByRaw("MIN(paid_at) ASC")
             ->get();
+
         $cashflowLabels = $cashflowData->pluck('month');
         $cashflowValues = $cashflowData->pluck('total');
 
-        // --- Data for the dynamic "Member Growth" chart ---
         $newUsersData = User::select(
                 DB::raw('COUNT(id) as count'),
                 DB::raw("DATE_FORMAT(created_at, '%b') as month")
@@ -50,10 +48,10 @@ class StatisticsController extends Controller
             ->groupBy('month')
             ->orderByRaw("MIN(created_at) ASC")
             ->get();
+
         $newUserLabels = $newUsersData->pluck('month');
         $newUserValues = $newUsersData->pluck('count');
 
-        // --- Data for the dynamic "Cotisation Status" donut chart ---
         $statusCounts = [
             'paid' => Cotisation::where('status', Cotisation::STATUS_PAID)->count(),
             'pending' => Cotisation::where('status', Cotisation::STATUS_PENDING)->count(),
@@ -61,10 +59,8 @@ class StatisticsController extends Controller
             'rejected' => Cotisation::where('status', Cotisation::STATUS_REJECTED)->count(),
         ];
 
-        // ----------------------------------------
-        // Pass the CORRECT data to the view
-        // ----------------------------------------
-        return view('admin.statistics.index', compact(
+        // Shared data for all views
+        $data = compact(
             'totalPaidCotisations',
             'totalCotisationsAllStatus',
             'newRegistrations',
@@ -73,6 +69,21 @@ class StatisticsController extends Controller
             'newUserLabels',
             'newUserValues',
             'statusCounts'
-        ));
+        );
+
+        // Return view based on user role
+        if ($auth->hasRole('superadmin')) {
+            return view('admin.statistics.superadmin', $data);
+        } elseif ($auth->hasRole('admin')) {
+            return view('admin.statistics.admin', $data);
+        } elseif ($auth->hasRole('board')) {
+            return view('admin.statistics.board', $data);
+        } elseif ($auth->hasRole('supervisor')) {
+            return view('admin.statistics.supervisor', $data);
+        } elseif ($auth->hasRole('member')) {
+            return view('admin.statistics.member', $data);
+        }
+
+        return abort(403, 'Unauthorized access.');
     }
 }

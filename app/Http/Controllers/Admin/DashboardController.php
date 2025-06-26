@@ -9,6 +9,7 @@ use App\Models\Cotisation;
 use App\Models\Meeting;
 use App\Models\MeetingDocument;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -16,6 +17,7 @@ class DashboardController extends Controller
     public function index()
     {
         $now = Carbon::now();
+        $user = Auth::user();
 
         // ASSOCIATIONS
         $totalAssociations = Association::count();
@@ -76,8 +78,8 @@ class DashboardController extends Controller
             'rejected' => Cotisation::where('status', Cotisation::STATUS_REJECTED)->count(),
         ];
 
-        // RETURN ALL DATA TO VIEW
-        return view('admin.dashboard', compact(
+        // Shared data
+        $data = compact(
             'totalAssociations',
             'validatedAssociations',
             'pendingAssociations',
@@ -98,6 +100,21 @@ class DashboardController extends Controller
             'cashflowLabels',
             'cashflowData',
             'statusCounts'
-        ));
+        );
+
+        // Return view based on role
+        if ($user->hasRole('superadmin')) {
+            return view('admin.dashboards.superadmin', $data);
+        } elseif ($user->hasRole('admin')) {
+            return view('admin.dashboards.admin', $data);
+        } elseif ($user->hasRole('board')) {
+            return view('admin.dashboards.board', $data);
+        } elseif ($user->hasRole('supervisor')) {
+            return view('admin.dashboards.supervisor', $data);
+        } elseif ($user->hasRole('member')) {
+            return view('admin.dashboards.member', $data);
+        }
+
+        abort(403); // Unknown role
     }
 }

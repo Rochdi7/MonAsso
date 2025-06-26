@@ -4,31 +4,56 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Meeting;
-use App\Models\MeetingDocument;
 use App\Models\Association;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MeetingController extends Controller
 {
     public function index()
     {
-        $meetings = Meeting::with(['association', 'organizer'])->latest()->get();
+        $user = Auth::user();
+
+        $meetings = Meeting::with(['association', 'organizer'])
+            ->when(!$user->hasRole('superadmin'), function ($query) use ($user) {
+                $query->where('association_id', $user->association_id);
+            })
+            ->latest()
+            ->get();
+
         return view('admin.meetings.index', compact('meetings'));
     }
 
     public function create()
     {
-        abort_if(!auth()->user()->hasAnyRole(['admin', 'super_admin']), 403);
+        $user = Auth::user();
+        if (!$user->hasAnyRole(['admin', 'superadmin', 'board', 'supervisor'])) {
+            abort(403, 'Unauthorized to create meetings.');
+        }
 
-        $associations = Association::all();
-        $users = User::all();
-        return view('admin.meetings.create', compact('associations', 'users'));
+        $associations = $user->hasRole('superadmin')
+            ? Association::all()
+            : Association::where('id', $user->association_id)->get();
+
+        $users = $user->hasRole('superadmin')
+            ? User::all()
+            : User::where('association_id', $user->association_id)->get();
+
+        return view('admin.meetings.create', [
+            'auth' => $user,
+            'associations' => $associations,
+            'users' => $users,
+        ]);
     }
+
 
     public function store(Request $request)
     {
-        abort_if(!auth()->user()->hasAnyRole(['admin', 'super_admin']), 403);
+        $user = Auth::user();
+        if (!$user->hasAnyRole(['admin', 'superadmin', 'board', 'supervisor'])) {
+            abort(403, 'Unauthorized to store meetings.');
+        }
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -40,6 +65,17 @@ class MeetingController extends Controller
             'organizer_id' => 'required|exists:users,id',
             'documents.*' => 'nullable|file|max:2048',
         ]);
+
+        if (!$user->hasRole('superadmin')) {
+            if ((int) $validated['association_id'] !== (int) $user->association_id) {
+                abort(403, 'You can only create meetings for your own association.');
+            }
+            $validated['association_id'] = $user->association_id;
+            $organizer = User::find($validated['organizer_id']);
+            if (!$organizer || (int) $organizer->association_id !== (int) $user->association_id) {
+                abort(403, 'Organizer must belong to your association.');
+            }
+        }
 
         $meeting = Meeting::create($validated);
 
@@ -54,21 +90,45 @@ class MeetingController extends Controller
 
     public function edit(Meeting $meeting)
     {
-        abort_if(!auth()->user()->hasAnyRole(['admin', 'super_admin']), 403);
+        $user = Auth::user();
+        if (!$user->hasAnyRole(['admin', 'superadmin', 'board', 'supervisor'])) {
+            abort(403, 'Unauthorized to edit meetings.');
+        }
 
-        $associations = Association::all();
-        $users = User::all();
+        if (!$user->hasRole('superadmin') && (int) $meeting->association_id !== (int) $user->association_id) {
+            abort(403);
+        }
+
+        $associations = $user->hasRole('superadmin')
+            ? Association::all()
+            : Association::where('id', $user->association_id)->get();
+
+        $users = $user->hasRole('superadmin')
+            ? User::all()
+            : User::where('association_id', $user->association_id)->get();
+
         $documents = $meeting->getMedia('documents');
 
-        return view('admin.meetings.edit', compact('meeting', 'associations', 'users', 'documents'));
+        return view('admin.meetings.edit', [
+            'meeting' => $meeting,
+            'associations' => $associations,
+            'users' => $users,
+            'documents' => $documents,
+            'auth' => $user,
+        ]);
     }
-
-
 
 
     public function update(Request $request, Meeting $meeting)
     {
-        abort_if(!auth()->user()->hasAnyRole(['admin', 'super_admin']), 403);
+        $user = Auth::user();
+        if (!$user->hasAnyRole(['admin', 'superadmin', 'board', 'supervisor'])) {
+            abort(403, 'Unauthorized to update meetings.');
+        }
+
+        if (!$user->hasRole('superadmin') && (int) $meeting->association_id !== (int) $user->association_id) {
+            abort(403);
+        }
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -81,13 +141,22 @@ class MeetingController extends Controller
             'documents.*' => 'nullable|file|max:2048',
         ]);
 
+        if (!$user->hasRole('superadmin')) {
+            if ((int) $validated['association_id'] !== (int) $meeting->association_id) {
+                abort(403, 'You cannot change the association of this meeting.');
+            }
+            $organizer = User::find($validated['organizer_id']);
+            if (!$organizer || (int) $organizer->association_id !== (int) $user->association_id) {
+                abort(403, 'Organizer must belong to your association.');
+            }
+            $validated['association_id'] = $meeting->association_id;
+        }
+
         $meeting->update($validated);
 
-        // Only clear and re-upload documents if new ones were submitted
+        // Document handling: only add new files if present, do not clear existing if none are uploaded
         if ($request->hasFile('documents')) {
-            // Optional: only remove documents that are not in keep list
-            $meeting->clearMediaCollection('documents');
-
+            // This loop only adds new documents. It does NOT clear existing documents.
             foreach ($request->file('documents') as $file) {
                 $meeting->addMedia($file)->toMediaCollection('documents');
             }
@@ -98,30 +167,67 @@ class MeetingController extends Controller
 
     public function destroy(Meeting $meeting)
     {
-        abort_if(!auth()->user()->hasAnyRole(['admin', 'super_admin']), 403);
+        $user = Auth::user();
+
+        // 🔍 Log debug info to trace unexpected deletion triggers
+        \Log::warning('Meeting deletion triggered', [
+            'user_id' => $user->id,
+            'user_roles' => $user->getRoleNames(),
+            'request_method' => request()->method(),
+            'request_url' => request()->fullUrl(),
+            'referer' => request()->headers->get('referer'),
+            'request_input' => request()->all(),
+            'meeting_id' => $meeting->id,
+        ]);
+
+        if ($user->hasAnyRole(['board', 'supervisor'])) {
+            abort(403, 'Board members and Supervisors are not allowed to delete meetings.');
+        }
+
+        if (!$user->hasAnyRole(['admin', 'superadmin'])) {
+            abort(403);
+        }
+
+        if (!$user->hasRole('superadmin') && (int) $meeting->association_id !== (int) $user->association_id) {
+            abort(403);
+        }
 
         $meeting->clearMediaCollection('documents');
         $meeting->delete();
+
         return redirect()->route('admin.meetings.index')->with('success', 'Meeting deleted.');
     }
 
+
     public function show(Meeting $meeting)
     {
-        abort_if(!auth()->user()->hasAnyRole(['admin', 'super_admin']), 403);
+        $user = Auth::user();
+        if (!$user->hasAnyRole(['admin', 'superadmin', 'board', 'supervisor', 'member'])) {
+            abort(403, 'Unauthorized to view meeting details.');
+        }
+        if (!$user->hasRole('superadmin') && (int) $meeting->association_id !== (int) $user->association_id) {
+            abort(403);
+        }
 
         $documents = $meeting->getMedia('documents');
         return view('admin.meetings.show', compact('meeting', 'documents'));
     }
 
-
     public function removeMedia(Meeting $meeting, $mediaId)
     {
+        $user = Auth::user();
+        // Board and Supervisor can remove media if they can update the meeting
+        if (!$user->hasAnyRole(['admin', 'superadmin', 'board', 'supervisor'])) {
+            abort(403, 'You are not authorized to remove meeting documents.');
+        }
+
+        if (!$user->hasRole('superadmin') && (int) $meeting->association_id !== (int) $user->association_id) {
+            abort(403);
+        }
+
         $media = $meeting->media()->where('id', $mediaId)->firstOrFail();
         $media->delete();
 
         return back()->with('success', 'Document removed successfully.');
     }
-
-
-
 }

@@ -14,18 +14,18 @@ class CotisationController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->hasRole('super_admin')) {
+        if ($user->hasRole('superadmin')) {
             $cotisations = Cotisation::with(['user', 'association'])->latest()->get();
-        } elseif ($user->hasRole('admin')) {
+        } elseif ($user->hasAnyRole(['admin', 'board'])) {
             $cotisations = Cotisation::with(['user', 'association'])
                 ->where('association_id', $user->association_id)
                 ->latest()->get();
-        } elseif ($user->hasRole('membre')) {
+        } elseif ($user->hasRole('member')) {
             $cotisations = Cotisation::with('association')
                 ->where('user_id', $user->id)
                 ->latest()->get();
         } else {
-            abort(403, 'Unauthorized');
+            abort(403, 'Unauthorized access to cotisations list.');
         }
 
         return view('admin.cotisations.index', compact('cotisations'));
@@ -33,32 +33,36 @@ class CotisationController extends Controller
 
     public function create(Request $request)
     {
-        $this->authorize('create cotisation');
         $authUser = auth()->user();
-        $selectedUserId = $request->get('user_id');
 
-        if ($authUser->hasRole('super_admin')) {
-            $users = User::all();
-            $associations = Association::all();
-        } elseif ($authUser->hasRole('admin')) {
-            $users = User::where('association_id', $authUser->association_id)->get();
-            $associations = Association::where('id', $authUser->association_id)->get();
-        } else {
-            abort(403, 'Unauthorized');
+        if (!$authUser->hasAnyRole(['admin', 'superadmin', 'board'])) {
+            abort(403, 'Unauthorized to create cotisations.');
         }
 
-        if ($selectedUserId && !$users->pluck('id')->contains($selectedUserId)) {
+        $selectedUserId = $request->get('user_id');
+
+        if ($authUser->hasRole('superadmin')) {
+            $users = User::all();
+            $associations = Association::all();
+        } else {
+            $users = User::where('association_id', $authUser->association_id)->get();
+            $associations = Association::where('id', $authUser->association_id)->get();
+        }
+
+        if ($selectedUserId && !$users->pluck('id')->contains((int)$selectedUserId)) { // Type cast for pluck
             $selectedUserId = null;
         }
 
         return view('admin.cotisations.create', compact('users', 'associations', 'selectedUserId'));
     }
 
-
     public function store(Request $request)
     {
-        $this->authorize('create cotisation');
         $authUser = auth()->user();
+
+        if (!$authUser->hasAnyRole(['admin', 'superadmin', 'board'])) {
+            abort(403, 'Unauthorized to store cotisations.');
+        }
 
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -71,15 +75,13 @@ class CotisationController extends Controller
             'approved_by' => 'nullable|exists:users,id',
         ]);
 
-        // Extra security for admins
-        if ($authUser->hasRole('admin')) {
-            $user = User::find($validated['user_id']);
-            if ($user->association_id != $authUser->association_id || $validated['association_id'] != $authUser->association_id) {
-                abort(403, 'You can only create cotisations for your association.');
+        if (!$authUser->hasRole('superadmin')) {
+            $userForCotisation = User::find($validated['user_id']); // Renamed variable for clarity
+            if (!$userForCotisation || (int)$userForCotisation->association_id !== (int)$authUser->association_id || (int)$validated['association_id'] !== (int)$authUser->association_id) {
+                abort(403, 'You can only create cotisations for users within your association and for your association.');
             }
         }
 
-        // Prevent duplicate for same year
         $exists = Cotisation::where('user_id', $validated['user_id'])
             ->where('year', $validated['year'])
             ->exists();
@@ -97,45 +99,59 @@ class CotisationController extends Controller
 
     public function edit(Cotisation $cotisation)
     {
-        $this->authorize('edit cotisation');
         $authUser = auth()->user();
 
-        if ($authUser->hasRole('super_admin')) {
-            $users = User::all();
-            $associations = Association::all();
-        } elseif ($authUser->hasRole('admin')) {
-            if ($cotisation->association_id != $authUser->association_id) {
-                abort(403, 'You cannot edit cotisations outside your association.');
-            }
-            $users = User::where('association_id', $authUser->association_id)->get();
-            $associations = Association::where('id', $authUser->association_id)->get();
-        } else {
-            abort(403);
+        if (!$authUser->hasAnyRole(['admin', 'superadmin', 'board'])) {
+            abort(403, 'Unauthorized to edit cotisations.');
         }
+
+        if (!$authUser->hasRole('superadmin') && (int)$cotisation->association_id !== (int)$authUser->association_id) {
+            abort(403, 'You cannot edit cotisations outside your association.');
+        }
+
+        $users = $authUser->hasRole('superadmin')
+            ? User::all()
+            : User::where('association_id', $authUser->association_id)->get();
+
+        $associations = $authUser->hasRole('superadmin')
+            ? Association::all()
+            : Association::where('id', $authUser->association_id)->get();
 
         return view('admin.cotisations.edit', compact('cotisation', 'users', 'associations'));
     }
 
     public function update(Request $request, Cotisation $cotisation)
     {
-        $this->authorize('edit cotisation');
         $authUser = auth()->user();
+
+        if (!$authUser->hasAnyRole(['admin', 'superadmin', 'board'])) {
+            abort(403, 'Unauthorized to update cotisations.');
+        }
+
+        if (!$authUser->hasRole('superadmin') && (int)$cotisation->association_id !== (int)$authUser->association_id) {
+            abort(403, 'You cannot update cotisations outside your association.');
+        }
 
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'association_id' => 'required|exists:associations,id',
             'year' => 'required|integer|min:1900|max:' . (now()->year + 1),
             'amount' => 'required|numeric|min:0',
-            'status' => 'required|in:0,1',
+            'status' => 'required|in:0,1,2,3', // Allow all 4 statuses for update
             'paid_at' => 'nullable|date',
             'receipt_number' => 'nullable|string|unique:cotisations,receipt_number,' . $cotisation->id,
             'approved_by' => 'nullable|exists:users,id',
         ]);
 
-        if ($authUser->hasRole('admin')) {
-            $user = User::find($validated['user_id']);
-            if ($user->association_id != $authUser->association_id || $validated['association_id'] != $authUser->association_id) {
-                abort(403, 'You can only update cotisations for your association.');
+        if (!$authUser->hasRole('superadmin')) {
+            $userForCotisation = User::find($validated['user_id']); // Renamed variable
+            // Ensure the user associated with the cotisation and the association_id in payload belong to current user's association
+            if (!$userForCotisation || (int)$userForCotisation->association_id !== (int)$authUser->association_id || (int)$validated['association_id'] !== (int)$authUser->association_id) {
+                abort(403, 'You can only update cotisations for users within your association and for your association.');
+            }
+            // Prevent changing association_id of an existing cotisation by non-superadmins
+            if ((int)$validated['association_id'] !== (int)$cotisation->association_id) {
+                abort(403, 'You cannot reassign a cotisation to another association.');
             }
         }
 
@@ -146,10 +162,17 @@ class CotisationController extends Controller
 
     public function destroy(Cotisation $cotisation)
     {
-        $this->authorize('delete cotisation');
         $authUser = auth()->user();
 
-        if ($authUser->hasRole('admin') && $cotisation->association_id != $authUser->association_id) {
+        if ($authUser->hasRole('board')) {
+            abort(403, 'Board members are not allowed to delete cotisations.');
+        }
+
+        if (!$authUser->hasAnyRole(['admin', 'superadmin'])) {
+            abort(403, 'Unauthorized to delete cotisations.');
+        }
+
+        if (!$authUser->hasRole('superadmin') && (int)$cotisation->association_id !== (int)$authUser->association_id) {
             abort(403, 'You cannot delete cotisations outside your association.');
         }
 
