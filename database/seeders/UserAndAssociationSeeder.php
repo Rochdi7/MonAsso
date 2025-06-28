@@ -60,10 +60,9 @@ class UserAndAssociationSeeder extends Seeder
             );
         }
 
-        // Create users for each association with real Moroccan names
-        $this->createAMDHUsers();       // Human Rights Association
-        $this->createFRMFUsers();       // Football Federation
-        $this->createAESVTUsers();      // Education Association
+        $this->createAMDHUsers();       
+        $this->createFRMFUsers();       
+        $this->createAESVTUsers();      
     }
 
     protected function createAMDHUsers()
