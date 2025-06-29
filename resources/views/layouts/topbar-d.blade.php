@@ -355,13 +355,14 @@
                                         <span>Edit profile</span>
                                     </span>
                                 </a>
-                                <a href="#" class="dropdown-item">
-                                    <span class="d-flex align-items-center">
-                                        <i class="ph-duotone ph-star text-warning"></i>
-                                        <span>Upgrade account</span>
-                                        <span class="badge bg-light-success border border-success ms-2">NEW</span>
-                                    </span>
-                                </a>
+                                <a href="http://127.0.0.1:8000/#pricing" class="dropdown-item">
+    <span class="d-flex align-items-center">
+        <i class="ph-duotone ph-star text-warning"></i>
+        <span>Upgrade account</span>
+        <span class="badge bg-light-success border border-success ms-2">NEW</span>
+    </span>
+</a>
+
                                 <a href="#" class="dropdown-item">
                                     <span class="d-flex align-items-center">
                                         <i class="ph-duotone ph-bell"></i>

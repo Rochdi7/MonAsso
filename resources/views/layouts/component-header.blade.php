@@ -11,11 +11,12 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
             <div class="navbar-nav ms-auto mt-lg-0 mt-2 mb-2 mb-lg-0 align-items-start">
-                <a class="nav-link px-1" href="{{ url('index') }}">Home</a>
-                <a class="nav-link px-1" href="{{ url('features') }}">Features</a>
-                <a class="nav-link px-1" href="{{ url('pricing') }}">Pricing</a>
-                <a class="nav-link px-1" href="{{ url('contact') }}">Contact</a>
+                <a class="nav-link px-1" href="http://127.0.0.1:8000/#home">Home</a>
+                <a class="nav-link px-1" href="http://127.0.0.1:8000/#features">Features</a>
+                <a class="nav-link px-1" href="http://127.0.0.1:8000/#pricing">Pricing</a>
+                <a class="nav-link px-1" href="http://127.0.0.1:8000/#contact">Contact</a>
             </div>
+
             <ul class="navbar-nav mb-2 mb-lg-0 align-items-start">
                 <li class="dropdown px-1 me-2 mb-2 mb-md-0">
                     <a class="btn btn-icon btn-outline-dark border border-secondary border-opacity-25 dropdown-toggle arrow-none me-0 rounded"
@@ -41,12 +42,14 @@
                 @auth
                     <!-- User is authenticated -->
                     <li class="nav-item">
-                        <a href="{{ url('dashboard') }}" class="btn btn-primary">Dashboard <i class="ph-duotone ph-arrow-square-out"></i></a>
+                        <a href="{{ url('dashboard') }}" class="btn btn-primary">Dashboard <i
+                                class="ph-duotone ph-arrow-square-out"></i></a>
                     </li>
                 @else
                     <!-- User is not authenticated -->
                     <li class="nav-item">
-                        <a href="{{ url('signup') }}" class="btn btn-primary">Sign Up <i class="ph-duotone ph-arrow-square-out"></i></a>
+                        <a href="{{ url('signup') }}" class="btn btn-primary">Sign Up <i
+                                class="ph-duotone ph-arrow-square-out"></i></a>
                     </li>
                 @endauth
             </ul>
