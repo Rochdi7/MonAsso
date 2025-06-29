@@ -59,32 +59,7 @@
                 </div>
             </form>
 
-            <div class="saprator my-3">
-                <span>Ou continuer avec</span>
-            </div>
-
-            <div class="text-center">
-                <ul class="list-inline mx-auto mt-3 mb-0">
-                    <li class="list-inline-item">
-                        <a href="https://www.facebook.com/" target="_blank"
-                            class="avtar avtar-s rounded-circle bg-facebook">
-                            <i class="fab fa-facebook-f text-white"></i>
-                        </a>
-                    </li>
-                    <li class="list-inline-item">
-                        <a href="https://twitter.com/" target="_blank"
-                            class="avtar avtar-s rounded-circle bg-twitter">
-                            <i class="fab fa-twitter text-white"></i>
-                        </a>
-                    </li>
-                    <li class="list-inline-item">
-                        <a href="https://myaccount.google.com/" target="_blank"
-                            class="avtar avtar-s rounded-circle bg-googleplus">
-                            <i class="fab fa-google text-white"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            
         </div>
     </div>
 </div>
