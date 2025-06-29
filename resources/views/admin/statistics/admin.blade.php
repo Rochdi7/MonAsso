@@ -12,7 +12,10 @@
     <div class="col-md-6 col-xl-8">
         <div class="card h-100">
             <div class="card-header d-flex align-items-center justify-content-between">
-                <h5 class="mb-0"><i class="ph-duotone ph-users-four me-1"></i> Member Registration Growth</h5>
+                <h5 class="mb-0">
+                    <i class="ph-duotone ph-users-four me-1"></i> 
+                    Member Registration Growth
+                </h5>
                 <select id="member-growth-range" class="form-select form-select-sm w-auto border-0 shadow-none">
                     <option value="6">Last 6 months</option>
                     <option value="12" selected>This Year</option>
@@ -33,22 +36,31 @@
     <div class="col-md-6 col-xl-4">
         <div class="card h-100">
             <div class="card-header">
-                <h5 class="mb-0"><i class="ph-duotone ph-wallet me-1"></i> Cotisation Status</h5>
+                <h5 class="mb-0">
+                    <i class="ph-duotone ph-wallet me-1"></i> 
+                    Cotisation Status
+                </h5>
             </div>
             <div class="card-body">
                 <div class="text-center" style="max-width: 150px; margin: auto;">
                     <div id="total-earning-chart-1"></div>
                 </div>
                 <div class="bg-body mt-4 py-2 px-3 rounded d-flex justify-content-between">
-                    <p class="mb-0"><i class="ph-duotone ph-circle text-success f-12"></i> Paid</p>
+                    <p class="mb-0">
+                        <i class="ph-duotone ph-circle text-success f-12"></i> Paid
+                    </p>
                     <h5 class="mb-0">11,750 MAD</h5>
                 </div>
                 <div class="bg-body mt-2 py-2 px-3 rounded d-flex justify-content-between">
-                    <p class="mb-0"><i class="ph-duotone ph-circle text-warning f-12"></i> Unpaid</p>
+                    <p class="mb-0">
+                        <i class="ph-duotone ph-circle text-warning f-12"></i> Unpaid
+                    </p>
                     <h5 class="mb-0">1,200 MAD</h5>
                 </div>
                 <div class="bg-body mt-2 py-2 px-3 rounded d-flex justify-content-between">
-                    <p class="mb-0"><i class="ph-duotone ph-circle text-danger f-12"></i> Overdue</p>
+                    <p class="mb-0">
+                        <i class="ph-duotone ph-circle text-danger f-12"></i> Overdue
+                    </p>
                     <h5 class="mb-0">450 MAD</h5>
                 </div>
             </div>
@@ -57,7 +69,12 @@
 
     <div class="col-md-6">
         <div class="card">
-            <div class="card-header"><h5 class="mb-0"><i class="ph-duotone ph-currency-circle-dollar me-1"></i> Monthly Cotisations</h5></div>
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="ph-duotone ph-currency-circle-dollar me-1"></i> 
+                    Monthly Cotisations
+                </h5>
+            </div>
             <div class="card-body">
                 <p>Total paid cotisations (last 6 months)</p>
                 <h4 class="fw-semibold">8,450 MAD</h4>
@@ -68,7 +85,12 @@
 
     <div class="col-md-6">
         <div class="card">
-            <div class="card-header"><h5 class="mb-0"><i class="ph-duotone ph-credit-card me-1"></i> Monthly Expenses</h5></div>
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="ph-duotone ph-credit-card me-1"></i> 
+                    Monthly Expenses
+                </h5>
+            </div>
             <div class="card-body">
                 <p>Recorded expenses (last 6 months)</p>
                 <h4 class="fw-semibold">2,180.50 MAD</h4>
@@ -80,22 +102,36 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5><i class="ph-duotone ph-handshake me-1"></i> Contributions by Type (This Year)</h5>
-                <a href="{{ route ('admin.contributions.create') }}" class="btn btn-sm btn-primary">Add Contribution</a>
+                <h5 class="mb-0">
+                    <i class="ph-duotone ph-handshake me-1"></i> 
+                    Contributions by Type (This Year)
+                </h5>
+                <a href="{{ route('admin.contributions.create') }}" class="btn btn-sm btn-primary">
+                    Add Contribution
+                </a>
             </div>
             <div class="card-body">
                 <div id="overview-bar-chart"></div>
                 <div class="row text-center mt-4">
                     <div class="col-md-4">
-                        <p class="mb-0"><i class="ph-duotone ph-circle text-primary f-12"></i> Subventions</p>
+                        <p class="mb-0">
+                            <i class="ph-duotone ph-circle text-primary f-12"></i> 
+                            Subventions
+                        </p>
                         <h5 class="mb-0">5,000 MAD</h5>
                     </div>
                     <div class="col-md-4">
-                        <p class="mb-0"><i class="ph-duotone ph-circle text-info f-12"></i> Donations</p>
+                        <p class="mb-0">
+                            <i class="ph-duotone ph-circle text-info f-12"></i> 
+                            Donations
+                        </p>
                         <h5 class="mb-0">1,850 MAD</h5>
                     </div>
                     <div class="col-md-4">
-                        <p class="mb-0"><i class="ph-duotone ph-circle text-warning f-12"></i> Cotisations Paid</p>
+                        <p class="mb-0">
+                            <i class="ph-duotone ph-circle text-warning f-12"></i> 
+                            Cotisations Paid
+                        </p>
                         <h5 class="mb-0">12,000 MAD</h5>
                     </div>
                 </div>
@@ -150,8 +186,8 @@
     });
 </script>
 
-<script src="{{ URL::asset('build/js/widgets/total-earning-chart-1.js') }}"></script> 
-<script src="{{ URL::asset('build/js/widgets/monthly-report-graph.js') }}"></script> 
+<script src="{{ URL::asset('build/js/widgets/total-earning-chart-1.js') }}"></script>
+<script src="{{ URL::asset('build/js/widgets/monthly-report-graph.js') }}"></script>
 <script src="{{ URL::asset('build/js/widgets/yearly-summary-chart.js') }}"></script>
 <script src="{{ URL::asset('build/js/widgets/overview-bar-chart.js') }}"></script>
 @endsection
