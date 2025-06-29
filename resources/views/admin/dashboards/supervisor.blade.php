@@ -9,7 +9,7 @@
 
 @section('content')
 
-    {{-- STATIC NOTIFICATIONS (These are great for immediate, high-priority alerts) --}}
+    {{-- STATIC NOTIFICATIONS --}}
     <div class="alert alert-warning" role="alert">
         <i class="ti ti-alert-triangle me-2"></i>
         Your email is not verified yet. Please check your inbox for a verification link.
@@ -36,7 +36,9 @@
                             <p class="mb-0 text-muted">Here's what's happening in your association.</p>
                         </div>
                         <div class="flex-shrink-0">
-                            <a href="{{ route('profile.index') }}" class="btn btn-primary d-inline-flex align-items-center"><i class="ti ti-user me-2"></i>My Profile</a>
+                            <a href="{{ route('profile.index') }}" class="btn btn-primary d-inline-flex align-items-center">
+                                <i class="ti ti-user me-2"></i>My Profile
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -52,24 +54,46 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Cycle</th> <th>Amount</th> <th>Due Date</th> <th>Status</th> <th class="text-end">Action</th>
+                                    <th>Cycle</th>
+                                    <th>Amount</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Annual Dues 2024</td> <td>$150.00</td> <td>Feb 15, 2024</td>
+                                    <td>Annual Dues 2024</td>
+                                    <td>1,500.00 MAD</td>
+                                    <td>Feb 15, 2024</td>
                                     <td><span class="badge bg-light-danger">Overdue</span></td>
-                                    <td class="text-end"><a href="{{ route('admin.cotisations.index') }}" class="btn btn-sm btn-success d-inline-flex align-items-center"><i class="ti ti-wallet me-1"></i>Pay Now</a></td>
+                                    <td class="text-end">
+                                        <a href="{{ route('admin.cotisations.index') }}" class="btn btn-sm btn-success d-inline-flex align-items-center">
+                                            <i class="ti ti-wallet me-1"></i>Pay Now
+                                        </a>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td>Q1 Contribution 2024</td> <td>$25.00</td> <td>Mar 31, 2024</td>
+                                    <td>Q1 Contribution 2024</td>
+                                    <td>250.00 MAD</td>
+                                    <td>Mar 31, 2024</td>
                                     <td><span class="badge bg-light-warning">Pending</span></td>
-                                    <td class="text-end"><a href="{{ route('admin.cotisations.index') }}" class="btn btn-sm btn-success d-inline-flex align-items-center"><i class="ti ti-wallet me-1"></i>Pay Now</a></td>
+                                    <td class="text-end">
+                                        <a href="{{ route('admin.cotisations.index') }}" class="btn btn-sm btn-success d-inline-flex align-items-center">
+                                            <i class="ti ti-wallet me-1"></i>Pay Now
+                                        </a>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td>Annual Dues 2023</td> <td>$125.00</td> <td>Feb 15, 2023</td>
+                                    <td>Annual Dues 2023</td>
+                                    <td>1,250.00 MAD</td>
+                                    <td>Feb 15, 2023</td>
                                     <td><span class="badge bg-light-success">Paid</span></td>
-                                    <td class="text-end"><a href="{{ route('admin.cotisations.index') }}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center"><i class="ti ti-receipt me-1"></i>View Receipt</a></td>
+                                    <td class="text-end">
+                                        <a href="{{ route('admin.cotisations.index') }}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center">
+                                            <i class="ti ti-receipt me-1"></i>View Receipt
+                                        </a>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -122,7 +146,9 @@
             {{-- Membership Status Card --}}
             <div class="card mb-4 bg-light-success">
                 <div class="card-body text-center">
-                    <h5 class="mb-2">Membership Status</h5> <h3 class="text-success">ACTIVE</h3> <p class="text-muted mb-0">Your payments are up to date. Thank you!</p>
+                    <h5 class="mb-2">Membership Status</h5>
+                    <h3 class="text-success">ACTIVE</h3>
+                    <p class="text-muted mb-0">Your payments are up to date. Thank you!</p>
                 </div>
             </div>
 
@@ -134,13 +160,21 @@
                 <div class="card-body p-0">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex align-items-center">
-                            <div class="flex-shrink-0"><div class="avtar avtar-s bg-light-secondary"><i class="ti ti-file-text f-20"></i></div></div>
-                            <div class="flex-grow-1 ms-3"><h6 class="mb-0">Meeting Minutes - Q1 2024</h6></div>
+                            <div class="flex-shrink-0">
+                                <div class="avtar avtar-s bg-light-secondary"><i class="ti ti-file-text f-20"></i></div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-0">Meeting Minutes - Q1 2024</h6>
+                            </div>
                             <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-download"></i></a>
                         </li>
                         <li class="list-group-item d-flex align-items-center">
-                            <div class="flex-shrink-0"><div class="avtar avtar-s bg-light-secondary"><i class="ti ti-file-text f-20"></i></div></div>
-                            <div class="flex-grow-1 ms-3"><h6 class="mb-0">Association Bylaws</h6></div>
+                            <div class="flex-shrink-0">
+                                <div class="avtar avtar-s bg-light-secondary"><i class="ti ti-file-text f-20"></i></div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-0">Association Bylaws</h6>
+                            </div>
                             <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-download"></i></a>
                         </li>
                     </ul>
@@ -156,11 +190,16 @@
                 <div class="card-body p-0">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex align-items-center">
-                            <div class="flex-shrink-0"><div class="avtar avtar-s bg-light-primary"><i class="ti ti-calendar-event f-20"></i></div></div>
-                            <div class="flex-grow-1 ms-3">
-                                <h6 class="mb-0">Quarterly Review</h6><small class="text-muted">Thu, Apr 18, 2024 - 06:00 PM</small>
+                            <div class="flex-shrink-0">
+                                <div class="avtar avtar-s bg-light-primary"><i class="ti ti-calendar-event f-20"></i></div>
                             </div>
-                            <a href="{{ route('admin.meetings.index') }}" class="btn btn-icon btn-light-secondary"><i class="ti ti-arrow-right"></i></a>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-0">Quarterly Review</h6>
+                                <small class="text-muted">Thu, Apr 18, 2024 - 06:00 PM</small>
+                            </div>
+                            <a href="{{ route('admin.meetings.index') }}" class="btn btn-icon btn-light-secondary">
+                                <i class="ti ti-arrow-right"></i>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -170,23 +209,29 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Upcoming Events</h5>
-                    <a href="{{ route('client.events.index') }}" class="btn btn-sm btn-link-primary">View All</a>
+                    <a href="{{ route('admin.events.index') }}" class="btn btn-sm btn-link-primary">View All</a>
                 </div>
                 <div class="card-body p-0">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex align-items-center">
-                            <div class="flex-shrink-0"><div class="avtar avtar-s bg-light-info"><i class="ti ti-ticket f-20"></i></div></div>
+                            <div class="flex-shrink-0">
+                                <div class="avtar avtar-s bg-light-info"><i class="ti ti-ticket f-20"></i></div>
+                            </div>
                             <div class="flex-grow-1 ms-3">
-                                <h6 class="mb-0">Annual Charity Gala</h6><small class="text-muted">Sat, Jun 15, 2024</small>
+                                <h6 class="mb-0">Annual Charity Gala</h6>
+                                <small class="text-muted">Sat, Jun 15, 2024</small>
                             </div>
                             <div class="flex-shrink-0 text-end">
                                 <span class="badge bg-light-success">Joined</span>
                             </div>
                         </li>
                         <li class="list-group-item d-flex align-items-center">
-                            <div class="flex-shrink-0"><div class="avtar avtar-s bg-light-info"><i class="ti ti-users f-20"></i></div></div>
+                            <div class="flex-shrink-0">
+                                <div class="avtar avtar-s bg-light-info"><i class="ti ti-users f-20"></i></div>
+                            </div>
                             <div class="flex-grow-1 ms-3">
-                                <h6 class="mb-0">Community Workshop</h6><small class="text-muted">Tue, Jul 09, 2024</small>
+                                <h6 class="mb-0">Community Workshop</h6>
+                                <small class="text-muted">Tue, Jul 09, 2024</small>
                             </div>
                             <div class="flex-shrink-0 text-end">
                                 <span class="badge bg-light-primary">Interested</span>

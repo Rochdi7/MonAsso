@@ -10,7 +10,6 @@
 @endsection
 
 @section('content')
-    
 
     <!-- Top Row: Key Performance Indicators (KPIs) -->
     <div class="row">
@@ -24,7 +23,6 @@
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
                         <h4 class="mb-0">1,247</h4>
-                        {{-- UPDATED: Used a badge for a cleaner look --}}
                         <span class="badge bg-light-primary">Active: 1,105</span>
                     </div>
                 </div>
@@ -41,7 +39,6 @@
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
                         <h4 class="mb-0">72%</h4>
-                        {{-- This badge style is already perfect for the theme --}}
                         <span class="badge bg-light-success"><i class="ti ti-arrow-up"></i> +5%</span>
                     </div>
                 </div>
@@ -57,9 +54,8 @@
                         <div class="ms-3"><h6 class="mb-0">Cotisations (YTD)</h6></div>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
-                        <h4 class="mb-0">$84,550</h4>
-                        {{-- UPDATED: Used a badge for consistency --}}
-                        <span class="badge bg-light-secondary">Target: $100k</span>
+                        <h4 class="mb-0">84,550 MAD</h4>
+                        <span class="badge bg-light-secondary">Target: 100,000 MAD</span>
                     </div>
                 </div>
             </div>
@@ -75,14 +71,12 @@
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
                         <h4 class="mb-0">4</h4>
-                        {{-- UPDATED: Used a badge for consistency --}}
                         <span class="badge bg-light-warning">Next: 15 Days</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 
     <!-- Main Content and Sidebar Row -->
     <div class="row">
@@ -118,7 +112,11 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Meeting Title</th> <th>Date</th> <th>Attendees</th> <th>Participation Rate</th> <th class="text-end">View</th>
+                                    <th>Meeting Title</th>
+                                    <th>Date</th>
+                                    <th>Attendees</th>
+                                    <th>Participation Rate</th>
+                                    <th class="text-end">View</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -128,7 +126,6 @@
                                     <td>980 / 1247</td>
                                     <td><span class="text-success">78.5%</span></td>
                                     <td class="text-end">
-                                        {{-- UPDATED: Used theme-consistent icon button --}}
                                         <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-eye"></i></a>
                                     </td>
                                 </tr>
@@ -141,7 +138,7 @@
                                         <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-eye"></i></a>
                                     </td>
                                 </tr>
-                                 <tr>
+                                <tr>
                                     <td>Strategic Planning Session</td>
                                     <td>Dec 05, 2023</td>
                                     <td>910 / 1247</td>
@@ -170,15 +167,21 @@
                     <div id="cotisation-status-chart" class="mt-3"></div>
                     <ul class="list-group list-group-flush mt-auto">
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <span class="p-0 d-inline-flex align-items-center"><i class="ti ti-circle-filled text-success me-2"></i>Paid</span>
+                            <span class="p-0 d-inline-flex align-items-center">
+                                <i class="ti ti-circle-filled text-success me-2"></i>Paid
+                            </span>
                             <span class="badge bg-light-success f-w-500">85%</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                             <span class="p-0 d-inline-flex align-items-center"><i class="ti ti-circle-filled text-warning me-2"></i>Pending</span>
+                            <span class="p-0 d-inline-flex align-items-center">
+                                <i class="ti ti-circle-filled text-warning me-2"></i>Pending
+                            </span>
                             <span class="badge bg-light-warning f-w-500">10%</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <span class="p-0 d-inline-flex align-items-center"><i class="ti ti-circle-filled text-danger me-2"></i>Overdue</span>
+                            <span class="p-0 d-inline-flex align-items-center">
+                                <i class="ti ti-circle-filled text-danger me-2"></i>Overdue
+                            </span>
                             <span class="badge bg-light-danger f-w-500">5%</span>
                         </li>
                     </ul>
@@ -189,7 +192,6 @@
     </div>
 @endsection
 
-
 @section('scripts')
     <script src="{{ URL::asset('build/js/plugins/apexcharts.min.js') }}"></script>
 
@@ -197,22 +199,42 @@
     <script>
         (function() {
             var options = {
-                chart: { type: 'bar', height: 300, stacked: true, toolbar: { show: false } },
-                plotOptions: { bar: { columnWidth: '50%' } },
-                series: [{
-                    name: 'Cotisations',
-                    data: [18000, 25000, 32000, 28000, 35000, 40000]
-                }, {
-                    name: 'Expenses',
-                    data: [-12000, -15000, -10000, -18000, -22000, -19000]
-                }],
-                xaxis: { categories: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'] },
-                yaxis: { labels: { formatter: (val) => { return `$${val/1000}k` } } },
-                // UPDATED: Replaced hardcoded colors with Bootstrap CSS variables
+                chart: {
+                    type: 'bar',
+                    height: 300,
+                    stacked: true,
+                    toolbar: { show: false }
+                },
+                plotOptions: {
+                    bar: { columnWidth: '50%' }
+                },
+                series: [
+                    {
+                        name: 'Cotisations',
+                        data: [18000, 25000, 32000, 28000, 35000, 40000]
+                    },
+                    {
+                        name: 'Expenses',
+                        data: [-12000, -15000, -10000, -18000, -22000, -19000]
+                    }
+                ],
+                xaxis: {
+                    categories: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar']
+                },
+                yaxis: {
+                    labels: {
+                        formatter: (val) => `${val.toLocaleString()} MAD`
+                    }
+                },
                 colors: ['var(--bs-success)', 'var(--bs-danger)'],
                 dataLabels: { enabled: false },
-                legend: { position: 'top', horizontalAlign: 'right', markers: { radius: 12 } }
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'right',
+                    markers: { radius: 12 }
+                }
             };
+
             var chart = new ApexCharts(document.querySelector("#financial-performance-chart"), options);
             chart.render();
         })();
@@ -222,14 +244,17 @@
     <script>
         (function() {
             var options = {
-                chart: { type: 'donut', height: 250 },
-                series: [85, 10, 5], // Static data: Paid, Pending, Overdue
+                chart: {
+                    type: 'donut',
+                    height: 250
+                },
+                series: [85, 10, 5],
                 labels: ['Paid', 'Pending', 'Overdue'],
-                // UPDATED: Replaced hardcoded colors with Bootstrap CSS variables
                 colors: ['var(--bs-success)', 'var(--bs-warning)', 'var(--bs-danger)'],
                 dataLabels: { enabled: false },
-                legend: { show: false },
+                legend: { show: false }
             };
+
             var chart = new ApexCharts(document.querySelector("#cotisation-status-chart"), options);
             chart.render();
         })();

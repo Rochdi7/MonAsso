@@ -17,7 +17,6 @@
             <a href="{{ route('admin.membres.create') }}" class="btn btn-primary d-inline-flex align-items-center">
                 <i class="ti ti-user-plus me-2"></i>Add New Member
             </a>
-
         </div>
     </div>
 
@@ -47,7 +46,7 @@
                         <div class="avtar avtar-s bg-light-success"><i class="ti ti-wallet f-20"></i></div>
                         <h6 class="ms-3 mb-0">Cotisations (YTD)</h6>
                     </div>
-                    <h4 class="mt-3 mb-0">$42,150 <span class="text-success text-sm fw-normal">/ $50,000 Target</span></h4>
+                    <h4 class="mt-3 mb-0">42,150 MAD <span class="text-success text-sm fw-normal">/ 50,000 MAD Target</span></h4>
                     <div class="progress mt-2" style="height: 7px">
                         <div class="progress-bar bg-success" role="progressbar" style="width: 84.3%" aria-valuenow="84.3"
                             aria-valuemin="0" aria-valuemax="100"></div>
@@ -114,7 +113,6 @@
             <div class="card table-card mt-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Recent Member Activity</h5>
-
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -122,9 +120,8 @@
                             <tbody>
                                 <tr>
                                     <td>
-                                        <div class="d-flex align-items-center"><img
-                                                src="{{ asset('build/images/user/avatar-1.jpg') }}" alt="user"
-                                                class="img-radius wid-40" />
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ asset('build/images/user/avatar-1.jpg') }}" alt="user" class="img-radius wid-40" />
                                             <h6 class="mb-0 ms-3">Jane Doe</h6>
                                         </div>
                                     </td>
@@ -133,9 +130,8 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <div class="d-flex align-items-center"><img
-                                                src="{{ asset('build/images/user/avatar-2.jpg') }}" alt="user"
-                                                class="img-radius wid-40" />
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ asset('build/images/user/avatar-2.jpg') }}" alt="user" class="img-radius wid-40" />
                                             <h6 class="mb-0 ms-3">John Smith</h6>
                                         </div>
                                     </td>
@@ -145,8 +141,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="avtar avtar-s bg-light-secondary"><i class="ti ti-user-shield"></i>
-                                            </div>
+                                            <div class="avtar avtar-s bg-light-secondary"><i class="ti ti-user-shield"></i></div>
                                             <h6 class="mb-0 ms-3">Admin User</h6>
                                         </div>
                                     </td>
@@ -155,9 +150,8 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <div class="d-flex align-items-center"><img
-                                                src="{{ asset('build/images/user/avatar-4.jpg') }}" alt="user"
-                                                class="img-radius wid-40" />
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ asset('build/images/user/avatar-4.jpg') }}" alt="user" class="img-radius wid-40" />
                                             <h6 class="mb-0 ms-3">Michael B.</h6>
                                         </div>
                                     </td>
@@ -190,8 +184,6 @@
                             class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center">
                             <i class="ti ti-cash me-2"></i>New Contribution
                         </a>
-
-
                     </div>
                 </div>
             </div>
@@ -204,18 +196,21 @@
                     <div id="cotisation-status-donut" class="mt-2"></div>
                     <ul class="list-group list-group-flush mt-4">
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <span class="p-0 d-inline-flex align-items-center"><i
-                                    class="ti ti-circle-filled text-success me-2"></i>Paid</span>
+                            <span class="p-0 d-inline-flex align-items-center">
+                                <i class="ti ti-circle-filled text-success me-2"></i>Paid
+                            </span>
                             <span class="badge bg-light-success f-w-500">420</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <span class="p-0 d-inline-flex align-items-center"><i
-                                    class="ti ti-circle-filled text-warning me-2"></i>Pending</span>
+                            <span class="p-0 d-inline-flex align-items-center">
+                                <i class="ti ti-circle-filled text-warning me-2"></i>Pending
+                            </span>
                             <span class="badge bg-light-warning f-w-500">25</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <span class="p-0 d-inline-flex align-items-center"><i
-                                    class="ti ti-circle-filled text-danger me-2"></i>Overdue</span>
+                            <span class="p-0 d-inline-flex align-items-center">
+                                <i class="ti ti-circle-filled text-danger me-2"></i>Overdue
+                            </span>
                             <span class="badge bg-light-danger f-w-500">7</span>
                         </li>
                     </ul>
@@ -259,7 +254,11 @@
             colors: ['var(--bs-primary)'],
             series: cotisationChartData[180].series,
             xaxis: { categories: cotisationChartData[180].categories },
-            yaxis: { labels: { formatter: (val) => `$${val / 1000}k` } }
+            yaxis: {
+                labels: {
+                    formatter: (val) => `${val.toLocaleString()} MAD`
+                }
+            }
         });
 
         cotisationChart.render();
