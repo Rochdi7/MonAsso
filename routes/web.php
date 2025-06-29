@@ -42,10 +42,10 @@ Route::post('/email/verification-notification', function (Request $request) {
 Route::get('/user-guide', function () {
     return view('user-guide');
 })->name('user-guide')->middleware(['auth']);
+Route::get('/', fn() => view('index'))->name('home');
 
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/', fn() => view('index'))->name('home');
 
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
@@ -109,4 +109,3 @@ Route::get('/test-error', function () {
 Route::fallback(function () {
     return response()->view('errors.404', [], 404);
 });
-
