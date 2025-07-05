@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -11,12 +10,25 @@ class DatabaseSeeder extends Seeder
      * Seed the application's database.
      */
     public function run(): void
-{
-    $this->call([
-        RoleAndPermissionSeeder::class,
-        UserAndAssociationSeeder::class,
-    ]);
-}
+    {
+        $this->call([
+            // Core seeders
+            RoleAndPermissionSeeder::class,
+            UserAndAssociationSeeder::class,
 
+            // Dashboard seeders
+            SuperAdminDashboardSeeder::class,
+            AdminDashboardSeeder::class,
+            BoardDashboardSeeder::class,
+            SupervisorDashboardSeeder::class,
+            MemberDashboardSeeder::class,
 
+            // Statistics seeders
+            SuperAdminStatisticsSeeder::class,
+            AdminStatisticsSeeder::class,
+            BoardStatisticsSeeder::class,
+            SupervisorStatisticsSeeder::class,
+            MemberStatisticsSeeder::class,
+        ]);
+    }
 }
