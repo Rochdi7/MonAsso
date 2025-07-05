@@ -8,12 +8,14 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
 use App\Models\Association;
+use Spatie\Permission\PermissionRegistrar;
 
 class RoleAndPermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        // Clear cached permissions
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         $permissions = [
             'manage roles',
@@ -78,34 +80,71 @@ class RoleAndPermissionSeeder extends Seeder
             ]);
         }
 
+        // Assign permissions to each role
         Role::findByName('superadmin')->syncPermissions(Permission::all());
 
         Role::findByName('admin')->syncPermissions([
             'view dashboard',
-            'view events', 'create events', 'edit events', 'delete events', 'participate events',
-            'view cotisations', 'create cotisation', 'edit cotisation', 'delete cotisation', 'approve cotisation',
-            'view meetings', 'create meetings', 'edit meetings', 'delete meetings',
-            'view members', 'create members', 'edit members', 'delete members',
-            'view contributions', 'create contributions', 'edit contributions', 'delete contributions',
-            'view expenses', 'create expenses', 'edit expenses', 'delete expenses',
+            'view events',
+            'create events',
+            'edit events',
+            'delete events',
+            'participate events',
+            'view cotisations',
+            'create cotisation',
+            'edit cotisation',
+            'delete cotisation',
+            'approve cotisation',
+            'view meetings',
+            'create meetings',
+            'edit meetings',
+            'delete meetings',
+            'view members',
+            'create members',
+            'edit members',
+            'delete members',
+            'view contributions',
+            'create contributions',
+            'edit contributions',
+            'delete contributions',
+            'view expenses',
+            'create expenses',
+            'edit expenses',
+            'delete expenses',
             'view statistics',
         ]);
 
         Role::findByName('board')->syncPermissions([
             'view dashboard',
-            'view events', 'create events', 'edit events', 'participate events',
-            'view cotisations', 'create cotisation', 'edit cotisation', 'approve cotisation',
-            'view meetings', 'create meetings', 'edit meetings',
-            'view members', 'create members', 'edit members',
-            'view contributions', 'create contributions', 'edit contributions',
-            'view expenses', 'create expenses', 'edit expenses',
+            'view events',
+            'create events',
+            'edit events',
+            'participate events',
+            'view cotisations',
+            'create cotisation',
+            'edit cotisation',
+            'approve cotisation',
+            'view meetings',
+            'create meetings',
+            'edit meetings',
+            'view members',
+            'create members',
+            'edit members',
+            'view contributions',
+            'create contributions',
+            'edit contributions',
+            'view expenses',
+            'create expenses',
+            'edit expenses',
             'view statistics',
         ]);
 
         Role::findByName('supervisor')->syncPermissions([
             'view dashboard',
-            'view members', 'create members',
-            'view meetings', 'create meetings',
+            'view members',
+            'create members',
+            'view meetings',
+            'create meetings',
             'view statistics',
         ]);
 
@@ -118,6 +157,7 @@ class RoleAndPermissionSeeder extends Seeder
             'view statistics',
         ]);
 
+        // Create a default association if not exists
         $association = Association::firstOrCreate(
             ['id' => 1],
             [
@@ -128,6 +168,7 @@ class RoleAndPermissionSeeder extends Seeder
             ]
         );
 
+        // Create default users for testing
         $users = [
             'superadmin' => 'super@asso.com',
             'admin' => 'admin@asso.com',
@@ -148,7 +189,15 @@ class RoleAndPermissionSeeder extends Seeder
                     'association_id' => $association->id,
                 ]
             );
+
             $user->assignRole($role);
+
+            // Optionally sync permissions directly for testing
+            $roleModel = Role::findByName($role);
+            $user->syncPermissions($roleModel->permissions);
         }
+
+        // Clear cache again to ensure fresh runtime permissions
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
     }
 }
