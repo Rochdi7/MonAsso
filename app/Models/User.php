@@ -15,6 +15,14 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles, InteractsWithMedia;
 
+    /**
+     * Explicitly set the guard name for Spatie Permissions.
+     *
+     * This ensures Spatie always looks for permissions
+     * assigned under the "web" guard.
+     */
+    protected $guard_name = 'web';
+
     protected $fillable = [
         'name',
         'email',
@@ -28,13 +36,6 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'association_id',
     ];
 
-    // Add this to properly handle the media conversions
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('profile_photo')
-            ->singleFile()
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif']);
-    }
     protected $hidden = [
         'password',
         'remember_token',
@@ -46,6 +47,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'password' => 'hashed',
     ];
 
+    // Relations
     public function association()
     {
         return $this->belongsTo(Association::class);
@@ -54,5 +56,13 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function cotisations()
     {
         return $this->hasMany(Cotisation::class);
+    }
+
+    // Register MediaLibrary collections
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('profile_photo')
+            ->singleFile() // only one profile photo per user
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif']);
     }
 }
