@@ -5,37 +5,40 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Association;
-use App\Models\Cotisation;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
     public function index()
     {
+        // All authenticated users with proper middleware can access
         $users = $this->getFilteredUsers();
         return view('admin.membres.index', compact('users'));
     }
 
     public function create()
     {
-        $authUser = auth()->user();
+        $this->authorizeAccess();
+
+        /** @var \App\Models\User $authUser */
+        $authUser = Auth::user();
 
         $associations = $authUser->hasRole('superadmin')
-            ? \App\Models\Association::pluck('name', 'id')
-            : \App\Models\Association::where('id', $authUser->association_id)->pluck('name', 'id');
+            ? Association::pluck('name', 'id')
+            : Association::where('id', $authUser->association_id)->pluck('name', 'id');
 
-        $roles = ['supervisor', 'admin', 'board', 'member'];
+        $roles = $this->getAvailableRoles();
 
         return view('admin.membres.create', compact('associations', 'roles'));
     }
 
-
     public function store(Request $request)
     {
+        $this->authorizeAccess();
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -58,7 +61,6 @@ class UserController extends Controller
 
         $this->handleProfilePhoto($request, $newUser);
 
-        // Validate role before assigning
         $validRoles = $this->getAvailableRoles();
         if (in_array($request->assign_role, $validRoles)) {
             $newUser->assignRole($request->assign_role);
@@ -71,7 +73,7 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        if (!$this->canViewUser($user)) {
+        if (!$this->canAccessUser($user)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -82,8 +84,7 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        // Check if the current user is authorized to edit this user
-        if (!$this->canViewUser($user)) {
+        if (!$this->canAccessUser($user)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -95,8 +96,7 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        // Check if the current user is authorized to update this user
-        if (!$this->canViewUser($user)) {
+        if (!$this->canAccessUser($user)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -123,9 +123,9 @@ class UserController extends Controller
         }
 
         $user->update($data);
+
         $this->handleProfilePhoto($request, $user);
 
-        // Validate and sync the role
         $validRoles = $this->getAvailableRoles();
         $selectedRole = $request->assign_role;
 
@@ -140,12 +140,10 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        // Check if the current user is authorized to delete this user
-        if (!$this->canViewUser($user)) {
+        if (!$this->canAccessUser($user)) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Check if user has 'board' role
         if ($user->hasRole('board')) {
             return redirect()->route('admin.membres.index')
                 ->with('error', 'Cannot delete users with board role');
@@ -162,6 +160,7 @@ class UserController extends Controller
 
     private function getFilteredUsers()
     {
+        /** @var \App\Models\User $auth */
         $auth = Auth::user();
 
         return User::with('association')
@@ -174,6 +173,7 @@ class UserController extends Controller
 
     private function getAssociationsByRole()
     {
+        /** @var \App\Models\User $auth */
         $auth = Auth::user();
 
         return $auth->hasRole('superadmin')
@@ -183,7 +183,9 @@ class UserController extends Controller
 
     private function getAvailableRoles()
     {
+        /** @var \App\Models\User $auth */
         $auth = Auth::user();
+
         $roles = ['member', 'supervisor'];
 
         if ($auth->hasRole('superadmin')) {
@@ -200,20 +202,31 @@ class UserController extends Controller
         if ($request->hasFile('profile_photo')) {
             $user->clearMediaCollection('profile_photo');
             $shortName = substr(Str::uuid(), 0, 8) . '.' . $request->file('profile_photo')->getClientOriginalExtension();
-            $user->addMediaFromRequest('profile_photo')->usingFileName($shortName)->toMediaCollection('profile_photo');
+            $user->addMediaFromRequest('profile_photo')
+                ->usingFileName($shortName)
+                ->toMediaCollection('profile_photo');
         }
     }
 
-    private function canViewUser(User $user)
+    private function canAccessUser(User $user): bool
     {
+        /** @var \App\Models\User $auth */
         $auth = Auth::user();
 
-        // Super admin can view any user
         if ($auth->hasRole('superadmin')) {
             return true;
         }
 
-        // Other users can only view users from their own association
         return $auth->association_id === $user->association_id;
+    }
+
+    private function authorizeAccess()
+    {
+        /** @var \App\Models\User $auth */
+        $auth = Auth::user();
+
+        if (!$auth->hasAnyRole(['superadmin', 'admin', 'board', 'supervisor'])) {
+            abort(403, 'Unauthorized action.');
+        }
     }
 }
