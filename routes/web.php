@@ -79,7 +79,7 @@ Route::middleware(['auth'])->group(function () {
         });
 
         // Admin + Superadmin + Board + Supervisor + Member routes
-        Route::middleware('role:admin|superadmin|board|supervisor|member')->group(function () {
+        Route::middleware('role:admin|superadmin|board|supervisor')->group(function () {
             // Explicit model binding for membres resource
             Route::resource('membres', UserController::class, [
                 'parameters' => [

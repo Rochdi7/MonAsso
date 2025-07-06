@@ -32,8 +32,11 @@ class ProfileController extends Controller
         $user->bio = $request->bio;
 
         if ($request->hasFile('profile_photo')) {
+            // Remove existing profile photo before adding new one
             $user->clearMediaCollection('profile_photo');
-            $user->addMedia($request->file('profile_photo'))->toMediaCollection('profile_photo');
+
+            // Add new profile photo from uploaded file
+            $user->addMediaFromRequest('profile_photo')->toMediaCollection('profile_photo');
         }
 
         $user->save();
@@ -54,5 +57,4 @@ class ProfileController extends Controller
 
         return redirect()->route('profile.index')->with('success', 'Password updated successfully.');
     }
-    
 }
