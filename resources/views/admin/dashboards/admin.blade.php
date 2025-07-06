@@ -11,7 +11,10 @@
 @section('content')
     <div class="row align-items-center mb-3">
         <div class="col-md-8">
-            <p class="text-muted mb-0">Manage your members, finances, and engagement from here.</p>
+            <p class="text-muted mb-0">
+                Manage your members, finances, and engagement for
+                <strong>{{ $association->name }}</strong>.
+            </p>
         </div>
         <div class="col-md-4 text-md-end mt-3 mt-md-0">
             <a href="{{ route('admin.membres.create') }}" class="btn btn-primary d-inline-flex align-items-center">
@@ -21,6 +24,7 @@
     </div>
 
     <div class="row">
+        <!-- Member Statistics -->
         <div class="col-md-6 col-lg-3">
             <div class="card">
                 <div class="card-body">
@@ -29,16 +33,17 @@
                         <h6 class="ms-3 mb-0">Member Statistics</h6>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
-                        <h4 class="mb-0">452</h4>
-                        <span class="badge bg-light-primary">Active: 418</span>
+                        <h4 class="mb-0">{{ $users['total'] }}</h4>
+                        <span class="badge bg-light-primary">Active: {{ $users['active'] }}</span>
                     </div>
                     <div class="text-end mt-1">
-                        <span class="badge bg-light-danger">Inactive: 34</span>
+                        <span class="badge bg-light-danger">Inactive: {{ $users['inactive'] }}</span>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Cotisations -->
         <div class="col-md-6 col-lg-3">
             <div class="card">
                 <div class="card-body">
@@ -46,15 +51,26 @@
                         <div class="avtar avtar-s bg-light-success"><i class="ti ti-wallet f-20"></i></div>
                         <h6 class="ms-3 mb-0">Cotisations (YTD)</h6>
                     </div>
-                    <h4 class="mt-3 mb-0">42,150 MAD <span class="text-success text-sm fw-normal">/ 50,000 MAD Target</span></h4>
+                    <h4 class="mt-3 mb-0">
+                        {{ number_format($cotisations['total'], 0, '.', ' ') }} MAD
+                        <span class="text-success text-sm fw-normal">/ 50,000 MAD Target</span>
+                    </h4>
+                    @php
+                        $target = 50000;
+                        $progress = $cotisations['total'] > 0
+                            ? min(round(($cotisations['total'] / $target) * 100, 1), 100)
+                            : 0;
+                    @endphp
                     <div class="progress mt-2" style="height: 7px">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 84.3%" aria-valuenow="84.3"
-                            aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-success" role="progressbar"
+                             style="width: {{ $progress }}%"
+                             aria-valuenow="{{ $progress }}" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Meetings -->
         <div class="col-md-6 col-lg-3">
             <div class="card">
                 <div class="card-body">
@@ -63,17 +79,24 @@
                         <h6 class="ms-3 mb-0">Upcoming Meetings</h6>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
-                        <h4 class="mb-0">3</h4>
+                        <h4 class="mb-0">{{ $meetings['upcoming'] }}</h4>
                         <a href="{{ route('admin.meetings.create') }}"
-                            class="btn btn-sm btn-info d-inline-flex align-items-center">
+                           class="btn btn-sm btn-info d-inline-flex align-items-center">
                             <i class="ti ti-calendar-plus me-1"></i> Schedule
                         </a>
                     </div>
-                    <p class="text-sm text-muted mt-1 mb-0">Next: "Q2 Review" in 5 days</p>
+                    <p class="text-sm text-muted mt-1 mb-0">
+                        @if ($meetings['upcoming'] > 0)
+                            Next meeting scheduled soon
+                        @else
+                            No upcoming meetings
+                        @endif
+                    </p>
                 </div>
             </div>
         </div>
 
+        <!-- Events -->
         <div class="col-md-6 col-lg-3">
             <div class="card">
                 <div class="card-body">
@@ -82,20 +105,24 @@
                         <h6 class="ms-3 mb-0">Active Events</h6>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
-                        <h4 class="mb-0">2</h4>
+                        <h4 class="mb-0">{{ $events['active'] }}</h4>
                         <a href="{{ route('admin.events.create') }}"
-                            class="btn btn-sm btn-warning d-inline-flex align-items-center">
+                           class="btn btn-sm btn-warning d-inline-flex align-items-center">
                             <i class="ti ti-ticket-plus me-1"></i> Create
                         </a>
                     </div>
-                    <p class="text-sm text-muted mt-1 mb-0">Total registrations: 124</p>
+                    <p class="text-sm text-muted mt-1 mb-0">
+                        Total registrations not tracked
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Charts and Recent Activity -->
     <div class="row">
         <div class="col-lg-8">
+            <!-- Cashflow Chart -->
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Monthly Cotisation Collection</h5>
@@ -110,6 +137,7 @@
                 </div>
             </div>
 
+            <!-- Recent Activity -->
             <div class="card table-card mt-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Recent Member Activity</h5>
@@ -118,46 +146,31 @@
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="{{ asset('build/images/user/avatar-1.jpg') }}" alt="user" class="img-radius wid-40" />
-                                            <h6 class="mb-0 ms-3">Jane Doe</h6>
-                                        </div>
-                                    </td>
-                                    <td>Paid their <span class="fw-bold">Annual Dues 2024</span></td>
-                                    <td class="text-end text-muted"><small>5 minutes ago</small></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="{{ asset('build/images/user/avatar-2.jpg') }}" alt="user" class="img-radius wid-40" />
-                                            <h6 class="mb-0 ms-3">John Smith</h6>
-                                        </div>
-                                    </td>
-                                    <td>Registered as a new member</td>
-                                    <td class="text-end text-muted"><small>2 hours ago</small></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avtar avtar-s bg-light-secondary"><i class="ti ti-user-shield"></i></div>
-                                            <h6 class="mb-0 ms-3">Admin User</h6>
-                                        </div>
-                                    </td>
-                                    <td>Created event: <span class="fw-bold">"Summer Mixer"</span></td>
-                                    <td class="text-end text-muted"><small>1 day ago</small></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="{{ asset('build/images/user/avatar-4.jpg') }}" alt="user" class="img-radius wid-40" />
-                                            <h6 class="mb-0 ms-3">Michael B.</h6>
-                                        </div>
-                                    </td>
-                                    <td>Attended "Q1 Financial Review" meeting</td>
-                                    <td class="text-end text-muted"><small>3 days ago</small></td>
-                                </tr>
+                                @forelse($recentActivities as $activity)
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avtar avtar-s bg-light-primary">
+                                                    <i class="ti ti-user"></i>
+                                                </div>
+                                                <h6 class="mb-0 ms-3">{{ $activity->member_name }}</h6>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {{ $activity->action }}
+                                            @if($activity->details)
+                                                : <span class="fw-bold">{{ $activity->details }}</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-end text-muted">
+                                            <small>{{ \Carbon\Carbon::parse($activity->activity_time)->diffForHumans() }}</small>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center">No recent activities found.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -166,6 +179,7 @@
         </div>
 
         <div class="col-lg-4">
+            <!-- Quick Actions -->
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">Quick Actions</h5>
@@ -173,21 +187,22 @@
                 <div class="card-body">
                     <div class="d-grid gap-2">
                         <a href="{{ route('admin.events.create') }}"
-                            class="btn btn-outline-primary d-inline-flex align-items-center justify-content-center">
+                           class="btn btn-outline-primary d-inline-flex align-items-center justify-content-center">
                             <i class="ti ti-calendar-plus me-2"></i>Create New Event
                         </a>
                         <a href="{{ route('admin.meetings.create') }}"
-                            class="btn btn-outline-info d-inline-flex align-items-center justify-content-center">
+                           class="btn btn-outline-info d-inline-flex align-items-center justify-content-center">
                             <i class="ti ti-calendar-plus me-2"></i>Schedule a Meeting
                         </a>
                         <a href="{{ route('admin.contributions.create') }}"
-                            class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center">
+                           class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center">
                             <i class="ti ti-cash me-2"></i>New Contribution
                         </a>
                     </div>
                 </div>
             </div>
 
+            <!-- Cotisation Status Donut -->
             <div class="card mt-4">
                 <div class="card-header">
                     <h5 class="mb-0">Cotisation Status</h5>
@@ -199,19 +214,19 @@
                             <span class="p-0 d-inline-flex align-items-center">
                                 <i class="ti ti-circle-filled text-success me-2"></i>Paid
                             </span>
-                            <span class="badge bg-light-success f-w-500">420</span>
+                            <span class="badge bg-light-success f-w-500">{{ $cotisationsStatus['paid'] }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                             <span class="p-0 d-inline-flex align-items-center">
                                 <i class="ti ti-circle-filled text-warning me-2"></i>Pending
                             </span>
-                            <span class="badge bg-light-warning f-w-500">25</span>
+                            <span class="badge bg-light-warning f-w-500">{{ $cotisationsStatus['pending'] }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                             <span class="p-0 d-inline-flex align-items-center">
                                 <i class="ti ti-circle-filled text-danger me-2"></i>Overdue
                             </span>
-                            <span class="badge bg-light-danger f-w-500">7</span>
+                            <span class="badge bg-light-danger f-w-500">{{ $cotisationsStatus['overdue'] }}</span>
                         </li>
                     </ul>
                 </div>
@@ -225,27 +240,18 @@
     <script>
         new ApexCharts(document.querySelector("#cotisation-status-donut"), {
             chart: { type: 'donut', height: 200 },
-            series: [420, 25, 7],
+            series: [
+                {{ $cotisationsStatus['paid'] }},
+                {{ $cotisationsStatus['pending'] }},
+                {{ $cotisationsStatus['overdue'] }}
+            ],
             labels: ['Paid', 'Pending', 'Overdue'],
             colors: ['var(--bs-success)', 'var(--bs-warning)', 'var(--bs-danger)'],
             dataLabels: { enabled: false },
             legend: { show: false }
         }).render();
 
-        const cotisationChartData = {
-            30: {
-                categories: ['Day 1', 'Day 5', 'Day 10', 'Day 15', 'Day 20', 'Day 25'],
-                series: [{ name: 'Cotisations', data: [3200, 4500, 3900, 5000, 4700, 5200] }]
-            },
-            180: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                series: [{ name: 'Cotisations', data: [5500, 6200, 7800, 9500, 8100, 11000] }]
-            },
-            365: {
-                categories: ['Q1', 'Q2', 'Q3', 'Q4'],
-                series: [{ name: 'Cotisations', data: [18000, 21000, 25000, 30000] }]
-            }
-        };
+        const cotisationChartData = @json($cashflowData);
 
         const cotisationChart = new ApexCharts(document.querySelector("#association-cotisations-chart"), {
             chart: { type: 'bar', height: 300, toolbar: { show: false } },
@@ -256,7 +262,7 @@
             xaxis: { categories: cotisationChartData[180].categories },
             yaxis: {
                 labels: {
-                    formatter: (val) => `${val.toLocaleString()} MAD`
+                    formatter: (val) => `${Number(val).toLocaleString()} MAD`
                 }
             }
         });

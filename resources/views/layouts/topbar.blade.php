@@ -15,21 +15,7 @@
                         <i class="ti ti-menu-2"></i>
                     </a>
                 </li>
-                <li class="dropdown pc-h-item d-inline-flex d-md-none">
-                    <a class="pc-head-link dropdown-toggle arrow-none m-0" data-bs-toggle="dropdown" href="#"
-                        role="button" aria-haspopup="false" aria-expanded="false">
-                        <i class="ph-duotone ph-magnifying-glass"></i>
-                    </a>
-                    <div class="dropdown-menu pc-h-dropdown drp-search">
-                        <form class="px-3">
-                            <div class="mb-0 d-flex align-items-center">
-                                <input type="search" class="form-control border-0 shadow-none"
-                                    placeholder="Search..." />
-                                <button class="btn btn-light-secondary btn-search">Search</button>
-                            </div>
-                        </form>
-                    </div>
-                </li>
+
 
             </ul>
         </div>
@@ -64,7 +50,8 @@
                         role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
                         @php
                             $user = Auth::user();
-                            $avatar = $user->getFirstMediaUrl('profile_photo') ?: asset('assets/images/user/avatar-1.jpg');
+                            $avatar =
+                                $user->getFirstMediaUrl('profile_photo') ?: asset('assets/images/user/avatar-1.jpg');
                         @endphp
 
                         <img src="{{ $avatar }}" alt="{{ $user->name }}" class="user-avtar avtar avtar-s" />
@@ -83,7 +70,9 @@
                                             <div class="flex-shrink-0">
                                                 @php
                                                     $user = Auth::user();
-                                                    $avatar = $user->getFirstMediaUrl('profile_photo') ?: asset('assets/images/user/avatar-1.jpg');
+                                                    $avatar =
+                                                        $user->getFirstMediaUrl('profile_photo') ?:
+                                                        asset('assets/images/user/avatar-1.jpg');
                                                 @endphp
                                                 <img src="{{ $avatar }}" alt="{{ $user->name }}"
                                                     class="user-avtar avtar avtar-s" />
@@ -93,7 +82,7 @@
                                             @endphp
                                             <div class="flex-grow-1 mx-3">
                                                 <h5 class="mb-0">{{ $user->name }}</h5>
-                                                @if($user->email)
+                                                @if ($user->email)
                                                     <a class="link-primary"
                                                         href="mailto:{{ $user->email }}">{{ $user->email }}</a>
                                                 @else
@@ -111,20 +100,23 @@
                                             </span>
                                         </a>
 
-                                       <a href="http://127.0.0.1:8000/#pricing" class="dropdown-item">
-    <span class="d-flex align-items-center">
-        <i class="ph-duotone ph-star text-warning"></i>
-        <span>Upgrade account</span>
-        <span class="badge bg-light-success border border-success ms-2">NEW</span>
-    </span>
-</a>
+                                        <a href="http://127.0.0.1:8000/#pricing" class="dropdown-item">
+                                            <span class="d-flex align-items-center">
+                                                <i class="ph-duotone ph-star text-warning"></i>
+                                                <span>Upgrade account</span>
+                                                <span
+                                                    class="badge bg-light-success border border-success ms-2">NEW</span>
+                                            </span>
+                                        </a>
 
 
-                                                                        </li>
+                                    </li>
 
                                     <li class="list-group-item">
-                                        <a href="{{ route('logout') }}" onclick="event.preventDefault();
-                              document.getElementById('logout-form').submit();" class="dropdown-item">
+                                        <a href="{{ route('logout') }}"
+                                            onclick="event.preventDefault();
+                              document.getElementById('logout-form').submit();"
+                                            class="dropdown-item">
                                             <span class="d-flex align-items-center">
                                                 <i class="ph-duotone ph-power"></i>
                                                 <span>Logout</span>

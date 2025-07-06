@@ -9,6 +9,7 @@
 
 @section('content')
 <div class="row g-3">
+    <!-- Member Growth -->
     <div class="col-md-6 col-xl-8">
         <div class="card h-100">
             <div class="card-header d-flex align-items-center justify-content-between">
@@ -24,8 +25,12 @@
             </div>
             <div class="card-body">
                 <div class="d-flex align-items-center mb-1">
-                    <h3 class="mb-0">210 <small class="text-muted">/ total members</small></h3>
-                    <span class="badge bg-light-success ms-2">+28 since last year</span>
+                    <h3 class="mb-0">
+                        {{ $totalMembers }} <small class="text-muted">/ total members</small>
+                    </h3>
+                    <span class="badge bg-light-success ms-2">
+                        +{{ $memberGrowthThisYear ?? 0 }} since last year
+                    </span>
                 </div>
                 <p>New member registrations for your association over time.</p>
                 <div id="customer-rate-graph"></div>
@@ -33,6 +38,7 @@
         </div>
     </div>
 
+    <!-- Cotisation Status -->
     <div class="col-md-6 col-xl-4">
         <div class="card h-100">
             <div class="card-header">
@@ -49,24 +55,25 @@
                     <p class="mb-0">
                         <i class="ph-duotone ph-circle text-success f-12"></i> Paid
                     </p>
-                    <h5 class="mb-0">11,750 MAD</h5>
+                    <h5 class="mb-0">{{ number_format($cotisationsPaidMAD, 2, '.', ' ') }} MAD</h5>
                 </div>
                 <div class="bg-body mt-2 py-2 px-3 rounded d-flex justify-content-between">
                     <p class="mb-0">
-                        <i class="ph-duotone ph-circle text-warning f-12"></i> Unpaid
+                        <i class="ph-duotone ph-circle text-warning f-12"></i> Pending
                     </p>
-                    <h5 class="mb-0">1,200 MAD</h5>
+                    <h5 class="mb-0">{{ number_format($cotisationsPendingMAD, 2, '.', ' ') }} MAD</h5>
                 </div>
                 <div class="bg-body mt-2 py-2 px-3 rounded d-flex justify-content-between">
                     <p class="mb-0">
-                        <i class="ph-duotone ph-circle text-danger f-12"></i> Overdue
+                        <i class="ph-duotone ph-circle text-danger f-12"></i> Overdue / Rejected
                     </p>
-                    <h5 class="mb-0">450 MAD</h5>
+                    <h5 class="mb-0">{{ number_format($cotisationsOverdueRejectedMAD, 2, '.', ' ') }} MAD</h5>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Monthly Cotisations -->
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
@@ -77,12 +84,15 @@
             </div>
             <div class="card-body">
                 <p>Total paid cotisations (last 6 months)</p>
-                <h4 class="fw-semibold">8,450 MAD</h4>
+                <h4 class="fw-semibold">
+                    {{ number_format(array_sum($cashflowValues->toArray()), 2, '.', ' ') }} MAD
+                </h4>
                 <div id="monthly-report-graph"></div>
             </div>
         </div>
     </div>
 
+    <!-- Monthly Expenses -->
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
@@ -93,12 +103,15 @@
             </div>
             <div class="card-body">
                 <p>Recorded expenses (last 6 months)</p>
-                <h4 class="fw-semibold">2,180.50 MAD</h4>
+                <h4 class="fw-semibold">
+                    {{ number_format($totalOutflowMAD, 2, '.', ' ') }} MAD
+                </h4>
                 <div id="yearly-summary-chart"></div>
             </div>
         </div>
     </div>
 
+    <!-- Contributions by Type -->
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -118,21 +131,25 @@
                             <i class="ph-duotone ph-circle text-primary f-12"></i> 
                             Subventions
                         </p>
-                        <h5 class="mb-0">5,000 MAD</h5>
+                        <h5 class="mb-0">
+                            {{ number_format($totalInflowMAD, 2, '.', ' ') }} MAD
+                        </h5>
                     </div>
                     <div class="col-md-4">
                         <p class="mb-0">
                             <i class="ph-duotone ph-circle text-info f-12"></i> 
                             Donations
                         </p>
-                        <h5 class="mb-0">1,850 MAD</h5>
+                        <h5 class="mb-0">-</h5>
                     </div>
                     <div class="col-md-4">
                         <p class="mb-0">
                             <i class="ph-duotone ph-circle text-warning f-12"></i> 
                             Cotisations Paid
                         </p>
-                        <h5 class="mb-0">12,000 MAD</h5>
+                        <h5 class="mb-0">
+                            {{ number_format($cotisationsPaidMAD, 2, '.', ' ') }} MAD
+                        </h5>
                     </div>
                 </div>
             </div>
@@ -145,20 +162,7 @@
 <script src="{{ URL::asset('build/js/plugins/apexcharts.min.js') }}"></script>
 
 <script>
-    const memberGrowthData = {
-        6: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            series: [{ name: 'Registrations', data: [20, 30, 25, 35, 28, 40] }]
-        },
-        12: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            series: [{ name: 'Registrations', data: [20, 30, 25, 35, 28, 40, 38, 42, 39, 45, 41, 50] }]
-        },
-        all: {
-            categories: ['2021', '2022', '2023', '2024', '2025'],
-            series: [{ name: 'Registrations', data: [180, 220, 245, 310, 385] }]
-        }
-    };
+    const memberGrowthData = @json($memberGrowthChartData);
 
     const memberChart = new ApexCharts(document.querySelector("#customer-rate-graph"), {
         chart: {
@@ -171,7 +175,10 @@
         xaxis: {
             categories: memberGrowthData[12].categories
         },
-        series: memberGrowthData[12].series,
+        series: [{
+            name: 'Registrations',
+            data: memberGrowthData[12].data
+        }],
         colors: ['#2563eb']
     });
 
@@ -181,13 +188,42 @@
         const selected = this.value === 'all' ? 'all' : parseInt(this.value);
         memberChart.updateOptions({
             xaxis: { categories: memberGrowthData[selected].categories },
-            series: memberGrowthData[selected].series
+            series: [{
+                name: 'Registrations',
+                data: memberGrowthData[selected].data
+            }]
         });
     });
 </script>
 
+<script>
+    // Monthly cotisation graph
+    const cashflowData = {
+        categories: @json($cashflowLabels),
+        series: [{
+            name: 'Cotisations',
+            data: @json($cashflowValues)
+        }]
+    };
+
+    const cotisationChart = new ApexCharts(document.querySelector("#monthly-report-graph"), {
+        chart: { type: 'bar', height: 250, toolbar: { show: false } },
+        plotOptions: { bar: { borderRadius: 4 } },
+        dataLabels: { enabled: false },
+        colors: ['#2563eb'],
+        series: cashflowData.series,
+        xaxis: { categories: cashflowData.categories },
+        yaxis: {
+            labels: {
+                formatter: (val) => `${Number(val).toLocaleString()} MAD`
+            }
+        }
+    });
+
+    cotisationChart.render();
+</script>
+
 <script src="{{ URL::asset('build/js/widgets/total-earning-chart-1.js') }}"></script>
-<script src="{{ URL::asset('build/js/widgets/monthly-report-graph.js') }}"></script>
 <script src="{{ URL::asset('build/js/widgets/yearly-summary-chart.js') }}"></script>
 <script src="{{ URL::asset('build/js/widgets/overview-bar-chart.js') }}"></script>
 @endsection

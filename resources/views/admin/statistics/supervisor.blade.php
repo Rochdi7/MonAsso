@@ -21,8 +21,8 @@
             </div>
             <div class="card-body">
                 <div class="d-flex align-items-center mb-1">
-                    <h3 class="mb-0">145 <small class="text-muted">/ new members</small></h3>
-                    <span class="badge bg-light-success ms-2">+15% vs. previous period</span>
+                    <h3 class="mb-0">{{ $totalNewMembers }} <small class="text-muted">/ new members</small></h3>
+                    <span class="badge bg-light-success ms-2">+{{ $growthPercent }}% vs. previous period</span>
                 </div>
                 <p>Total new members added over the selected period.</p>
                 <div id="customer-rate-graph"></div>
@@ -49,11 +49,11 @@
                 <div class="row text-center">
                     <div class="col-6">
                         <p class="text-muted mb-1"><i class="ph-duotone ph-circle text-primary f-12"></i> Created</p>
-                        <h4 class="mb-0">82</h4>
+                        <h4 class="mb-0">{{ $createdMeetings }}</h4>
                     </div>
                     <div class="col-6">
                         <p class="text-muted mb-1"><i class="ph-duotone ph-circle text-success f-12"></i> Completed</p>
-                        <h4 class="mb-0">71</h4>
+                        <h4 class="mb-0">{{ $completedMeetings }}</h4>
                     </div>
                 </div>
                 <div id="yearly-summary-chart" class="mt-3"></div>
@@ -66,18 +66,14 @@
                 <i class="ph-duotone ph-info f-20 ms-1" data-bs-toggle="tooltip" data-bs-title="Count of all coordinated events per month."></i>
             </div>
             <div class="card-body">
-                <div class="bg-body py-2 px-3 rounded d-flex justify-content-between mb-2">
-                    <p class="mb-0"><i class="ph-duotone ph-circle text-primary f-12"></i> Workshops</p>
-                    <h5 class="mb-0">12</h5>
-                </div>
-                <div class="bg-body py-2 px-3 rounded d-flex justify-content-between mb-2">
-                    <p class="mb-0"><i class="ph-duotone ph-circle text-success f-12"></i> Seminars</p>
-                    <h5 class="mb-0">8</h5>
-                </div>
-                <div class="bg-body py-2 px-3 rounded d-flex justify-content-between mb-2">
-                    <p class="mb-0"><i class="ph-duotone ph-circle text-warning f-12"></i> Community Outreach</p>
-                    <h5 class="mb-0">5</h5>
-                </div>
+                @foreach ($eventTypes as $type => $count)
+                    <div class="bg-body py-2 px-3 rounded d-flex justify-content-between mb-2">
+                        <p class="mb-0">
+                            <i class="ph-duotone ph-circle text-{{ $eventTypeColors[$type] }} f-12"></i> {{ $type }}
+                        </p>
+                        <h5 class="mb-0">{{ $count }}</h5>
+                    </div>
+                @endforeach
                 <div id="overview-bar-chart" class="mt-3"></div>
             </div>
         </div>
@@ -90,7 +86,7 @@
             </div>
             <div class="card-body">
                 <p class="mb-0">Total files uploaded by month</p>
-                <h4>482 files</h4>
+                <h4>{{ $documentsUploaded }} files</h4>
                 <div id="monthly-report-graph"></div>
             </div>
         </div>
@@ -102,22 +98,9 @@
 <script src="{{ URL::asset('build/js/plugins/apexcharts.min.js') }}"></script>
 
 <script>
-    const memberGrowthData = {
-        3: {
-            categories: ['Apr', 'May', 'Jun'],
-            series: [{ name: 'New Members', data: [25, 40, 30] }]
-        },
-        6: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            series: [{ name: 'New Members', data: [20, 35, 28, 25, 40, 30] }]
-        },
-        12: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            series: [{ name: 'New Members', data: [20, 35, 28, 25, 40, 30, 22, 18, 26, 30, 27, 24] }]
-        }
-    };
+    const memberGrowthData = @json($memberGrowthChartData);
 
-    const growthChart = new ApexCharts(document.querySelector("#customer-rate-graph"), {
+    const chart = new ApexCharts(document.querySelector("#customer-rate-graph"), {
         chart: {
             type: 'area',
             height: 300,
@@ -126,17 +109,17 @@
         dataLabels: { enabled: false },
         stroke: { curve: 'smooth' },
         xaxis: { categories: memberGrowthData[6].categories },
-        series: memberGrowthData[6].series,
+        series: [{ name: 'New Members', data: memberGrowthData[6].data }],
         colors: ['#0d6efd']
     });
 
-    growthChart.render();
+    chart.render();
 
     document.getElementById("member-growth-range").addEventListener("change", function () {
         const val = parseInt(this.value);
-        growthChart.updateOptions({
+        chart.updateOptions({
             xaxis: { categories: memberGrowthData[val].categories },
-            series: memberGrowthData[val].series
+            series: [{ name: 'New Members', data: memberGrowthData[val].data }]
         });
     });
 </script>

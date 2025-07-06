@@ -9,19 +9,24 @@
 
 @section('content')
 
+    {{-- Notifications --}}
     <div class="alert alert-warning" role="alert">
         <i class="ti ti-alert-triangle me-2"></i>
         Your email is not verified yet. Please check your inbox for a verification link.
     </div>
+
+    @if ($overdueTotal > 0 || $pendingTotal > 0)
     <div class="alert alert-danger" role="alert">
         <i class="ti ti-file-invoice me-2"></i>
-        You have <strong>2</strong> unpaid cotisation(s) due.
+        You have unpaid cotisation(s) due.
         <a href="{{ route('membre.cotisations.index') }}" class="alert-link">Please pay now</a> to remain an active member.
     </div>
+    @endif
 
     <div class="row">
         <div class="col-lg-8">
 
+            {{-- Profile --}}
             <div class="card mb-4">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -29,10 +34,9 @@
                             <img src="{{ asset('build/images/user/avatar-1.jpg') }}" alt="user image" class="img-radius wid-60" />
                         </div>
                         <div class="flex-grow-1 ms-3">
-    <h4 class="mb-1">Welcome, {{ auth()->user()->name }}!</h4>
-    <p class="mb-0 text-muted">Here's what's happening in your association.</p>
-</div>
-
+                            <h4 class="mb-1">Welcome, {{ auth()->user()->name }}!</h4>
+                            <p class="mb-0 text-muted">Here's what's happening in your association.</p>
+                        </div>
                         <div class="flex-shrink-0">
                             <a href="{{ route('profile.index') }}" class="btn btn-primary d-inline-flex align-items-center">
                                 <i class="ti ti-user me-2"></i>My Profile
@@ -42,6 +46,7 @@
                 </div>
             </div>
 
+            {{-- Cotisation History --}}
             <div class="card table-card mb-4">
                 <div class="card-header"><h5>My Cotisation History</h5></div>
                 <div class="card-body">
@@ -57,45 +62,48 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Annual Dues 2024</td>
-                                    <td>1,500.00 MAD</td>
-                                    <td>Feb 15, 2024</td>
-                                    <td><span class="badge bg-light-danger">Overdue</span></td>
-                                    <td class="text-end">
-                                        <a href="{{ route('membre.cotisations.index') }}" class="btn btn-sm btn-success d-inline-flex align-items-center">
-                                            <i class="ti ti-wallet me-1"></i>Pay Now
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Q1 Contribution 2024</td>
-                                    <td>250.00 MAD</td>
-                                    <td>Mar 31, 2024</td>
-                                    <td><span class="badge bg-light-warning">Pending</span></td>
-                                    <td class="text-end">
-                                        <a href="{{ route('membre.cotisations.index') }}" class="btn btn-sm btn-success d-inline-flex align-items-center">
-                                            <i class="ti ti-wallet me-1"></i>Pay Now
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Annual Dues 2023</td>
-                                    <td>1,250.00 MAD</td>
-                                    <td>Feb 15, 2023</td>
-                                    <td><span class="badge bg-light-success">Paid</span></td>
-                                    <td class="text-end">
-                                        <a href="{{ route('membre.cotisations.index') }}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center">
-                                            <i class="ti ti-receipt me-1"></i>View Receipt
-                                        </a>
-                                    </td>
-                                </tr>
+                                @forelse($myCotisationsList as $cotisation)
+                                    <tr>
+                                        <td>{{ $cotisation->cycle }}</td>
+                                        <td>{{ number_format($cotisation->amount, 2) }} MAD</td>
+                                        <td>{{ \Carbon\Carbon::parse($cotisation->due_date)->format('M d, Y') }}</td>
+                                        <td>
+                                            @php
+                                                $badge = match ($cotisation->status) {
+                                                    'paid' => 'bg-light-success',
+                                                    'pending' => 'bg-light-warning',
+                                                    'overdue' => 'bg-light-danger',
+                                                    default => 'bg-light-secondary',
+                                                };
+                                            @endphp
+                                            <span class="badge {{ $badge }}">
+                                                {{ ucfirst($cotisation->status) }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end">
+                                            @if ($cotisation->status !== 'paid')
+                                                <a href="{{ route('membre.cotisations.index') }}" class="btn btn-sm btn-success d-inline-flex align-items-center">
+                                                    <i class="ti ti-wallet me-1"></i>Pay Now
+                                                </a>
+                                            @else
+                                                <a href="{{ route('membre.cotisations.index') }}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center">
+                                                    <i class="ti ti-receipt me-1"></i>View Receipt
+                                                </a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">No cotisation history available.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
+            {{-- Activity Log --}}
             <div class="card table-card">
                 <div class="card-header"><h5>My Recent Activity</h5></div>
                 <div class="card-body">
@@ -109,21 +117,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Apr 10, 2024</td>
-                                    <td><span class="badge bg-light-info">Joined Event</span></td>
-                                    <td class="text-end">Annual Charity Gala</td>
-                                </tr>
-                                <tr>
-                                    <td>Mar 05, 2024</td>
-                                    <td><span class="badge bg-light-primary">Attended Meeting</span></td>
-                                    <td class="text-end">Quarterly Review</td>
-                                </tr>
-                                <tr>
-                                    <td>Feb 14, 2023</td>
-                                    <td><span class="badge bg-light-success">Paid Cotisation</span></td>
-                                    <td class="text-end">Annual Dues 2023</td>
-                                </tr>
+                                @forelse($recentActivities as $activity)
+                                    <tr>
+                                        <td>{{ \Carbon\Carbon::parse($activity->date)->format('M d, Y') }}</td>
+                                        <td>
+                                            <span class="badge bg-light-primary">{{ $activity->type }}</span>
+                                        </td>
+                                        <td class="text-end">{{ $activity->details }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">No recent activities.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -132,8 +138,10 @@
 
         </div>
 
+        {{-- Sidebar --}}
         <div class="col-lg-4">
 
+            {{-- Membership Status --}}
             <div class="card mb-4 bg-light-success text-center">
                 <div class="card-body">
                     <h5 class="mb-2">Membership Status</h5>
@@ -142,6 +150,7 @@
                 </div>
             </div>
 
+            {{-- My Documents --}}
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>My Documents</h5>
@@ -166,6 +175,7 @@
                 </div>
             </div>
 
+            {{-- Upcoming Meetings --}}
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Upcoming Meetings</h5>
@@ -189,6 +199,7 @@
                 </div>
             </div>
 
+            {{-- Upcoming Events --}}
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Upcoming Events</h5>
@@ -226,7 +237,6 @@
 
         </div>
     </div>
-
 @endsection
 
 @section('scripts')

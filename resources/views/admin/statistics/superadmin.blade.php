@@ -21,8 +21,13 @@
             </div>
             <div class="card-body">
                 <div class="d-flex align-items-center mb-1">
-                    <h3 class="mb-0">8,452 <small class="text-muted">/ total active members</small></h3>
-                    <span class="badge bg-light-success ms-2">+1,240 this year</span>
+                    <h3 class="mb-0">
+                        {{ number_format($totalActiveMembers) }}
+                        <small class="text-muted">/ total active members</small>
+                    </h3>
+                    <span class="badge bg-light-success ms-2">
+                        +{{ number_format($memberGrowthThisYear) }} this year
+                    </span>
                 </div>
                 <p>New member registrations across all associations.</p>
                 <div id="customer-rate-graph"></div>
@@ -39,15 +44,15 @@
                 </div>
                 <div class="bg-body mt-4 py-2 px-3 rounded d-flex align-items-center justify-content-between">
                     <p class="mb-0"><i class="ph-duotone ph-circle text-success f-12"></i> Paid</p>
-                    <h5 class="mb-0 ms-1">89,450 MAD</h5>
+                    <h5 class="mb-0 ms-1">{{ number_format($cotisationsPaidMAD, 0) }} MAD</h5>
                 </div>
                 <div class="bg-body mt-1 py-2 px-3 rounded d-flex align-items-center justify-content-between">
                     <p class="mb-0"><i class="ph-duotone ph-circle text-warning f-12"></i> Pending</p>
-                    <h5 class="mb-0 ms-1">12,300 MAD</h5>
+                    <h5 class="mb-0 ms-1">{{ number_format($cotisationsPendingMAD, 0) }} MAD</h5>
                 </div>
                 <div class="bg-body mt-1 py-2 px-3 rounded d-flex align-items-center justify-content-between">
                     <p class="mb-0"><i class="ph-duotone ph-circle text-danger f-12"></i> Overdue / Rejected</p>
-                    <h5 class="mb-0 ms-1">5,150 MAD</h5>
+                    <h5 class="mb-0 ms-1">{{ number_format($cotisationsOverdueRejectedMAD, 0) }} MAD</h5>
                 </div>
             </div>
         </div>
@@ -71,7 +76,7 @@
                     <div class="text-center">
                         <div class="d-inline-flex align-items-center m-1">
                             <p class="mb-0"><i class="ph-duotone ph-circle text-primary f-12"></i> Members</p>
-                            <span class="badge bg-light-secondary ms-1">8,452</span>
+                            <span class="badge bg-light-secondary ms-1">{{ number_format($totalActiveMembers) }}</span>
                         </div>
                         <div class="d-inline-flex align-items-center m-1">
                             <p class="mb-0"><i class="ph-duotone ph-circle text-success f-12"></i> Admins</p>
@@ -98,11 +103,11 @@
                     <div class="row text-center mt-3">
                         <div class="col-6">
                             <p class="text-muted mb-1"><i class="ph-duotone ph-circle text-success f-12"></i> Total Inflow</p>
-                            <h4 class="mb-0">45,800 MAD</h4>
+                            <h4 class="mb-0">{{ number_format($totalInflowMAD, 0) }} MAD</h4>
                         </div>
                         <div class="col-6">
                             <p class="text-muted mb-1"><i class="ph-duotone ph-circle text-danger f-12"></i> Total Outflow</p>
-                            <h4 class="mb-0">15,200 MAD</h4>
+                            <h4 class="mb-0">{{ number_format($totalOutflowMAD, 0) }} MAD</h4>
                         </div>
                     </div>
                 </div>
@@ -118,7 +123,10 @@
                 <div class="card-body d-flex flex-column justify-content-between">
                     <div>
                         <p>Total active associations on the platform</p>
-                        <h3 class="mb-3">45 <span class="badge bg-light-success ms-2">+8 this year</span></h3>
+                        <h3 class="mb-3">
+                            {{ number_format($associationsTotal) }}
+                            <span class="badge bg-light-success ms-2">+{{ $associationsGrowthThisYear }} this year</span>
+                        </h3>
                     </div>
                     <div id="overview-bar-chart" class="mt-auto"></div>
                 </div>
@@ -132,19 +140,17 @@
 <script src="{{ URL::asset('build/js/plugins/apexcharts.min.js') }}"></script>
 
 <script>
-    // Platform-Wide Member Growth Chart
-    const memberGrowthData = {
-        3: { categories: ['Apr', 'May', 'Jun'], series: [{ name: 'Registrations', data: [110, 140, 130] }] },
-        6: { categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], series: [{ name: 'Registrations', data: [95, 120, 150, 110, 140, 130] }] },
-        12: { categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], series: [{ name: 'Registrations', data: [95, 120, 150, 110, 140, 130, 155, 165, 170, 180, 190, 200] }] }
-    };
+    const memberGrowthData = @json($memberGrowthChartData);
 
-    const chart = new ApexCharts(document.querySelector("#customer-rate-graph"), {
+    let chart = new ApexCharts(document.querySelector("#customer-rate-graph"), {
         chart: { type: 'area', height: 300, toolbar: { show: false } },
         dataLabels: { enabled: false },
         stroke: { curve: 'smooth' },
         xaxis: { categories: memberGrowthData[6].categories },
-        series: memberGrowthData[6].series,
+        series: [{
+            name: 'Registrations',
+            data: memberGrowthData[6].data
+        }],
         colors: ['#2563eb']
     });
     chart.render();
@@ -153,14 +159,16 @@
         const range = parseInt(this.value);
         chart.updateOptions({
             xaxis: { categories: memberGrowthData[range].categories },
-            series: memberGrowthData[range].series
+            series: [{
+                name: 'Registrations',
+                data: memberGrowthData[range].data
+            }]
         });
     });
 
-    // Inflow vs Outflow Donut Chart
     const inflowOutflowChart = new ApexCharts(document.querySelector("#inflow-outflow-chart"), {
         chart: { type: 'donut', height: 180 },
-        series: [45800, 15200],
+        series: [{{ $totalInflowMAD }}, {{ $totalOutflowMAD }}],
         labels: ['Inflow', 'Outflow'],
         colors: ['#16a34a', '#dc2626'],
         legend: { show: false },

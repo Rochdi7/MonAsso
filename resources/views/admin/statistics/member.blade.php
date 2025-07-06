@@ -9,6 +9,7 @@
 
 @section('content')
 <div class="row g-3">
+
     <!-- Cotisation Status -->
     <div class="col-md-6 col-xl-4">
         <div class="card h-100 d-flex flex-column">
@@ -21,12 +22,26 @@
                 </div>
                 <div>
                     <div class="bg-body mt-4 py-2 px-3 rounded d-flex align-items-center justify-content-between">
-                        <p class="mb-0"><i class="ph-duotone ph-circle text-success f-12"></i> Total Paid</p>
-                        <h5 class="mb-0">MAD 250.00</h5>
+                        <p class="mb-0">
+                            <i class="ph-duotone ph-circle text-success f-12"></i> Total Paid
+                        </p>
+                        <h5 class="mb-0">
+                            MAD {{ number_format($myCotisations['paid'] ?? 0, 2) }}
+                        </h5>
                     </div>
                     <div class="bg-body mt-2 py-2 px-3 rounded d-flex align-items-center justify-content-between">
-                        <p class="mb-0"><i class="ph-duotone ph-circle text-danger f-12"></i> Total Unpaid</p>
-                        <h5 class="mb-0">MAD 50.00</h5>
+                        <p class="mb-0">
+                            <i class="ph-duotone ph-circle text-danger f-12"></i> Total Unpaid
+                        </p>
+                        <h5 class="mb-0">
+                            MAD {{
+                                number_format(
+                                    ($myCotisations['pending'] ?? 0)
+                                    + ($myCotisations['overdue'] ?? 0)
+                                    + ($myCotisations['rejected'] ?? 0), 2
+                                )
+                            }}
+                        </h5>
                     </div>
                 </div>
             </div>
@@ -38,7 +53,9 @@
         <div class="card h-100 d-flex flex-column">
             <div class="card-header d-flex align-items-center justify-content-between">
                 <h5 class="mb-0"><i class="ph-duotone ph-user-circle-gear me-1"></i> Profile Completeness</h5>
-                <a href="#!" class="btn btn-sm btn-link-primary">Edit Profile <i class="ph ph-arrow-square-out ms-1"></i></a>
+                <a href="{{ route('profile.index') }}" class="btn btn-sm btn-link-primary">
+                    Edit Profile <i class="ph ph-arrow-square-out ms-1"></i>
+                </a>
             </div>
             <div class="card-body d-flex flex-column justify-content-between">
                 <div class="d-flex align-items-center justify-content-center mb-3">
@@ -53,37 +70,25 @@
         </div>
     </div>
 
-    <!-- Upcoming Meetings -->
+    <!-- Upcoming Meetings & Events -->
     <div class="col-xl-4">
         <div class="card h-100 d-flex flex-column">
             <div class="card-header">
                 <h5 class="mb-0"><i class="ph-duotone ph-calendar-check me-1"></i> My Upcoming Meetings & Events</h5>
             </div>
             <ul class="list-group list-group-flush flex-grow-1">
-                <li class="list-group-item">
-                    <div class="d-flex justify-content-between">
-                        <h6 class="mb-1">Monthly Chapter Sync</h6>
-                        <small class="text-muted">3 days</small>
-                    </div>
-                    <p class="mb-1 text-muted">Nov 15, 2023 - Online</p>
-                    <small><a href="#!">View Details</a></small>
-                </li>
-                <li class="list-group-item">
-                    <div class="d-flex justify-content-between">
-                        <h6 class="mb-1">Annual Tech Workshop</h6>
-                        <small class="text-muted">2 weeks</small>
-                    </div>
-                    <p class="mb-1 text-muted">Nov 28, 2023 - Main Hall</p>
-                    <small><a href="#!">View Details</a></small>
-                </li>
-                <li class="list-group-item list-group-item-action bg-body">
-                    <div class="d-flex justify-content-between">
-                        <h6 class="mb-1">End of Year Celebration</h6>
-                        <small class="text-muted">1 month</small>
-                    </div>
-                    <p class="mb-1 text-muted">Dec 20, 2023 - Grand Ballroom</p>
-                    <small><a href="#!">RSVP Now</a></small>
-                </li>
+                @forelse ($upcomingMeetingsEvents as $item)
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="mb-1">{{ $item['title'] }}</h6>
+                            <small class="text-muted">{{ $item['time_diff'] }}</small>
+                        </div>
+                        <p class="mb-1 text-muted">{{ $item['date'] }} - {{ $item['location'] }}</p>
+                        <small><a href="{{ $item['link'] }}">View Details</a></small>
+                    </li>
+                @empty
+                    <li class="list-group-item text-center text-muted">No upcoming meetings or events.</li>
+                @endforelse
             </ul>
         </div>
     </div>
@@ -100,7 +105,7 @@
             </div>
             <div class="card-body">
                 <p class="mb-0">Total paid this year</p>
-                <h4>MAD 250.00</h4>
+                <h4>MAD {{ number_format($myCotisations['paid'] ?? 0, 2) }}</h4>
                 <div id="monthly-report-graph"></div>
             </div>
         </div>
@@ -114,16 +119,20 @@
 <script src="{{ URL::asset('build/js/widgets/project-rating-chart.js') }}"></script>
 
 <script>
-    const cotisationChartEl = document.querySelector("#monthly-report-graph");
-
     const chartData = {
         6: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            series: [{ name: 'Paid', data: [40, 30, 45, 35, 60, 50] }]
+            categories: @json(array_slice($cashflowLabels, -6)),
+            series: [{
+                name: 'Paid',
+                data: @json(array_slice($cashflowValues, -6))
+            }]
         },
         12: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            series: [{ name: 'Paid', data: [40, 30, 45, 35, 60, 50, 30, 40, 55, 65, 20, 45] }]
+            categories: @json($cashflowLabels),
+            series: [{
+                name: 'Paid',
+                data: @json($cashflowValues)
+            }]
         }
     };
 
@@ -146,7 +155,7 @@
         colors: ['#16a34a']
     };
 
-    const cotisationChart = new ApexCharts(cotisationChartEl, options);
+    const cotisationChart = new ApexCharts(document.querySelector("#monthly-report-graph"), options);
     cotisationChart.render();
 
     document.getElementById('cotisation-range').addEventListener('change', function () {

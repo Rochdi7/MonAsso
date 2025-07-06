@@ -9,22 +9,34 @@
 
 @section('content')
 
-    {{-- STATIC NOTIFICATIONS --}}
-    <div class="alert alert-warning" role="alert">
-        <i class="ti ti-alert-triangle me-2"></i>
-        Your email is not verified yet. Please check your inbox for a verification link.
-    </div>
-    <div class="alert alert-danger" role="alert">
-        <i class="ti ti-file-invoice me-2"></i>
-        You have <strong>2</strong> unpaid cotisation(s) due.
-        <a href="{{ route('admin.cotisations.index') }}" class="alert-link">Please pay now</a> to remain an active member.
-    </div>
+    {{-- Dynamic Email verification alert --}}
+    @if (!auth()->user()->hasVerifiedEmail())
+        <div class="alert alert-warning" role="alert">
+            <i class="ti ti-alert-triangle me-2"></i>
+            Your email is not verified yet. Please check your inbox for a verification link.
+        </div>
+    @endif
+
+    {{-- Dynamic unpaid cotisation alert --}}
+    @php
+        $overdueAmount = $myCotisations[\App\Models\Cotisation::STATUS_OVERDUE] ?? 0;
+        $pendingAmount = $myCotisations[\App\Models\Cotisation::STATUS_PENDING] ?? 0;
+    @endphp
+
+    @if ($overdueAmount > 0 || $pendingAmount > 0)
+        <div class="alert alert-danger" role="alert">
+            <i class="ti ti-file-invoice me-2"></i>
+            You have unpaid cotisations totalling:
+            <strong>{{ number_format($overdueAmount + $pendingAmount, 2, '.', ' ') }} MAD</strong>.
+            <a href="{{ route('admin.cotisations.index') }}" class="alert-link">Pay now</a> to remain active.
+        </div>
+    @endif
 
     <div class="row">
         {{-- LEFT COLUMN (Main Content) --}}
         <div class="col-lg-8">
 
-            {{-- 🪪 Profile Summary Card --}}
+            {{-- Profile Summary Card --}}
             <div class="card mb-4">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -32,7 +44,7 @@
                             <img src="{{ asset('build/images/user/avatar-1.jpg') }}" alt="user image" class="img-radius wid-60" />
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h4 class="mb-1">Welcome, Jane Doe!</h4>
+                            <h4 class="mb-1">Welcome, {{ auth()->user()->name }}!</h4>
                             <p class="mb-0 text-muted">Here's what's happening in your association.</p>
                         </div>
                         <div class="flex-shrink-0">
@@ -44,64 +56,30 @@
                 </div>
             </div>
 
-            {{-- 💳 My Cotisation History --}}
+            {{-- My Cotisation History --}}
             <div class="card table-card mb-4">
                 <div class="card-header">
-                    <h5>My Cotisation History</h5>
+                    <h5>My Cotisation Summary</h5>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Cycle</th>
-                                    <th>Amount</th>
-                                    <th>Due Date</th>
-                                    <th>Status</th>
-                                    <th class="text-end">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Annual Dues 2024</td>
-                                    <td>1,500.00 MAD</td>
-                                    <td>Feb 15, 2024</td>
-                                    <td><span class="badge bg-light-danger">Overdue</span></td>
-                                    <td class="text-end">
-                                        <a href="{{ route('admin.cotisations.index') }}" class="btn btn-sm btn-success d-inline-flex align-items-center">
-                                            <i class="ti ti-wallet me-1"></i>Pay Now
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Q1 Contribution 2024</td>
-                                    <td>250.00 MAD</td>
-                                    <td>Mar 31, 2024</td>
-                                    <td><span class="badge bg-light-warning">Pending</span></td>
-                                    <td class="text-end">
-                                        <a href="{{ route('admin.cotisations.index') }}" class="btn btn-sm btn-success d-inline-flex align-items-center">
-                                            <i class="ti ti-wallet me-1"></i>Pay Now
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Annual Dues 2023</td>
-                                    <td>1,250.00 MAD</td>
-                                    <td>Feb 15, 2023</td>
-                                    <td><span class="badge bg-light-success">Paid</span></td>
-                                    <td class="text-end">
-                                        <a href="{{ route('admin.cotisations.index') }}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center">
-                                            <i class="ti ti-receipt me-1"></i>View Receipt
-                                        </a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="ti ti-circle-filled text-success me-2"></i> Paid</span>
+                            <span class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_PAID] ?? 0, 2, '.', ' ') }} MAD</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="ti ti-circle-filled text-warning me-2"></i> Pending</span>
+                            <span class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_PENDING] ?? 0, 2, '.', ' ') }} MAD</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="ti ti-circle-filled text-danger me-2"></i> Overdue</span>
+                            <span class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_OVERDUE] ?? 0, 2, '.', ' ') }} MAD</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
 
-            {{-- 📝 My Activity Log --}}
+            {{-- My Activity Log --}}
             <div class="card table-card">
                 <div class="card-header">
                     <h5>My Recent Activity</h5>
@@ -117,20 +95,21 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {{-- Example static data. Replace with real data later --}}
                                 <tr>
-                                    <td>Apr 10, 2024</td>
+                                    <td>{{ now()->subDays(2)->format('M d, Y') }}</td>
                                     <td><span class="badge bg-light-info">Joined Event</span></td>
                                     <td class="text-end">Annual Charity Gala</td>
                                 </tr>
                                 <tr>
-                                    <td>Mar 05, 2024</td>
+                                    <td>{{ now()->subDays(10)->format('M d, Y') }}</td>
                                     <td><span class="badge bg-light-primary">Attended Meeting</span></td>
                                     <td class="text-end">Quarterly Review</td>
                                 </tr>
                                 <tr>
-                                    <td>Feb 14, 2023</td>
+                                    <td>{{ now()->subYear()->format('M d, Y') }}</td>
                                     <td><span class="badge bg-light-success">Paid Cotisation</span></td>
-                                    <td class="text-end">Annual Dues 2023</td>
+                                    <td class="text-end">Annual Dues {{ now()->subYear()->year }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -144,11 +123,15 @@
         <div class="col-lg-4">
 
             {{-- Membership Status Card --}}
-            <div class="card mb-4 bg-light-success">
+            <div class="card mb-4 {{ auth()->user()->is_active ? 'bg-light-success' : 'bg-light-danger' }}">
                 <div class="card-body text-center">
                     <h5 class="mb-2">Membership Status</h5>
-                    <h3 class="text-success">ACTIVE</h3>
-                    <p class="text-muted mb-0">Your payments are up to date. Thank you!</p>
+                    <h3 class="{{ auth()->user()->is_active ? 'text-success' : 'text-danger' }}">
+                        {{ auth()->user()->is_active ? 'ACTIVE' : 'INACTIVE' }}
+                    </h3>
+                    <p class="text-muted mb-0">
+                        {{ auth()->user()->is_active ? 'Your payments are up to date. Thank you!' : 'Your membership is currently inactive. Please settle your dues.' }}
+                    </p>
                 </div>
             </div>
 

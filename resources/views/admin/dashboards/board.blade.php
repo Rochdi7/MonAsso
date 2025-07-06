@@ -22,8 +22,8 @@
                         <div class="ms-3"><h6 class="mb-0">Total Members</h6></div>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
-                        <h4 class="mb-0">1,247</h4>
-                        <span class="badge bg-light-primary">Active: 1,105</span>
+                        <h4 class="mb-0">{{ $users['total'] }}</h4>
+                        <span class="badge bg-light-primary">Active: {{ $users['active'] }}</span>
                     </div>
                 </div>
             </div>
@@ -38,7 +38,9 @@
                         <div class="ms-3"><h6 class="mb-0">Meeting Attendance (Avg)</h6></div>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
-                        <h4 class="mb-0">72%</h4>
+                        <h4 class="mb-0">
+                            {{ $users['total'] > 0 ? round(($meetings['held'] > 0 ? ($meetings['held'] / $users['total']) * 100 : 0), 1) : 0 }}%
+                        </h4>
                         <span class="badge bg-light-success"><i class="ti ti-arrow-up"></i> +5%</span>
                     </div>
                 </div>
@@ -54,7 +56,7 @@
                         <div class="ms-3"><h6 class="mb-0">Cotisations (YTD)</h6></div>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
-                        <h4 class="mb-0">84,550 MAD</h4>
+                        <h4 class="mb-0">{{ number_format($cotisations['total'], 0, '.', ' ') }} MAD</h4>
                         <span class="badge bg-light-secondary">Target: 100,000 MAD</span>
                     </div>
                 </div>
@@ -70,7 +72,7 @@
                         <div class="ms-3"><h6 class="mb-0">Upcoming Events</h6></div>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
-                        <h4 class="mb-0">4</h4>
+                        <h4 class="mb-0">{{ $events['active'] }}</h4>
                         <span class="badge bg-light-warning">Next: 15 Days</span>
                     </div>
                 </div>
@@ -120,33 +122,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Annual General Meeting 2024</td>
-                                    <td>Feb 20, 2024</td>
-                                    <td>980 / 1247</td>
-                                    <td><span class="text-success">78.5%</span></td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-eye"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Q1 Budget Review</td>
-                                    <td>Jan 15, 2024</td>
-                                    <td>850 / 1247</td>
-                                    <td><span class="text-warning">68.1%</span></td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-eye"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Strategic Planning Session</td>
-                                    <td>Dec 05, 2023</td>
-                                    <td>910 / 1247</td>
-                                    <td><span class="text-success">73.0%</span></td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-eye"></i></a>
-                                    </td>
-                                </tr>
+                                @foreach($recentActivities as $activity)
+                                    <tr>
+                                        <td>{{ $activity->details }}</td>
+                                        <td>{{ $activity->activity_time->format('M d, Y') }}</td>
+                                        <td>N/A</td>
+                                        <td><span class="text-success">--</span></td>
+                                        <td class="text-end">
+                                            <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                @if($recentActivities->isEmpty())
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">No recent meetings.</td>
+                                    </tr>
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -170,19 +161,25 @@
                             <span class="p-0 d-inline-flex align-items-center">
                                 <i class="ti ti-circle-filled text-success me-2"></i>Paid
                             </span>
-                            <span class="badge bg-light-success f-w-500">85%</span>
+                            <span class="badge bg-light-success f-w-500">
+                                {{ $cotisationsStatus['paid'] ?? 0 }}
+                            </span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                             <span class="p-0 d-inline-flex align-items-center">
                                 <i class="ti ti-circle-filled text-warning me-2"></i>Pending
                             </span>
-                            <span class="badge bg-light-warning f-w-500">10%</span>
+                            <span class="badge bg-light-warning f-w-500">
+                                {{ $cotisationsStatus['pending'] ?? 0 }}
+                            </span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                             <span class="p-0 d-inline-flex align-items-center">
                                 <i class="ti ti-circle-filled text-danger me-2"></i>Overdue
                             </span>
-                            <span class="badge bg-light-danger f-w-500">5%</span>
+                            <span class="badge bg-light-danger f-w-500">
+                                {{ $cotisationsStatus['overdue'] ?? 0 }}
+                            </span>
                         </li>
                     </ul>
                 </div>
@@ -211,22 +208,18 @@
                 series: [
                     {
                         name: 'Cotisations',
-                        data: [18000, 25000, 32000, 28000, 35000, 40000]
-                    },
-                    {
-                        name: 'Expenses',
-                        data: [-12000, -15000, -10000, -18000, -22000, -19000]
+                        data: {!! json_encode($cashflowData['180']['series'][0]['data'] ?? []) !!}
                     }
                 ],
                 xaxis: {
-                    categories: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar']
+                    categories: {!! json_encode($cashflowData['180']['categories'] ?? []) !!}
                 },
                 yaxis: {
                     labels: {
                         formatter: (val) => `${val.toLocaleString()} MAD`
                     }
                 },
-                colors: ['var(--bs-success)', 'var(--bs-danger)'],
+                colors: ['var(--bs-success)'],
                 dataLabels: { enabled: false },
                 legend: {
                     position: 'top',
@@ -248,7 +241,11 @@
                     type: 'donut',
                     height: 250
                 },
-                series: [85, 10, 5],
+                series: [
+                    {{ $cotisationsStatus['paid'] ?? 0 }},
+                    {{ $cotisationsStatus['pending'] ?? 0 }},
+                    {{ $cotisationsStatus['overdue'] ?? 0 }}
+                ],
                 labels: ['Paid', 'Pending', 'Overdue'],
                 colors: ['var(--bs-success)', 'var(--bs-warning)', 'var(--bs-danger)'],
                 dataLabels: { enabled: false },
