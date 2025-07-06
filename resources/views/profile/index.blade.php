@@ -56,9 +56,11 @@
         <div class="card-body position-relative">
         <div class="text-center mt-3">
           <div class="chat-avtar d-inline-flex mx-auto">
-          <img class="rounded-circle img-fluid wid-90 img-thumbnail"
-            src="{{ $user->getFirstMediaUrl('profile_photo') ?: URL::asset('build/images/user/avatar-1.jpg') }}"
-            alt="User image" />
+          <img 
+    src="{{ $user->getFirstMediaUrl('profile_photo') ?: asset('assets/images/default-user.png') }}"
+    alt="User image"
+    class="rounded-circle img-fluid wid-90 img-thumbnail">
+
           <i class="chat-badge bg-success me-2 mb-2"></i>
           </div>
           <h5 class="mb-0">{{ $user->name }}</h5>

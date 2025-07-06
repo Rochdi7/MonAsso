@@ -48,7 +48,7 @@
                 @else
                     <!-- User is not authenticated -->
                     <li class="nav-item">
-                        <a href="{{ url('signup') }}" class="btn btn-primary">Sign Up <i
+                        <a href="{{ url('login') }}" class="btn btn-primary">Login <i
                                 class="ph-duotone ph-arrow-square-out"></i></a>
                     </li>
                 @endauth

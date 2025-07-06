@@ -223,7 +223,7 @@
                 <div class="col-md-6 col-xl-4">
                     <div class="price-card wow animate__fadeInUp" data-wow-delay="0.4s">
                         <h3 class="h4 f-w-400 mb-0 text-white text-opacity-75">Free Trial</h3>
-                        <span class="price text-white">0 MAD</span>
+                        <span class="price text-white">Coming Soon</span>
                         <ul class="list-unstyled text-start text-white text-opacity-50">
                             <li class="my-2"><i class="me-1 ti ti-check text-success"></i> 14-day Free Access</li>
                             <li class="my-2"><i class="me-1 ti ti-check text-success"></i> Limited Feature Access
@@ -242,8 +242,7 @@
                     <div class="price-card wow animate__fadeInUp" data-wow-delay="0.2s">
                         <div class="price-label text-white bg-primary">Popular</div>
                         <h3 class="h4 f-w-400 mb-0 text-white text-opacity-75">Pro Plan</h3>
-                        <span class="price text-white">199 MAD <small
-                                class="f-w-400 text-opacity-50">/mo</small></span>
+                        <span class="price text-white">Coming Soon</span>
                         <ul class="list-unstyled text-start text-white text-opacity-50">
                             <li class="my-2"><i class="me-1 ti ti-check text-success"></i> Full Feature Access</li>
                             <li class="my-2"><i class="me-1 ti ti-check text-success"></i> Unlimited Members &
@@ -262,7 +261,7 @@
                 <div class="col-md-6 col-xl-4">
                     <div class="price-card wow animate__fadeInUp" data-wow-delay="0.6s">
                         <h3 class="h4 f-w-400 mb-0 text-white text-opacity-75">Enterprise</h3>
-                        <span class="price text-white">Custom Quote</span>
+                        <span class="price text-white">Coming Soon</span>
                         <ul class="list-unstyled text-start text-white text-opacity-50">
                             <li class="my-2"><i class="me-1 ti ti-check text-success"></i> Everything in Pro, plus:
                             </li>
@@ -279,7 +278,6 @@
                     </div>
                 </div>
             </div>
-        </div>
     </section>
 
     <!-- [ Pricing ] end -->
