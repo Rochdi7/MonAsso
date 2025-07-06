@@ -50,11 +50,14 @@
                         role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
                         @php
                             $user = Auth::user();
-                            $avatar =
-                                $user->getFirstMediaUrl('profile_photo') ?: asset('assets/images/user/avatar-1.jpg');
+                            $media = $user->getFirstMedia('profile_photo');
+                            $avatar = $media
+                                ? route('media.custom', ['id' => $media->id, 'filename' => $media->file_name])
+                                : asset('assets/images/user/avatar-1.jpg');
                         @endphp
 
                         <img src="{{ $avatar }}" alt="{{ $user->name }}" class="user-avtar avtar avtar-s" />
+
 
                     </a>
                     <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
@@ -70,13 +73,19 @@
                                             <div class="flex-shrink-0">
                                                 @php
                                                     $user = Auth::user();
-                                                    $avatar =
-                                                        $user->getFirstMediaUrl('profile_photo') ?:
-                                                        asset('assets/images/user/avatar-1.jpg');
+                                                    $media = $user->getFirstMedia('profile_photo');
+                                                    $avatar = $media
+                                                        ? route('media.custom', [
+                                                            'id' => $media->id,
+                                                            'filename' => $media->file_name,
+                                                        ])
+                                                        : asset('assets/images/user/avatar-1.jpg');
                                                 @endphp
+
                                                 <img src="{{ $avatar }}" alt="{{ $user->name }}"
                                                     class="user-avtar avtar avtar-s" />
                                             </div>
+
                                             @php
                                                 $user = Auth::user();
                                             @endphp

@@ -1,6 +1,12 @@
 <IfModule mod_negotiation.c>
     Options -MultiViews -Indexes
 </IfModule>
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Redirect requests to /storage
+    RewriteRule ^storage/(.*)$ storage/$1 [L,NC]
+</IfModule>
 
 <IfModule mod_rewrite.c>
     RewriteEngine On

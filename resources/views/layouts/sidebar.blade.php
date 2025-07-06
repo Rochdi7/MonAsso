@@ -28,7 +28,10 @@
                     <div class="flex-shrink-0">
                         @php
                             $user = Auth::user();
-                            $profilePhoto = $user->getFirstMediaUrl('profile_photo') ?: asset('assets/images/user/avatar-1.jpg');
+                            $media = $user->getFirstMedia('profile_photo');
+                            $profilePhoto = $media
+                                ? route('media.custom', ['id' => $media->id, 'filename' => $media->file_name])
+                                : asset('assets/images/user/avatar-1.jpg');
                         @endphp
 
                         <img src="{{ $profilePhoto }}" alt="user-image" class="user-avtar wid-45 rounded-circle">
@@ -55,6 +58,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </a>
                             <div class="dropdown-menu">
                                 <ul>
@@ -66,7 +70,8 @@
                                     </li>
 
 
-                                    <a class="pc-user-links" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                    <a class="pc-user-links" href="{{ route('logout') }}"
+                                        onclick="event.preventDefault();
                                               document.getElementById('logout-form').submit();">
                                         <i class="ph-duotone ph-power"></i>
                                         <span>Logout</span>
