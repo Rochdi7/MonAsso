@@ -16,11 +16,12 @@
     </div>
 
     @if ($overdueTotal > 0 || $pendingTotal > 0)
-    <div class="alert alert-danger" role="alert">
-        <i class="ti ti-file-invoice me-2"></i>
-        You have unpaid cotisation(s) due.
-        <a href="{{ route('membre.cotisations.index') }}" class="alert-link">Please pay now</a> to remain an active member.
-    </div>
+        <div class="alert alert-danger" role="alert">
+            <i class="ti ti-file-invoice me-2"></i>
+            You have unpaid cotisation(s) due.
+            <a href="{{ route('membre.cotisations.index') }}" class="alert-link">Please pay now</a> to remain an active
+            member.
+        </div>
     @endif
 
     <div class="row">
@@ -31,7 +32,8 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
-                            <img src="{{ asset('build/images/user/avatar-1.jpg') }}" alt="user image" class="img-radius wid-60" />
+                            <img src="{{ asset('build/images/user/avatar-1.jpg') }}" alt="user image"
+                                class="img-radius wid-60" />
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h4 class="mb-1">Welcome, {{ auth()->user()->name }}!</h4>
@@ -48,7 +50,9 @@
 
             {{-- Cotisation History --}}
             <div class="card table-card mb-4">
-                <div class="card-header"><h5>My Cotisation History</h5></div>
+                <div class="card-header">
+                    <h5>My Cotisation History</h5>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -66,27 +70,44 @@
                                     <tr>
                                         <td>{{ $cotisation->cycle }}</td>
                                         <td>{{ number_format($cotisation->amount, 2) }} MAD</td>
-                                        <td>{{ \Carbon\Carbon::parse($cotisation->due_date)->format('M d, Y') }}</td>
+                                        <td>
+                                            @if (!empty($cotisation->due_date) && $cotisation->due_date !== 'N/A')
+                                                {{ \Carbon\Carbon::parse($cotisation->due_date)->format('M d, Y') }}
+                                            @else
+                                                N/A
+                                            @endif
+                                        </td>
                                         <td>
                                             @php
                                                 $badge = match ($cotisation->status) {
-                                                    'paid' => 'bg-light-success',
-                                                    'pending' => 'bg-light-warning',
-                                                    'overdue' => 'bg-light-danger',
+                                                    1 => 'bg-light-success',
+                                                    0 => 'bg-light-warning',
+                                                    2 => 'bg-light-danger',
+                                                    3 => 'bg-light-secondary',
                                                     default => 'bg-light-secondary',
+                                                };
+
+                                                $statusLabel = match ($cotisation->status) {
+                                                    0 => 'Pending',
+                                                    1 => 'Paid',
+                                                    2 => 'Overdue',
+                                                    3 => 'Rejected',
+                                                    default => 'Unknown',
                                                 };
                                             @endphp
                                             <span class="badge {{ $badge }}">
-                                                {{ ucfirst($cotisation->status) }}
+                                                {{ $statusLabel }}
                                             </span>
                                         </td>
                                         <td class="text-end">
-                                            @if ($cotisation->status !== 'paid')
-                                                <a href="{{ route('membre.cotisations.index') }}" class="btn btn-sm btn-success d-inline-flex align-items-center">
+                                            @if ($cotisation->status !== 1)
+                                                <a href="{{ route('membre.cotisations.index') }}"
+                                                    class="btn btn-sm btn-success d-inline-flex align-items-center">
                                                     <i class="ti ti-wallet me-1"></i>Pay Now
                                                 </a>
                                             @else
-                                                <a href="{{ route('membre.cotisations.index') }}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center">
+                                                <a href="{{ route('membre.cotisations.index') }}"
+                                                    class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center">
                                                     <i class="ti ti-receipt me-1"></i>View Receipt
                                                 </a>
                                             @endif
@@ -94,7 +115,9 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted">No cotisation history available.</td>
+                                        <td colspan="5" class="text-center text-muted">
+                                            No cotisation history available.
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -103,9 +126,12 @@
                 </div>
             </div>
 
+
             {{-- Activity Log --}}
             <div class="card table-card">
-                <div class="card-header"><h5>My Recent Activity</h5></div>
+                <div class="card-header">
+                    <h5>My Recent Activity</h5>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -161,14 +187,18 @@
                             <div class="flex-shrink-0">
                                 <div class="avtar avtar-s bg-light-secondary"><i class="ti ti-file-text f-20"></i></div>
                             </div>
-                            <div class="flex-grow-1 ms-3"><h6 class="mb-0">Meeting Minutes - Q1 2024</h6></div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-0">Meeting Minutes - Q1 2024</h6>
+                            </div>
                             <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-download"></i></a>
                         </li>
                         <li class="list-group-item d-flex align-items-center">
                             <div class="flex-shrink-0">
                                 <div class="avtar avtar-s bg-light-secondary"><i class="ti ti-file-text f-20"></i></div>
                             </div>
-                            <div class="flex-grow-1 ms-3"><h6 class="mb-0">Association Bylaws</h6></div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-0">Association Bylaws</h6>
+                            </div>
                             <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-download"></i></a>
                         </li>
                     </ul>

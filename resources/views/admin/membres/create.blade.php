@@ -36,28 +36,43 @@
 
                             <div class="mb-3 col-md-6">
                                 <label for="name" class="form-label">Full Name</label>
-                                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                                    value="{{ old('name') }}" required>
+                                <input type="text" name="name"
+                                    class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}"
+                                    required>
                                 <div class="invalid-feedback">
-                                    @error('name') {{ $message }} @else Please enter the member's name. @enderror
+                                    @error('name')
+                                        {{ $message }}
+                                    @else
+                                        Please enter the member's name.
+                                    @enderror
                                 </div>
                             </div>
 
                             <div class="mb-3 col-md-6">
                                 <label for="phone" class="form-label">Phone Number</label>
-                                <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror"
-                                    value="{{ old('phone') }}" required>
+                                <input type="text" name="phone"
+                                    class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}"
+                                    required>
                                 <div class="invalid-feedback">
-                                    @error('phone') {{ $message }} @else Please enter a valid phone number. @enderror
+                                    @error('phone')
+                                        {{ $message }}
+                                    @else
+                                        Please enter a valid phone number.
+                                    @enderror
                                 </div>
                             </div>
 
                             <div class="mb-3 col-md-6">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                                    value="{{ old('email') }}" required>
+                                <input type="email" name="email"
+                                    class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}"
+                                    required>
                                 <div class="invalid-feedback">
-                                    @error('email') {{ $message }} @else Please enter a valid email address. @enderror
+                                    @error('email')
+                                        {{ $message }}
+                                    @else
+                                        Please enter a valid email address.
+                                    @enderror
                                 </div>
                             </div>
 
@@ -66,7 +81,10 @@
                                 <input type="password" name="password"
                                     class="form-control @error('password') is-invalid @enderror" required>
                                 <div class="invalid-feedback">
-                                    @error('password') {{ $message }} @else Please enter a password (min 6 characters).
+                                    @error('password')
+                                        {{ $message }}
+                                    @else
+                                        Please enter a password (min 6 characters).
                                     @enderror
                                 </div>
                             </div>
@@ -78,17 +96,15 @@
                                     required>
                                     <option value="">Choose...</option>
                                     @php
-                                        // Define exactly which roles should be available
                                         $allowedRoles = ['supervisor', 'admin', 'member', 'board'];
-                                        // Filter the roles to only include these
-                                        $filteredRoles = array_intersect($roles, $allowedRoles);
                                     @endphp
 
-                                    @foreach($filteredRoles as $role)
+                                    @foreach ($allowedRoles as $role)
                                         <option value="{{ $role }}" @selected(old('assign_role') == $role)>
                                             {{ ucfirst($role) }}
                                         </option>
                                     @endforeach
+
                                 </select>
                                 @error('assign_role')
                                     <div class="text-danger mt-1">{{ $message }}</div>
@@ -97,13 +113,13 @@
 
                             {{-- ASSOCIATION FIELD --}}
                             @php $auth = auth()->user(); @endphp
-                            @if($auth->hasRole('superadmin'))
+                            @if ($auth->hasRole('superadmin'))
                                 <div class="mb-3 col-md-6">
                                     <label for="association_id" class="form-label">Association</label>
                                     <select name="association_id"
                                         class="form-select @error('association_id') is-invalid @enderror" required>
                                         <option value="">Select Association</option>
-                                        @foreach($associations as $id => $name)
+                                        @foreach ($associations as $id => $name)
                                             <option value="{{ $id }}" @selected(old('association_id', $auth->association_id) == $id)>
                                                 {{ $name }}
                                             </option>
@@ -127,7 +143,7 @@
                                 @enderror
                             </div>
 
-                            @if(session('uploaded_profile_media'))
+                            @if (session('uploaded_profile_media'))
                                 @php
                                     $media = session('uploaded_profile_media');
                                 @endphp
@@ -143,8 +159,7 @@
 
                             <div class="mb-3 col-md-6">
                                 <label for="availability" class="form-label">Availability</label>
-                                <textarea name="availability" class="form-control"
-                                    rows="2">{{ old('availability') }}</textarea>
+                                <textarea name="availability" class="form-control" rows="2">{{ old('availability') }}</textarea>
                             </div>
 
                             <div class="mb-3 col-md-6">
@@ -176,12 +191,12 @@
 
 @section('scripts')
     <script>
-        (function () {
+        (function() {
             'use strict';
-            window.addEventListener('load', function () {
+            window.addEventListener('load', function() {
                 const forms = document.getElementsByClassName('needs-validation');
-                Array.prototype.forEach.call(forms, function (form) {
-                    form.addEventListener('submit', function (event) {
+                Array.prototype.forEach.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
                         if (!form.checkValidity()) {
                             event.preventDefault();
                             event.stopPropagation();

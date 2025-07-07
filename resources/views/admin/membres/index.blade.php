@@ -10,7 +10,7 @@
 
 @section('content')
 
-    @if(session()->has('toast') || session()->has('success') || session()->has('error'))
+    @if (session()->has('toast') || session()->has('success') || session()->has('error'))
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 99999">
             <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
@@ -20,7 +20,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
                 <div class="toast-body">
-                    {{ session('toast') ?? session('success') ?? session('error') }}
+                    {{ session('toast') ?? (session('success') ?? session('error')) }}
                 </div>
             </div>
         </div>
@@ -52,19 +52,30 @@
                                 @forelse($users as $user)
                                     <tr>
                                         <td>
-                                            @if($user->getFirstMediaUrl('profile_photo'))
-                                                <img src="{{ $user->getFirstMediaUrl('profile_photo') }}" alt="photo" width="40"
-                                                    height="40" class="rounded-circle shadow-sm">
-                                            @else
-                                                <span class="text-muted">N/A</span>
-                                            @endif
+                                            @php
+                                                $media = $user->getFirstMedia('profile_photo');
+                                                $avatar = $media
+                                                    ? route('media.custom', [
+                                                        'id' => $media->id,
+                                                        'filename' => $media->file_name,
+                                                    ])
+                                                    : asset('assets/images/user/avatar-1.jpg');
+                                            @endphp
+
+                                            <img src="{{ $avatar }}" alt="photo" width="40" height="40"
+                                                class="rounded-circle shadow-sm">
                                         </td>
                                         <td>{{ $user->name }}</td>
                                         <td>{{ $user->phone ?? '-' }}</td>
-                                        <td><span
-                                                class="badge bg-secondary text-uppercase">{{ $user->getRoleNames()->first() ?? 'N/A' }}</span>
+                                        <td>
+                                            <span class="badge bg-secondary text-uppercase">
+                                                {{ $user->getRoleNames()->first() ?? 'N/A' }}
+                                            </span>
                                         </td>
-                                        <td>{!! $user->is_active ? '<span class="text-success">✔ Active</span>' : '<span class="text-danger">✘ Inactive</span>' !!}
+                                        <td>
+                                            {!! $user->is_active
+                                                ? '<span class="text-success">✔ Active</span>'
+                                                : '<span class="text-danger">✘ Inactive</span>' !!}
                                         </td>
                                         <td>{{ $user->association?->name ?? 'N/A' }}</td>
                                         <td>
@@ -78,9 +89,11 @@
                                             </a>
                                             @php $authUser = auth()->user(); @endphp
 
-                                            @if(!$authUser->hasRole('board'))
-                                                <form action="{{ route('admin.membres.destroy', $user->id) }}" method="POST"
-                                                    onsubmit="return confirm('Delete this user?')" style="display:inline;">
+                                            @if (!$authUser->hasRole('board'))
+                                                <form action="{{ route('admin.membres.destroy', $user->id) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Delete this user?')"
+                                                    style="display:inline;">
                                                     @csrf @method('DELETE')
                                                     <button type="submit"
                                                         class="avtar avtar-xs btn-link-secondary border-0 bg-transparent p-0"
@@ -115,7 +128,7 @@
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const toastEl = document.getElementById('liveToast');
             if (toastEl) {
                 const toast = new bootstrap.Toast(toastEl);

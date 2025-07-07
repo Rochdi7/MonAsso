@@ -87,7 +87,7 @@
                                             </a>
                                         @endif
 
-                                        @if (auth()->user()->hasAnyRole(['admin', 'superadmin']))
+                                        @if (auth()->user()->hasAnyRole(['admin', 'superadmin', 'supervisor']))
                                             <form action="{{ route('admin.meetings.destroy', $meeting) }}" method="POST"
                                                   class="d-inline-block"
                                                   onsubmit="return confirm('Are you sure you want to delete this meeting?');">

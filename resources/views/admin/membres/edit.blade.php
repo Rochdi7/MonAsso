@@ -84,7 +84,7 @@
 
                             {{-- ASSOCIATION FIELD --}}
                             @php $auth = auth()->user(); @endphp
-                            @if($auth->hasRole('super_admin'))
+                            @if($auth->hasRole('superadmin'))
                                 <div class="mb-3 col-md-6">
                                     <label for="association_id" class="form-label">Association</label>
                                     <select name="association_id"
