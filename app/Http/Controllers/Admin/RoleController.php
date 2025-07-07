@@ -11,7 +11,7 @@ class RoleController extends Controller
 {
     public function index()
     {
-        abort_if(!auth()->user()->hasRole('super_admin'), 403);
+        abort_if(!auth()->user()->hasRole('superadmin'), 403);
 
         $roles = Role::with('permissions')->get();
         return view('admin.roles.index', compact('roles'));
