@@ -56,7 +56,12 @@ class PermissionController extends Controller
 
     public function destroy(Permission $permission)
     {
+        if (!$permission) {
+            abort(404, 'Permission not found');
+        }
+
         $permission->delete();
+
         return redirect()->route('admin.permissions.index')->with('toast', 'Permission deleted successfully.');
     }
 }
