@@ -131,12 +131,20 @@ class UserController extends Controller
 
         if (in_array($selectedRole, $validRoles)) {
             $user->syncRoles([$selectedRole]);
+
+            // Force refresh so subsequent views show new role
+            $user->refresh();
+
+            // Optional debug
+            logger()->info("User {$user->id} roles updated:", $user->getRoleNames()->toArray());
         } else {
             return back()->with('error', 'Invalid role selected');
         }
 
-        return redirect()->route('admin.membres.index')->with('success', 'User updated successfully.');
+        return redirect()->route('admin.membres.index')
+            ->with('success', 'User updated successfully.');
     }
+
 
     public function destroy(User $user)
     {
@@ -183,7 +191,6 @@ class UserController extends Controller
 
     private function getAvailableRoles()
     {
-        /** @var \App\Models\User $auth */
         $auth = Auth::user();
 
         $roles = ['member', 'supervisor'];
@@ -191,7 +198,7 @@ class UserController extends Controller
         if ($auth->hasRole('superadmin')) {
             $roles = array_merge($roles, ['admin', 'board', 'superadmin']);
         } elseif ($auth->hasRole('admin')) {
-            $roles[] = 'admin';
+            $roles = array_merge($roles, ['admin', 'board']);
         }
 
         return $roles;
