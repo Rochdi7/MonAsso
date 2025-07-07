@@ -145,6 +145,7 @@ class RoleAndPermissionSeeder extends Seeder
             'create members',
             'view meetings',
             'create meetings',
+            'delete meetings',
             'view statistics',
         ]);
 
