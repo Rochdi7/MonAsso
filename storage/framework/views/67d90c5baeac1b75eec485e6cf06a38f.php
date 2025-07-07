@@ -86,7 +86,7 @@
                                             </a>
                                         <?php endif; ?>
 
-                                        <?php if(auth()->user()->hasAnyRole(['admin', 'superadmin'])): ?>
+                                        <?php if(auth()->user()->hasAnyRole(['admin', 'superadmin', 'supervisor'])): ?>
                                             <form action="<?php echo e(route('admin.meetings.destroy', $meeting)); ?>" method="POST"
                                                   class="d-inline-block"
                                                   onsubmit="return confirm('Are you sure you want to delete this meeting?');">

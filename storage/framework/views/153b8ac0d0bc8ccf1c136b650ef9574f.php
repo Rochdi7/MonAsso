@@ -139,7 +139,7 @@ unset($__errorArgs, $__bag); ?>
 
                             
                             <?php $auth = auth()->user(); ?>
-                            <?php if($auth->hasRole('super_admin')): ?>
+                            <?php if($auth->hasRole('superadmin')): ?>
                                 <div class="mb-3 col-md-6">
                                     <label for="association_id" class="form-label">Association</label>
                                     <select name="association_id"

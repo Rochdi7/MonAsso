@@ -44,17 +44,35 @@
                     </div>
                 </li>
 
+                <script>
+                    function layout_change(theme) {
+                        if (theme === 'dark') {
+                            document.body.classList.add('dark-mode');
+                        } else {
+                            document.body.classList.remove('dark-mode');
+                        }
+                        localStorage.setItem('theme', theme);
+                    }
+
+                    function layout_change_default() {
+                        document.body.classList.remove('dark-mode');
+                        localStorage.removeItem('theme');
+                    }
+                </script>
 
                 <li class="dropdown pc-h-item header-user-profile">
                     <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
                         role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
                         <?php
                             $user = Auth::user();
-                            $avatar =
-                                $user->getFirstMediaUrl('profile_photo') ?: asset('assets/images/user/avatar-1.jpg');
+                            $media = $user->getFirstMedia('profile_photo');
+                            $avatar = $media
+                                ? route('media.custom', ['id' => $media->id, 'filename' => $media->file_name])
+                                : asset('assets/images/user/avatar-1.jpg');
                         ?>
 
                         <img src="<?php echo e($avatar); ?>" alt="<?php echo e($user->name); ?>" class="user-avtar avtar avtar-s" />
+
 
                     </a>
                     <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
@@ -70,13 +88,19 @@
                                             <div class="flex-shrink-0">
                                                 <?php
                                                     $user = Auth::user();
-                                                    $avatar =
-                                                        $user->getFirstMediaUrl('profile_photo') ?:
-                                                        asset('assets/images/user/avatar-1.jpg');
+                                                    $media = $user->getFirstMedia('profile_photo');
+                                                    $avatar = $media
+                                                        ? route('media.custom', [
+                                                            'id' => $media->id,
+                                                            'filename' => $media->file_name,
+                                                        ])
+                                                        : asset('assets/images/user/avatar-1.jpg');
                                                 ?>
+
                                                 <img src="<?php echo e($avatar); ?>" alt="<?php echo e($user->name); ?>"
                                                     class="user-avtar avtar avtar-s" />
                                             </div>
+
                                             <?php
                                                 $user = Auth::user();
                                             ?>

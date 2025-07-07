@@ -13,8 +13,8 @@
             </a>
         </li>
         <li class="dropdown pc-h-item d-inline-flex d-md-none">
-            <a class="pc-head-link dropdown-toggle arrow-none m-0" data-bs-toggle="dropdown" href="#" role="button"
-                aria-haspopup="false" aria-expanded="false">
+            <a class="pc-head-link dropdown-toggle arrow-none m-0" data-bs-toggle="dropdown" href="#"
+                role="button" aria-haspopup="false" aria-expanded="false">
                 <i class="ph-duotone ph-magnifying-glass"></i>
             </a>
             <div class="dropdown-menu pc-h-dropdown drp-search">
@@ -39,8 +39,8 @@
 <div class="ms-auto">
     <ul class="list-unstyled">
         <li class="dropdown pc-h-item d-none d-md-inline-flex">
-            <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button"
-                aria-haspopup="false" aria-expanded="false">
+            <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
+                role="button" aria-haspopup="false" aria-expanded="false">
                 <i class="ph-duotone ph-circles-four"></i>
             </a>
             <div class="dropdown-menu dropdown-qta dropdown-menu-end pc-h-dropdown">
@@ -87,8 +87,8 @@
             </div>
         </li>
         <li class="dropdown pc-h-item d-none d-md-inline-flex">
-            <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button"
-                aria-haspopup="false" aria-expanded="false">
+            <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
+                role="button" aria-haspopup="false" aria-expanded="false">
                 <i class="ph-duotone ph-sun-dim"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-end pc-h-dropdown">
@@ -107,13 +107,14 @@
             </div>
         </li>
         <li class="pc-h-item">
-            <a class="pc-head-link pct-c-btn" href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_pc_layout">
+            <a class="pc-head-link pct-c-btn" href="#" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvas_pc_layout">
                 <i class="ph-duotone ph-gear-six"></i>
             </a>
         </li>
         <li class="dropdown pc-h-item">
-            <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button"
-                aria-haspopup="false" aria-expanded="false">
+            <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
+                role="button" aria-haspopup="false" aria-expanded="false">
                 <i class="ph-duotone ph-diamonds-four"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-end pc-h-dropdown">
@@ -133,16 +134,18 @@
                     <i class="ph-duotone ph-lock-key"></i>
                     <span>Lock Screen</span>
                 </a>
-                <a href="<?php echo e(route('logout')); ?>" onclick="event.preventDefault();
-                                  document.getElementById('logout-form').submit();" class="dropdown-item">
+                <a href="<?php echo e(route('logout')); ?>"
+                    onclick="event.preventDefault();
+                                  document.getElementById('logout-form').submit();"
+                    class="dropdown-item">
                     <i class="ph-duotone ph-power"></i>
                     <span>Logout</span>
                 </a>
             </div>
         </li>
         <li class="dropdown pc-h-item">
-            <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button"
-                aria-haspopup="false" aria-expanded="false">
+            <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
+                role="button" aria-haspopup="false" aria-expanded="false">
                 <i class="ph-duotone ph-bell"></i>
                 <span class="badge bg-success pc-h-badge">3</span>
             </a>
@@ -177,7 +180,8 @@
                                             <span class="text-sm">2 min ago</span>
                                         </div>
                                     </div>
-                                    <p class="position-relative mt-1 mb-2"><br /><span class="text-truncate">Lorem Ipsum
+                                    <p class="position-relative mt-1 mb-2"><br /><span class="text-truncate">Lorem
+                                            Ipsum
                                             has been
                                             the industry's standard dummy text ever since the 1500s.</span></p>
                                     <span class="badge bg-light-primary border border-primary me-1 mt-1">web
@@ -205,7 +209,8 @@
                                             <span class="text-sm">1 hour ago</span>
                                         </div>
                                     </div>
-                                    <p class="position-relative mt-1 mb-2"><br /><span class="text-truncate">Lorem Ipsum
+                                    <p class="position-relative mt-1 mb-2"><br /><span class="text-truncate">Lorem
+                                            Ipsum
                                             has been
                                             the industry's standard dummy text ever since the 1500s.</span></p>
                                 </div>
@@ -276,7 +281,8 @@
                                             <span class="text-sm">2 min ago</span>
                                         </div>
                                     </div>
-                                    <p class="position-relative mt-1 mb-2"><br /><span class="text-truncate">Lorem Ipsum
+                                    <p class="position-relative mt-1 mb-2"><br /><span class="text-truncate">Lorem
+                                            Ipsum
                                             has been
                                             the industry's standard dummy text ever since the 1500s.</span></p>
                                     <button class="btn btn-sm rounded-pill btn-outline-secondary me-2">Decline</button>
@@ -323,8 +329,8 @@
             </div>
         </li>
         <li class="dropdown pc-h-item header-user-profile">
-            <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button"
-                aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
+            <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
+                role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
                 <img src="<?php echo e(URL::asset('build/images/user/avatar-2.jpg')); ?>" alt="user-image" class="user-avtar">
             </a>
             <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
@@ -332,7 +338,8 @@
                     <h5 class="m-0">Profile</h5>
                 </div>
                 <div class="dropdown-body">
-                    <div class="profile-notification-scroll position-relative" style="max-height: calc(100vh - 225px)">
+                    <div class="profile-notification-scroll position-relative"
+                        style="max-height: calc(100vh - 225px)">
                         <ul class="list-group list-group-flush w-100">
                             <li class="list-group-item">
                                 <div class="d-flex align-items-center">
@@ -356,12 +363,12 @@
                                     </span>
                                 </a>
                                 <a href="http://127.0.0.1:8000/#pricing" class="dropdown-item">
-    <span class="d-flex align-items-center">
-        <i class="ph-duotone ph-star text-warning"></i>
-        <span>Upgrade account</span>
-        <span class="badge bg-light-success border border-success ms-2">NEW</span>
-    </span>
-</a>
+                                    <span class="d-flex align-items-center">
+                                        <i class="ph-duotone ph-star text-warning"></i>
+                                        <span>Upgrade account</span>
+                                        <span class="badge bg-light-success border border-success ms-2">NEW</span>
+                                    </span>
+                                </a>
 
                                 <a href="#" class="dropdown-item">
                                     <span class="d-flex align-items-center">
@@ -395,8 +402,9 @@
                             </li>
 
                             <li class="list-group-item">
-                               
-                                <a href="<?php echo e(route('logout')); ?>" onclick="event.preventDefault();
+
+                                <a href="<?php echo e(route('logout')); ?>"
+                                    onclick="event.preventDefault();
                                                       document.getElementById('logout-form').submit();"
                                     class="dropdown-item">
                                     <span class="d-flex align-items-center">
@@ -414,4 +422,5 @@
             </div>
         </li>
     </ul>
-</div><?php /**PATH C:\Users\Outlaw\Desktop\Projects\MonAsso\resources\views\layouts\topbar-d.blade.php ENDPATH**/ ?>
+</div>
+<?php /**PATH C:\Users\Outlaw\Desktop\Projects\MonAsso\resources\views\layouts\topbar-d.blade.php ENDPATH**/ ?>

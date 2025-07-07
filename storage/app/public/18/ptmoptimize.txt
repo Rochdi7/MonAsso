@@ -1,0 +1,25 @@
+Hello! Please optimize the following Blade template section according to our established process.
+
+**Page:** [e.g., Homepage, About Us Page, Tour Details Page]
+**Section:** [e.g., Main Content, Image Gallery, Testimonials]
+
+---
+
+### **Primary Goal**
+Please optimize the following code for **SEO** and **Page Load Speed**.
+
+### **Key Rules & Constraints**
+1.  **No Front-End Changes:** Do not change the HTML structure, CSS classes, or visual layout. All optimizations must work within the existing theme.
+2.  **Preserve Custom Logic:** If you see complex PHP or Blade logic, especially for image paths, please preserve it. It is there for a specific reason related to my setup.
+3.  **Code Cleanup:** Please remove all Blade and HTML comments.
+4.  **Final Output:** Provide the complete, fully optimized code block for the section as the final answer.
+
+---
+
+### **Context (Optional, but very helpful):**
+* **Location on Page:** Is this section "above the fold" (visible on load) or "below the fold" (requires scrolling)?
+* **Important Notes:** Are there any specific links, scripts, or elements that have a special function I should be aware of?
+
+---
+
+### **Code to Optimize:**

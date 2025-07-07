@@ -14,11 +14,12 @@
     </div>
 
     <?php if($overdueTotal > 0 || $pendingTotal > 0): ?>
-    <div class="alert alert-danger" role="alert">
-        <i class="ti ti-file-invoice me-2"></i>
-        You have unpaid cotisation(s) due.
-        <a href="<?php echo e(route('membre.cotisations.index')); ?>" class="alert-link">Please pay now</a> to remain an active member.
-    </div>
+        <div class="alert alert-danger" role="alert">
+            <i class="ti ti-file-invoice me-2"></i>
+            You have unpaid cotisation(s) due.
+            <a href="<?php echo e(route('membre.cotisations.index')); ?>" class="alert-link">Please pay now</a> to remain an active
+            member.
+        </div>
     <?php endif; ?>
 
     <div class="row">
@@ -29,7 +30,8 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
-                            <img src="<?php echo e(asset('build/images/user/avatar-1.jpg')); ?>" alt="user image" class="img-radius wid-60" />
+                            <img src="<?php echo e(asset('build/images/user/avatar-1.jpg')); ?>" alt="user image"
+                                class="img-radius wid-60" />
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h4 class="mb-1">Welcome, <?php echo e(auth()->user()->name); ?>!</h4>
@@ -46,7 +48,9 @@
 
             
             <div class="card table-card mb-4">
-                <div class="card-header"><h5>My Cotisation History</h5></div>
+                <div class="card-header">
+                    <h5>My Cotisation History</h5>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -64,28 +68,46 @@
                                     <tr>
                                         <td><?php echo e($cotisation->cycle); ?></td>
                                         <td><?php echo e(number_format($cotisation->amount, 2)); ?> MAD</td>
-                                        <td><?php echo e(\Carbon\Carbon::parse($cotisation->due_date)->format('M d, Y')); ?></td>
+                                        <td>
+                                            <?php if(!empty($cotisation->due_date) && $cotisation->due_date !== 'N/A'): ?>
+                                                <?php echo e(\Carbon\Carbon::parse($cotisation->due_date)->format('M d, Y')); ?>
+
+                                            <?php else: ?>
+                                                N/A
+                                            <?php endif; ?>
+                                        </td>
                                         <td>
                                             <?php
                                                 $badge = match ($cotisation->status) {
-                                                    'paid' => 'bg-light-success',
-                                                    'pending' => 'bg-light-warning',
-                                                    'overdue' => 'bg-light-danger',
+                                                    1 => 'bg-light-success',
+                                                    0 => 'bg-light-warning',
+                                                    2 => 'bg-light-danger',
+                                                    3 => 'bg-light-secondary',
                                                     default => 'bg-light-secondary',
+                                                };
+
+                                                $statusLabel = match ($cotisation->status) {
+                                                    0 => 'Pending',
+                                                    1 => 'Paid',
+                                                    2 => 'Overdue',
+                                                    3 => 'Rejected',
+                                                    default => 'Unknown',
                                                 };
                                             ?>
                                             <span class="badge <?php echo e($badge); ?>">
-                                                <?php echo e(ucfirst($cotisation->status)); ?>
+                                                <?php echo e($statusLabel); ?>
 
                                             </span>
                                         </td>
                                         <td class="text-end">
-                                            <?php if($cotisation->status !== 'paid'): ?>
-                                                <a href="<?php echo e(route('membre.cotisations.index')); ?>" class="btn btn-sm btn-success d-inline-flex align-items-center">
+                                            <?php if($cotisation->status !== 1): ?>
+                                                <a href="<?php echo e(route('membre.cotisations.index')); ?>"
+                                                    class="btn btn-sm btn-success d-inline-flex align-items-center">
                                                     <i class="ti ti-wallet me-1"></i>Pay Now
                                                 </a>
                                             <?php else: ?>
-                                                <a href="<?php echo e(route('membre.cotisations.index')); ?>" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center">
+                                                <a href="<?php echo e(route('membre.cotisations.index')); ?>"
+                                                    class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center">
                                                     <i class="ti ti-receipt me-1"></i>View Receipt
                                                 </a>
                                             <?php endif; ?>
@@ -93,7 +115,9 @@
                                     </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted">No cotisation history available.</td>
+                                        <td colspan="5" class="text-center text-muted">
+                                            No cotisation history available.
+                                        </td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
@@ -102,9 +126,12 @@
                 </div>
             </div>
 
+
             
             <div class="card table-card">
-                <div class="card-header"><h5>My Recent Activity</h5></div>
+                <div class="card-header">
+                    <h5>My Recent Activity</h5>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -160,14 +187,18 @@
                             <div class="flex-shrink-0">
                                 <div class="avtar avtar-s bg-light-secondary"><i class="ti ti-file-text f-20"></i></div>
                             </div>
-                            <div class="flex-grow-1 ms-3"><h6 class="mb-0">Meeting Minutes - Q1 2024</h6></div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-0">Meeting Minutes - Q1 2024</h6>
+                            </div>
                             <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-download"></i></a>
                         </li>
                         <li class="list-group-item d-flex align-items-center">
                             <div class="flex-shrink-0">
                                 <div class="avtar avtar-s bg-light-secondary"><i class="ti ti-file-text f-20"></i></div>
                             </div>
-                            <div class="flex-grow-1 ms-3"><h6 class="mb-0">Association Bylaws</h6></div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-0">Association Bylaws</h6>
+                            </div>
                             <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-download"></i></a>
                         </li>
                     </ul>

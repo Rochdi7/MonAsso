@@ -34,21 +34,27 @@
 
                             <div class="mb-3 col-md-6">
                                 <label for="name" class="form-label">Full Name</label>
-                                <input type="text" name="name" class="form-control <?php $__errorArgs = ['name'];
+                                <input type="text" name="name"
+                                    class="form-control <?php $__errorArgs = ['name'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>"
-                                    value="<?php echo e(old('name')); ?>" required>
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('name')); ?>"
+                                    required>
                                 <div class="invalid-feedback">
                                     <?php $__errorArgs = ['name'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> <?php echo e($message); ?> <?php else: ?> Please enter the member's name. <?php unset($message);
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <?php echo e($message); ?>
+
+                                    <?php else: ?>
+                                        Please enter the member's name.
+                                    <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
@@ -57,21 +63,27 @@ unset($__errorArgs, $__bag); ?>
 
                             <div class="mb-3 col-md-6">
                                 <label for="phone" class="form-label">Phone Number</label>
-                                <input type="text" name="phone" class="form-control <?php $__errorArgs = ['phone'];
+                                <input type="text" name="phone"
+                                    class="form-control <?php $__errorArgs = ['phone'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>"
-                                    value="<?php echo e(old('phone')); ?>" required>
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('phone')); ?>"
+                                    required>
                                 <div class="invalid-feedback">
                                     <?php $__errorArgs = ['phone'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> <?php echo e($message); ?> <?php else: ?> Please enter a valid phone number. <?php unset($message);
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <?php echo e($message); ?>
+
+                                    <?php else: ?>
+                                        Please enter a valid phone number.
+                                    <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
@@ -80,21 +92,27 @@ unset($__errorArgs, $__bag); ?>
 
                             <div class="mb-3 col-md-6">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control <?php $__errorArgs = ['email'];
+                                <input type="email" name="email"
+                                    class="form-control <?php $__errorArgs = ['email'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>"
-                                    value="<?php echo e(old('email')); ?>" required>
+unset($__errorArgs, $__bag); ?>" value="<?php echo e(old('email')); ?>"
+                                    required>
                                 <div class="invalid-feedback">
                                     <?php $__errorArgs = ['email'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> <?php echo e($message); ?> <?php else: ?> Please enter a valid email address. <?php unset($message);
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <?php echo e($message); ?>
+
+                                    <?php else: ?>
+                                        Please enter a valid email address.
+                                    <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
@@ -117,7 +135,11 @@ unset($__errorArgs, $__bag); ?>" required>
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> <?php echo e($message); ?> <?php else: ?> Please enter a password (min 6 characters).
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <?php echo e($message); ?>
+
+                                    <?php else: ?>
+                                        Please enter a password (min 6 characters).
                                     <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
@@ -139,18 +161,16 @@ unset($__errorArgs, $__bag); ?>"
                                     required>
                                     <option value="">Choose...</option>
                                     <?php
-                                        // Define exactly which roles should be available
                                         $allowedRoles = ['supervisor', 'admin', 'member', 'board'];
-                                        // Filter the roles to only include these
-                                        $filteredRoles = array_intersect($roles, $allowedRoles);
                                     ?>
 
-                                    <?php $__currentLoopData = $filteredRoles; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $role): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php $__currentLoopData = $allowedRoles; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $role): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <option value="<?php echo e($role); ?>" <?php if(old('assign_role') == $role): echo 'selected'; endif; ?>>
                                             <?php echo e(ucfirst($role)); ?>
 
                                         </option>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
                                 </select>
                                 <?php $__errorArgs = ['assign_role'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -241,8 +261,7 @@ unset($__errorArgs, $__bag); ?>
 
                             <div class="mb-3 col-md-6">
                                 <label for="availability" class="form-label">Availability</label>
-                                <textarea name="availability" class="form-control"
-                                    rows="2"><?php echo e(old('availability')); ?></textarea>
+                                <textarea name="availability" class="form-control" rows="2"><?php echo e(old('availability')); ?></textarea>
                             </div>
 
                             <div class="mb-3 col-md-6">
@@ -274,12 +293,12 @@ unset($__errorArgs, $__bag); ?>
 
 <?php $__env->startSection('scripts'); ?>
     <script>
-        (function () {
+        (function() {
             'use strict';
-            window.addEventListener('load', function () {
+            window.addEventListener('load', function() {
                 const forms = document.getElementsByClassName('needs-validation');
-                Array.prototype.forEach.call(forms, function (form) {
-                    form.addEventListener('submit', function (event) {
+                Array.prototype.forEach.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
                         if (!form.checkValidity()) {
                             event.preventDefault();
                             event.stopPropagation();
@@ -302,4 +321,5 @@ unset($__errorArgs, $__bag); ?>
         }
     </script>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Outlaw\Desktop\Projects\MonAsso\resources\views\admin\membres\create.blade.php ENDPATH**/ ?>

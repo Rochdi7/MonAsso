@@ -18,7 +18,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
                 <div class="toast-body">
-                    <?php echo e(session('toast') ?? session('success') ?? session('error')); ?>
+                    <?php echo e(session('toast') ?? (session('success') ?? session('error'))); ?>
 
                 </div>
             </div>
@@ -51,19 +51,31 @@
                                 <?php $__empty_1 = true; $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                     <tr>
                                         <td>
-                                            <?php if($user->getFirstMediaUrl('profile_photo')): ?>
-                                                <img src="<?php echo e($user->getFirstMediaUrl('profile_photo')); ?>" alt="photo" width="40"
-                                                    height="40" class="rounded-circle shadow-sm">
-                                            <?php else: ?>
-                                                <span class="text-muted">N/A</span>
-                                            <?php endif; ?>
+                                            <?php
+                                                $media = $user->getFirstMedia('profile_photo');
+                                                $avatar = $media
+                                                    ? route('media.custom', [
+                                                        'id' => $media->id,
+                                                        'filename' => $media->file_name,
+                                                    ])
+                                                    : asset('assets/images/user/avatar-1.jpg');
+                                            ?>
+
+                                            <img src="<?php echo e($avatar); ?>" alt="photo" width="40" height="40"
+                                                class="rounded-circle shadow-sm">
                                         </td>
                                         <td><?php echo e($user->name); ?></td>
                                         <td><?php echo e($user->phone ?? '-'); ?></td>
-                                        <td><span
-                                                class="badge bg-secondary text-uppercase"><?php echo e($user->getRoleNames()->first() ?? 'N/A'); ?></span>
+                                        <td>
+                                            <span class="badge bg-secondary text-uppercase">
+                                                <?php echo e($user->getRoleNames()->first() ?? 'N/A'); ?>
+
+                                            </span>
                                         </td>
-                                        <td><?php echo $user->is_active ? '<span class="text-success">✔ Active</span>' : '<span class="text-danger">✘ Inactive</span>'; ?>
+                                        <td>
+                                            <?php echo $user->is_active
+                                                ? '<span class="text-success">✔ Active</span>'
+                                                : '<span class="text-danger">✘ Inactive</span>'; ?>
 
                                         </td>
                                         <td><?php echo e($user->association?->name ?? 'N/A'); ?></td>
@@ -79,8 +91,10 @@
                                             <?php $authUser = auth()->user(); ?>
 
                                             <?php if(!$authUser->hasRole('board')): ?>
-                                                <form action="<?php echo e(route('admin.membres.destroy', $user->id)); ?>" method="POST"
-                                                    onsubmit="return confirm('Delete this user?')" style="display:inline;">
+                                                <form action="<?php echo e(route('admin.membres.destroy', $user->id)); ?>"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Delete this user?')"
+                                                    style="display:inline;">
                                                     <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
                                                     <button type="submit"
                                                         class="avtar avtar-xs btn-link-secondary border-0 bg-transparent p-0"
@@ -115,7 +129,7 @@
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const toastEl = document.getElementById('liveToast');
             if (toastEl) {
                 const toast = new bootstrap.Toast(toastEl);
@@ -124,4 +138,5 @@
         });
     </script>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Outlaw\Desktop\Projects\MonAsso\resources\views\admin\membres\index.blade.php ENDPATH**/ ?>
