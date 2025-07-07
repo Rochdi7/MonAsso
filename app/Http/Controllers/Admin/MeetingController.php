@@ -180,14 +180,17 @@ class MeetingController extends Controller
             'meeting_id' => $meeting->id,
         ]);
 
-        if ($user->hasAnyRole(['board', 'supervisor'])) {
-            abort(403, 'Board members and Supervisors are not allowed to delete meetings.');
+        // Block board and member users from deleting
+        if ($user->hasAnyRole(['board', 'member'])) {
+            abort(403, 'Board members and Members are not allowed to delete meetings.');
         }
 
-        if (!$user->hasAnyRole(['admin', 'superadmin'])) {
-            abort(403);
+        // Only allow these roles to delete
+        if (!$user->hasAnyRole(['admin', 'superadmin', 'supervisor'])) {
+            abort(403, 'Unauthorized action.');
         }
 
+        // Non-superadmin can only delete meetings belonging to their own association
         if (!$user->hasRole('superadmin') && (int) $meeting->association_id !== (int) $user->association_id) {
             abort(403);
         }
@@ -195,8 +198,10 @@ class MeetingController extends Controller
         $meeting->clearMediaCollection('documents');
         $meeting->delete();
 
-        return redirect()->route('admin.meetings.index')->with('success', 'Meeting deleted.');
+        return redirect()->route('admin.meetings.index')
+            ->with('success', 'Meeting deleted.');
     }
+
 
 
     public function show(Meeting $meeting)
