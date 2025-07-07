@@ -42,10 +42,10 @@ Route::post('/email/verification-notification', function (Request $request) {
 Route::get('/user-guide', function () {
     return view('user-guide');
 })->name('user-guide')->middleware(['auth']);
+
 Route::get('/', fn() => view('index'))->name('home');
 
 Route::middleware(['auth'])->group(function () {
-
 
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
@@ -56,6 +56,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->middleware('role:superadmin|admin|board|supervisor|member')
         ->name('dashboard');
+
     Route::get('/statistics', [StatisticsController::class, 'index'])
         ->middleware('role:superadmin|admin|board|supervisor|member')
         ->name('statistics');
@@ -78,19 +79,26 @@ Route::middleware(['auth'])->group(function () {
             Route::get('statistics', [StatisticsController::class, 'index'])->name('statistics.index');
         });
 
-        // Admin + Superadmin + Board + Supervisor + Member routes
+        // ✅ Member access: view-only for meetings (index and show)
+        Route::middleware('role:admin|superadmin|board|supervisor|member')->group(function () {
+            Route::get('meetings', [MeetingController::class, 'index'])->name('meetings.index');
+            Route::get('meetings/{meeting}', [MeetingController::class, 'show'])->name('meetings.show');
+        });
+
+        // ✅ Management routes for higher roles only
         Route::middleware('role:admin|superadmin|board|supervisor')->group(function () {
+            Route::resource('meetings', MeetingController::class)->except(['index', 'show']);
+            Route::delete('meetings/{meeting}/media/{media}', [MeetingController::class, 'removeMedia'])
+                ->name('meetings.removeMedia');
+
             // Explicit model binding for membres resource
             Route::resource('membres', UserController::class, [
                 'parameters' => [
-                    'membres' => 'user:id' // Explicit binding with ID
+                    'membres' => 'user:id'
                 ]
             ]);
-
-            Route::resource('meetings', MeetingController::class)->except(['show']);
-            Route::get('meetings/{meeting}', [MeetingController::class, 'show'])->name('meetings.show');
-            Route::delete('meetings/{meeting}/media/{media}', [MeetingController::class, 'removeMedia'])->name('meetings.removeMedia');
         });
+
     });
 
     // Member-specific views
@@ -102,9 +110,11 @@ Route::middleware(['auth'])->group(function () {
     // CMS fallback
     Route::get('{routeName}/{name?}', [HomeController::class, 'pageView']);
 });
+
 Route::get('/test-error', function () {
     abort(500);
 });
+
 // === Fallback for 404 Not Found ===
 Route::fallback(function () {
     return response()->view('errors.404', [], 404);
