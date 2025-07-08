@@ -20,7 +20,8 @@
         <div class="col-md-4 col-sm-6">
             <div class="card statistics-card-1 overflow-hidden">
                 <div class="card-body">
-                    <img src="{{ URL::asset('build/images/widget/img-status-4.svg') }}" alt="img" class="img-fluid img-bg" />
+                    <img src="{{ URL::asset('build/images/widget/img-status-4.svg') }}" alt="img"
+                        class="img-fluid img-bg" />
                     <h5 class="mb-4">Total Associations</h5>
                     <div class="d-flex align-items-center mt-3">
                         <h3 class="f-w-300 d-flex align-items-center m-b-0">{{ $associations['total'] }}</h3>
@@ -30,7 +31,9 @@
                         <span class="badge bg-light-warning">Pending: {{ $associations['pending'] }}</span>
                     </div>
                     <div class="progress" style="height: 7px">
-                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $associations['progress'] }}%" aria-valuenow="{{ $associations['progress'] }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-primary" role="progressbar"
+                            style="width: {{ $associations['progress'] }}%" aria-valuenow="{{ $associations['progress'] }}"
+                            aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
             </div>
@@ -40,7 +43,8 @@
         <div class="col-md-4 col-sm-6">
             <div class="card statistics-card-1 overflow-hidden">
                 <div class="card-body">
-                    <img src="{{ URL::asset('build/images/widget/img-status-5.svg') }}" alt="img" class="img-fluid img-bg" />
+                    <img src="{{ URL::asset('build/images/widget/img-status-5.svg') }}" alt="img"
+                        class="img-fluid img-bg" />
                     <h5 class="mb-4">Total Users (All Roles)</h5>
                     <div class="d-flex align-items-center mt-3">
                         <h3 class="f-w-300 d-flex align-items-center m-b-0">{{ $users['total'] }}</h3>
@@ -50,7 +54,8 @@
                         <span class="badge bg-light-danger">Inactive: {{ $users['inactive'] }}</span>
                     </div>
                     <div class="progress" style="height: 7px">
-                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $users['progress'] }}%" aria-valuenow="{{ $users['progress'] }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $users['progress'] }}%"
+                            aria-valuenow="{{ $users['progress'] }}" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
             </div>
@@ -60,10 +65,13 @@
         <div class="col-md-4 col-sm-12">
             <div class="card statistics-card-1 overflow-hidden bg-primary">
                 <div class="card-body">
-                    <img src="{{ URL::asset('build/images/widget/img-status-6.svg') }}" alt="img" class="img-fluid img-bg" />
+                    <img src="{{ URL::asset('build/images/widget/img-status-6.svg') }}" alt="img"
+                        class="img-fluid img-bg" />
                     <h5 class="mb-4 text-white">Total Cotisations (Global)</h5>
                     <div class="d-flex align-items-center mt-3">
-                        <h3 class="text-white f-w-300 d-flex align-items-center m-b-0">${{ number_format($cotisations['total'], 2) }}</h3>
+                        <h3 class="text-white f-w-300 d-flex align-items-center m-b-0">
+                            {{ number_format($cotisations['total'], 2) }} MAD {{-- UPDATED --}}
+                        </h3>
                     </div>
                     <p class="text-white text-opacity-75 mb-2 text-sm mt-3">All Payments Received</p>
                     <div class="progress bg-white bg-opacity-10" style="height: 7px">
@@ -72,6 +80,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
 
@@ -148,19 +157,23 @@
                     <div id="cotisation-donut-chart" class="my-auto"></div>
                     <ul class="list-group mt-4 list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <span class="p-0 d-inline-flex align-items-center"><i class="ti ti-circle-filled text-success me-2"></i>Paid</span>
+                            <span class="p-0 d-inline-flex align-items-center"><i
+                                    class="ti ti-circle-filled text-success me-2"></i>Paid</span>
                             <span class="badge bg-light-success f-w-500">{{ $cotisationsStatus['paid'] }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <span class="p-0 d-inline-flex align-items-center"><i class="ti ti-circle-filled text-warning me-2"></i>Pending</span>
+                            <span class="p-0 d-inline-flex align-items-center"><i
+                                    class="ti ti-circle-filled text-warning me-2"></i>Pending</span>
                             <span class="badge bg-light-warning f-w-500">{{ $cotisationsStatus['pending'] }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <span class="p-0 d-inline-flex align-items-center"><i class="ti ti-circle-filled text-danger me-2"></i>Overdue</span>
+                            <span class="p-0 d-inline-flex align-items-center"><i
+                                    class="ti ti-circle-filled text-danger me-2"></i>Overdue</span>
                             <span class="badge bg-light-danger f-w-500">{{ $cotisationsStatus['overdue'] }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <span class="p-0 d-inline-flex align-items-center"><i class="ti ti-circle-filled text-secondary me-2"></i>Rejected</span>
+                            <span class="p-0 d-inline-flex align-items-center"><i
+                                    class="ti ti-circle-filled text-secondary me-2"></i>Rejected</span>
                             <span class="badge bg-light-secondary f-w-500">{{ $cotisationsStatus['rejected'] }}</span>
                         </li>
                     </ul>
@@ -171,57 +184,67 @@
 
     {{-- TOP PERFORMING ASSOCIATIONS --}}
     <div class="row">
-        <div class="col-12">
-            <div class="card table-card mt-4">
-                <div class="card-header d-flex align-items-center justify-content-between py-3">
-                    <h5 class="mb-0">Top Performing Associations</h5>
-                    <a href="{{ route('admin.associations.index') }}" class="btn btn-sm btn-link-primary">View All Associations</a>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+    <div class="col-12">
+        <div class="card table-card mt-4">
+            <div class="card-header d-flex align-items-center justify-content-between py-3">
+                <h5 class="mb-0">Top Performing Associations</h5>
+                <a href="{{ route('admin.associations.index') }}" class="btn btn-sm btn-link-primary">
+                    View All Associations
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Association Name</th>
+                                <th>Members</th>
+                                <th>Cotisations (YTD)</th>
+                                <th>Meetings Held</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($topAssociations ?? [] as $assoc)
                                 <tr>
-                                    <th>Association Name</th>
-                                    <th>Members</th>
-                                    <th>Cotisations (YTD)</th>
-                                    <th>Meetings Held</th>
-                                    <th>Status</th>
-                                    <th class="text-end">Actions</th>
+                                    <td>
+                                        <h6 class="mb-0">{{ $assoc['name'] }}</h6>
+                                    </td>
+                                    <td>{{ $assoc['members'] }}</td>
+                                    <td>{{ number_format($assoc['cotisations'], 2) }} MAD</td>
+                                    <td>{{ $assoc['meetings'] }}</td>
+                                    <td>
+                                        <span class="badge bg-light-{{ $assoc['status_color'] }}">
+                                            {{ $assoc['status_label'] }}
+                                        </span>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($topAssociations as $assoc)
-                                    <tr>
-                                        <td><h6 class="mb-0">{{ $assoc['name'] }}</h6></td>
-                                        <td>{{ $assoc['members'] }}</td>
-                                        <td>${{ number_format($assoc['cotisations'], 2) }}</td>
-                                        <td>{{ $assoc['meetings'] }}</td>
-                                        <td><span class="badge bg-light-{{ $assoc['status_color'] }}">{{ $assoc['status_label'] }}</span></td>
-                                        <td class="text-end">
-                                            <div class="btn-group">
-                                                <a href="#" class="btn btn-icon btn-light-primary"><i class="ti ti-eye"></i></a>
-                                                <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-settings"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">
+                                        No top performing associations found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 @endsection
 
 @section('scripts')
     <script src="{{ URL::asset('build/js/plugins/apexcharts.min.js') }}"></script>
     <script>
-        (function () {
+        (function() {
             var donutOptions = {
-                chart: { type: 'donut', height: 260 },
+                chart: {
+                    type: 'donut',
+                    height: 260
+                },
                 series: [
                     {{ $cotisationsStatus['paid'] }},
                     {{ $cotisationsStatus['pending'] }},
@@ -230,8 +253,12 @@
                 ],
                 labels: ['Paid', 'Pending', 'Overdue', 'Rejected'],
                 colors: ['var(--bs-success)', 'var(--bs-warning)', 'var(--bs-danger)', 'var(--bs-secondary)'],
-                legend: { show: false },
-                dataLabels: { enabled: false },
+                legend: {
+                    show: false
+                },
+                dataLabels: {
+                    enabled: false
+                },
             };
             var donutChart = new ApexCharts(document.querySelector("#cotisation-donut-chart"), donutOptions);
             donutChart.render();
@@ -240,25 +267,38 @@
         const cashflowData = @json($cashflowData);
 
         const cashflowChart = new ApexCharts(document.querySelector("#cashflow-bar-chart"), {
-            chart: { type: 'bar', height: 285, toolbar: { show: false } },
-            dataLabels: { enabled: false },
+            chart: {
+                type: 'bar',
+                height: 285,
+                toolbar: {
+                    show: false
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
             colors: ['var(--bs-primary)'],
             series: cashflowData[180].series,
-            xaxis: { categories: cashflowData[180].categories },
+            xaxis: {
+                categories: cashflowData[180].categories
+            },
             yaxis: {
                 labels: {
-                    formatter: (val) => `$${val / 1000}k`
+                    formatter: (val) => `${val / 1000}k MAD` // UPDATED
                 }
             }
         });
         cashflowChart.render();
 
-        document.getElementById('cashflow-range').addEventListener('change', function () {
+        document.getElementById('cashflow-range').addEventListener('change', function() {
             const range = this.value;
             cashflowChart.updateOptions({
                 series: cashflowData[range].series,
-                xaxis: { categories: cashflowData[range].categories }
+                xaxis: {
+                    categories: cashflowData[range].categories
+                }
             });
         });
     </script>
+    
 @endsection

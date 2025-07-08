@@ -57,14 +57,12 @@
                     </h4>
                     @php
                         $target = 50000;
-                        $progress = $cotisations['total'] > 0
-                            ? min(round(($cotisations['total'] / $target) * 100, 1), 100)
-                            : 0;
+                        $progress =
+                            $cotisations['total'] > 0 ? min(round(($cotisations['total'] / $target) * 100, 1), 100) : 0;
                     @endphp
                     <div class="progress mt-2" style="height: 7px">
-                        <div class="progress-bar bg-success" role="progressbar"
-                             style="width: {{ $progress }}%"
-                             aria-valuenow="{{ $progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ $progress }}%"
+                            aria-valuenow="{{ $progress }}" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
             </div>
@@ -75,15 +73,13 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <div class="avtar avtar-s bg-light-info"><i class="ti ti-calendar-event f-20"></i></div>
+                        <div class="avtar avtar-s bg-light-info">
+                            <i class="ti ti-calendar-event f-20"></i>
+                        </div>
                         <h6 class="ms-3 mb-0">Upcoming Meetings</h6>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
                         <h4 class="mb-0">{{ $meetings['upcoming'] }}</h4>
-                        <a href="{{ route('admin.meetings.create') }}"
-                           class="btn btn-sm btn-info d-inline-flex align-items-center">
-                            <i class="ti ti-calendar-plus me-1"></i> Schedule
-                        </a>
                     </div>
                     <p class="text-sm text-muted mt-1 mb-0">
                         @if ($meetings['upcoming'] > 0)
@@ -93,6 +89,7 @@
                         @endif
                     </p>
                 </div>
+
             </div>
         </div>
 
@@ -107,7 +104,7 @@
                     <div class="d-flex align-items-center justify-content-between mt-3">
                         <h4 class="mb-0">{{ $events['active'] }}</h4>
                         <a href="{{ route('admin.events.create') }}"
-                           class="btn btn-sm btn-warning d-inline-flex align-items-center">
+                            class="btn btn-sm btn-warning d-inline-flex align-items-center">
                             <i class="ti ti-ticket-plus me-1"></i> Create
                         </a>
                     </div>
@@ -158,7 +155,7 @@
                                         </td>
                                         <td>
                                             {{ $activity->action }}
-                                            @if($activity->details)
+                                            @if ($activity->details)
                                                 : <span class="fw-bold">{{ $activity->details }}</span>
                                             @endif
                                         </td>
@@ -187,15 +184,15 @@
                 <div class="card-body">
                     <div class="d-grid gap-2">
                         <a href="{{ route('admin.events.create') }}"
-                           class="btn btn-outline-primary d-inline-flex align-items-center justify-content-center">
+                            class="btn btn-outline-primary d-inline-flex align-items-center justify-content-center">
                             <i class="ti ti-calendar-plus me-2"></i>Create New Event
                         </a>
-                        <a href="{{ route('admin.meetings.create') }}"
-                           class="btn btn-outline-info d-inline-flex align-items-center justify-content-center">
-                            <i class="ti ti-calendar-plus me-2"></i>Schedule a Meeting
+                        <a href="{{ route('admin.cotisations.create') }}"
+                            class="btn btn-outline-success d-inline-flex align-items-center justify-content-center">
+                            <i class="ti ti-currency-dollar me-2"></i>New Cotisation
                         </a>
                         <a href="{{ route('admin.contributions.create') }}"
-                           class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center">
+                            class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center">
                             <i class="ti ti-cash me-2"></i>New Contribution
                         </a>
                     </div>
@@ -239,7 +236,10 @@
     <script src="{{ URL::asset('build/js/plugins/apexcharts.min.js') }}"></script>
     <script>
         new ApexCharts(document.querySelector("#cotisation-status-donut"), {
-            chart: { type: 'donut', height: 200 },
+            chart: {
+                type: 'donut',
+                height: 200
+            },
             series: [
                 {{ $cotisationsStatus['paid'] }},
                 {{ $cotisationsStatus['pending'] }},
@@ -247,19 +247,37 @@
             ],
             labels: ['Paid', 'Pending', 'Overdue'],
             colors: ['var(--bs-success)', 'var(--bs-warning)', 'var(--bs-danger)'],
-            dataLabels: { enabled: false },
-            legend: { show: false }
+            dataLabels: {
+                enabled: false
+            },
+            legend: {
+                show: false
+            }
         }).render();
 
         const cotisationChartData = @json($cashflowData);
 
         const cotisationChart = new ApexCharts(document.querySelector("#association-cotisations-chart"), {
-            chart: { type: 'bar', height: 300, toolbar: { show: false } },
-            plotOptions: { bar: { borderRadius: 4 } },
-            dataLabels: { enabled: false },
+            chart: {
+                type: 'bar',
+                height: 300,
+                toolbar: {
+                    show: false
+                }
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: 4
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
             colors: ['var(--bs-primary)'],
             series: cotisationChartData[180].series,
-            xaxis: { categories: cotisationChartData[180].categories },
+            xaxis: {
+                categories: cotisationChartData[180].categories
+            },
             yaxis: {
                 labels: {
                     formatter: (val) => `${Number(val).toLocaleString()} MAD`
@@ -269,14 +287,16 @@
 
         cotisationChart.render();
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const select = document.getElementById('cotisation-range');
             if (select) {
-                select.addEventListener('change', function () {
+                select.addEventListener('change', function() {
                     const selected = this.value;
                     cotisationChart.updateOptions({
                         series: cotisationChartData[selected].series,
-                        xaxis: { categories: cotisationChartData[selected].categories }
+                        xaxis: {
+                            categories: cotisationChartData[selected].categories
+                        }
                     });
                 });
             }

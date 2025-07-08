@@ -185,25 +185,36 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex align-items-center">
                             <div class="flex-shrink-0">
-                                <div class="avtar avtar-s bg-light-secondary"><i class="ti ti-file-text f-20"></i></div>
+                                <div class="avtar avtar-s bg-light-secondary">
+                                    <i class="ti ti-file-text f-20"></i>
+                                </div>
                             </div>
                             <div class="flex-grow-1 ms-3">
                                 <h6 class="mb-0">Meeting Minutes - Q1 2024</h6>
                             </div>
-                            <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-download"></i></a>
+                            <a href="{{ route('admin.meetings.index') }}" class="btn btn-icon btn-light-secondary"
+                                title="Go to Meetings">
+                                <i class="ti ti-download"></i>
+                            </a>
                         </li>
                         <li class="list-group-item d-flex align-items-center">
                             <div class="flex-shrink-0">
-                                <div class="avtar avtar-s bg-light-secondary"><i class="ti ti-file-text f-20"></i></div>
+                                <div class="avtar avtar-s bg-light-secondary">
+                                    <i class="ti ti-file-text f-20"></i>
+                                </div>
                             </div>
                             <div class="flex-grow-1 ms-3">
                                 <h6 class="mb-0">Association Bylaws</h6>
                             </div>
-                            <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-download"></i></a>
+                            <a href="{{ route('admin.meetings.index') }}" class="btn btn-icon btn-light-secondary"
+                                title="Go to Meetings">
+                                <i class="ti ti-download"></i>
+                            </a>
                         </li>
                     </ul>
                 </div>
             </div>
+
 
             {{-- Upcoming Meetings --}}
             <div class="card mb-4">
@@ -215,13 +226,16 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex align-items-center">
                             <div class="flex-shrink-0">
-                                <div class="avtar avtar-s bg-light-primary"><i class="ti ti-calendar-event f-20"></i></div>
+                                <div class="avtar avtar-s bg-light-primary">
+                                    <i class="ti ti-calendar-event f-20"></i>
+                                </div>
                             </div>
                             <div class="flex-grow-1 ms-3">
                                 <h6 class="mb-0">Quarterly Review</h6>
                                 <small class="text-muted">Thu, Apr 18, 2024 - 06:00 PM</small>
                             </div>
-                            <a href="{{ route('admin.meetings.index') }}" class="btn btn-icon btn-light-secondary">
+                            <a href="{{ route('admin.meetings.index') }}" class="btn btn-icon btn-light-secondary"
+                                title="View Meetings">
                                 <i class="ti ti-arrow-right"></i>
                             </a>
                         </li>
@@ -239,31 +253,38 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex align-items-center">
                             <div class="flex-shrink-0">
-                                <div class="avtar avtar-s bg-light-info"><i class="ti ti-ticket f-20"></i></div>
+                                <div class="avtar avtar-s bg-light-info">
+                                    <i class="ti ti-ticket f-20"></i>
+                                </div>
                             </div>
                             <div class="flex-grow-1 ms-3">
                                 <h6 class="mb-0">Annual Charity Gala</h6>
                                 <small class="text-muted">Sat, Jun 15, 2024</small>
                             </div>
-                            <div class="flex-shrink-0 text-end">
-                                <span class="badge bg-light-success">Joined</span>
-                            </div>
+                            <a href="{{ route('membre.events.index') }}" class="btn btn-icon btn-light-secondary"
+                                title="View Events">
+                                <i class="ti ti-arrow-right"></i>
+                            </a>
                         </li>
                         <li class="list-group-item d-flex align-items-center">
                             <div class="flex-shrink-0">
-                                <div class="avtar avtar-s bg-light-info"><i class="ti ti-users f-20"></i></div>
+                                <div class="avtar avtar-s bg-light-info">
+                                    <i class="ti ti-users f-20"></i>
+                                </div>
                             </div>
                             <div class="flex-grow-1 ms-3">
                                 <h6 class="mb-0">Community Workshop</h6>
                                 <small class="text-muted">Tue, Jul 09, 2024</small>
                             </div>
-                            <div class="flex-shrink-0 text-end">
-                                <span class="badge bg-light-primary">Interested</span>
-                            </div>
+                            <a href="{{ route('membre.events.index') }}" class="btn btn-icon btn-light-secondary"
+                                title="View Events">
+                                <i class="ti ti-arrow-right"></i>
+                            </a>
                         </li>
                     </ul>
                 </div>
             </div>
+
 
         </div>
     </div>

@@ -41,7 +41,8 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
-                            <img src="{{ asset('build/images/user/avatar-1.jpg') }}" alt="user image" class="img-radius wid-60" />
+                            <img src="{{ asset('build/images/user/avatar-1.jpg') }}" alt="user image"
+                                class="img-radius wid-60" />
                         </div>
                         <div class="flex-grow-1 ms-3">
                             <h4 class="mb-1">Welcome, {{ auth()->user()->name }}!</h4>
@@ -65,15 +66,21 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span><i class="ti ti-circle-filled text-success me-2"></i> Paid</span>
-                            <span class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_PAID] ?? 0, 2, '.', ' ') }} MAD</span>
+                            <span
+                                class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_PAID] ?? 0, 2, '.', ' ') }}
+                                MAD</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span><i class="ti ti-circle-filled text-warning me-2"></i> Pending</span>
-                            <span class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_PENDING] ?? 0, 2, '.', ' ') }} MAD</span>
+                            <span
+                                class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_PENDING] ?? 0, 2, '.', ' ') }}
+                                MAD</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span><i class="ti ti-circle-filled text-danger me-2"></i> Overdue</span>
-                            <span class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_OVERDUE] ?? 0, 2, '.', ' ') }} MAD</span>
+                            <span
+                                class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_OVERDUE] ?? 0, 2, '.', ' ') }}
+                                MAD</span>
                         </li>
                     </ul>
                 </div>
@@ -149,7 +156,10 @@
                             <div class="flex-grow-1 ms-3">
                                 <h6 class="mb-0">Meeting Minutes - Q1 2024</h6>
                             </div>
-                            <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-download"></i></a>
+                            <a href="{{ route('admin.meetings.index') }}" class="btn btn-icon btn-light-secondary"
+                                title="Go to Meetings">
+                                <i class="ti ti-download"></i>
+                            </a>
                         </li>
                         <li class="list-group-item d-flex align-items-center">
                             <div class="flex-shrink-0">
@@ -158,29 +168,38 @@
                             <div class="flex-grow-1 ms-3">
                                 <h6 class="mb-0">Association Bylaws</h6>
                             </div>
-                            <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-download"></i></a>
+                            <a href="{{ route('admin.meetings.index') }}" class="btn btn-icon btn-light-secondary"
+                                title="Go to Meetings">
+                                <i class="ti ti-download"></i>
+                            </a>
                         </li>
                     </ul>
                 </div>
             </div>
 
+
             {{-- Upcoming Meetings --}}
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Upcoming Meetings</h5>
-                    <a href="{{ route('admin.meetings.index') }}" class="btn btn-sm btn-link-primary">View All</a>
+                    <a href="{{ route('admin.meetings.index') }}" class="btn btn-sm btn-link-primary">
+                        View All
+                    </a>
                 </div>
                 <div class="card-body p-0">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex align-items-center">
                             <div class="flex-shrink-0">
-                                <div class="avtar avtar-s bg-light-primary"><i class="ti ti-calendar-event f-20"></i></div>
+                                <div class="avtar avtar-s bg-light-primary">
+                                    <i class="ti ti-calendar-event f-20"></i>
+                                </div>
                             </div>
                             <div class="flex-grow-1 ms-3">
                                 <h6 class="mb-0">Quarterly Review</h6>
                                 <small class="text-muted">Thu, Apr 18, 2024 - 06:00 PM</small>
                             </div>
-                            <a href="{{ route('admin.meetings.index') }}" class="btn btn-icon btn-light-secondary">
+                            <a href="{{ route('admin.meetings.index') }}" class="btn btn-icon btn-light-secondary"
+                                title="View Meetings">
                                 <i class="ti ti-arrow-right"></i>
                             </a>
                         </li>
@@ -188,41 +207,7 @@
                 </div>
             </div>
 
-            {{-- Upcoming Events --}}
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Upcoming Events</h5>
-                    <a href="{{ route('admin.events.index') }}" class="btn btn-sm btn-link-primary">View All</a>
-                </div>
-                <div class="card-body p-0">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex align-items-center">
-                            <div class="flex-shrink-0">
-                                <div class="avtar avtar-s bg-light-info"><i class="ti ti-ticket f-20"></i></div>
-                            </div>
-                            <div class="flex-grow-1 ms-3">
-                                <h6 class="mb-0">Annual Charity Gala</h6>
-                                <small class="text-muted">Sat, Jun 15, 2024</small>
-                            </div>
-                            <div class="flex-shrink-0 text-end">
-                                <span class="badge bg-light-success">Joined</span>
-                            </div>
-                        </li>
-                        <li class="list-group-item d-flex align-items-center">
-                            <div class="flex-shrink-0">
-                                <div class="avtar avtar-s bg-light-info"><i class="ti ti-users f-20"></i></div>
-                            </div>
-                            <div class="flex-grow-1 ms-3">
-                                <h6 class="mb-0">Community Workshop</h6>
-                                <small class="text-muted">Tue, Jul 09, 2024</small>
-                            </div>
-                            <div class="flex-shrink-0 text-end">
-                                <span class="badge bg-light-primary">Interested</span>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+
 
         </div>
     </div>

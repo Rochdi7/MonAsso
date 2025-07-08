@@ -124,7 +124,8 @@
             categories: @json(array_slice($cashflowLabels, -6)),
             series: [{
                 name: 'Paid',
-                data: @json(array_slice($cashflowValues, -6))
+                data: @json(array_slice($cashflowValues->toArray(), -6))
+
             }]
         },
         12: {
@@ -166,4 +167,5 @@
         });
     });
 </script>
+
 @endsection

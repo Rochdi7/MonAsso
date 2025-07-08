@@ -19,7 +19,9 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="avtar avtar-s bg-light-primary"><i class="ti ti-users f-20"></i></div>
-                        <div class="ms-3"><h6 class="mb-0">Total Members</h6></div>
+                        <div class="ms-3">
+                            <h6 class="mb-0">Total Members</h6>
+                        </div>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
                         <h4 class="mb-0">{{ $users['total'] }}</h4>
@@ -35,11 +37,13 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="avtar avtar-s bg-light-info"><i class="ti ti-calendar-stats f-20"></i></div>
-                        <div class="ms-3"><h6 class="mb-0">Meeting Attendance (Avg)</h6></div>
+                        <div class="ms-3">
+                            <h6 class="mb-0">Meeting Attendance (Avg)</h6>
+                        </div>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
                         <h4 class="mb-0">
-                            {{ $users['total'] > 0 ? round(($meetings['held'] > 0 ? ($meetings['held'] / $users['total']) * 100 : 0), 1) : 0 }}%
+                            {{ $users['total'] > 0 ? round($meetings['held'] > 0 ? ($meetings['held'] / $users['total']) * 100 : 0, 1) : 0 }}%
                         </h4>
                         <span class="badge bg-light-success"><i class="ti ti-arrow-up"></i> +5%</span>
                     </div>
@@ -53,7 +57,9 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="avtar avtar-s bg-light-success"><i class="ti ti-receipt-2 f-20"></i></div>
-                        <div class="ms-3"><h6 class="mb-0">Cotisations (YTD)</h6></div>
+                        <div class="ms-3">
+                            <h6 class="mb-0">Cotisations (YTD)</h6>
+                        </div>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
                         <h4 class="mb-0">{{ number_format($cotisations['total'], 0, '.', ' ') }} MAD</h4>
@@ -69,7 +75,9 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="avtar avtar-s bg-light-warning"><i class="ti ti-ticket f-20"></i></div>
-                        <div class="ms-3"><h6 class="mb-0">Upcoming Events</h6></div>
+                        <div class="ms-3">
+                            <h6 class="mb-0">Upcoming Events</h6>
+                        </div>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
                         <h4 class="mb-0">{{ $events['active'] }}</h4>
@@ -89,20 +97,13 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Financial Performance (Last 6 Months)</h5>
-                    <div class="dropdown">
-                        <a class="avtar avtar-s btn-link-secondary dropdown-toggle arrow-none" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="ti ti-dots-vertical f-18"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="#"><i class="ti ti-report-analytics me-2"></i>View Full Report</a>
-                            <a class="dropdown-item" href="#"><i class="ti ti-file-download me-2"></i>Export as PDF</a>
-                        </div>
-                    </div>
+                    
                 </div>
                 <div class="card-body">
                     <div id="financial-performance-chart"></div>
                 </div>
             </div>
+
 
             {{-- Meeting Performance Summary --}}
             <div class="card table-card mt-4">
@@ -122,18 +123,21 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($recentActivities as $activity)
+                                @foreach ($recentActivities as $activity)
                                     <tr>
                                         <td>{{ $activity->details }}</td>
                                         <td>{{ $activity->activity_time->format('M d, Y') }}</td>
                                         <td>N/A</td>
                                         <td><span class="text-success">--</span></td>
                                         <td class="text-end">
-                                            <a href="#" class="btn btn-icon btn-light-secondary"><i class="ti ti-eye"></i></a>
+                                            <a href="{{ route('admin.meetings.index') }}"
+                                                class="btn btn-icon btn-light-secondary" title="View Meetings">
+                                                <i class="ti ti-eye"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
-                                @if($recentActivities->isEmpty())
+                                @if ($recentActivities->isEmpty())
                                     <tr>
                                         <td colspan="5" class="text-center text-muted">No recent meetings.</td>
                                     </tr>
@@ -143,6 +147,7 @@
                     </div>
                 </div>
             </div>
+
 
         </div>
 
@@ -200,17 +205,19 @@
                     type: 'bar',
                     height: 300,
                     stacked: true,
-                    toolbar: { show: false }
+                    toolbar: {
+                        show: false
+                    }
                 },
                 plotOptions: {
-                    bar: { columnWidth: '50%' }
-                },
-                series: [
-                    {
-                        name: 'Cotisations',
-                        data: {!! json_encode($cashflowData['180']['series'][0]['data'] ?? []) !!}
+                    bar: {
+                        columnWidth: '50%'
                     }
-                ],
+                },
+                series: [{
+                    name: 'Cotisations',
+                    data: {!! json_encode($cashflowData['180']['series'][0]['data'] ?? []) !!}
+                }],
                 xaxis: {
                     categories: {!! json_encode($cashflowData['180']['categories'] ?? []) !!}
                 },
@@ -220,11 +227,15 @@
                     }
                 },
                 colors: ['var(--bs-success)'],
-                dataLabels: { enabled: false },
+                dataLabels: {
+                    enabled: false
+                },
                 legend: {
                     position: 'top',
                     horizontalAlign: 'right',
-                    markers: { radius: 12 }
+                    markers: {
+                        radius: 12
+                    }
                 }
             };
 
@@ -248,8 +259,12 @@
                 ],
                 labels: ['Paid', 'Pending', 'Overdue'],
                 colors: ['var(--bs-success)', 'var(--bs-warning)', 'var(--bs-danger)'],
-                dataLabels: { enabled: false },
-                legend: { show: false }
+                dataLabels: {
+                    enabled: false
+                },
+                legend: {
+                    show: false
+                }
             };
 
             var chart = new ApexCharts(document.querySelector("#cotisation-status-chart"), options);

@@ -34,16 +34,7 @@
         <div class="card flex-fill">
             <div class="card-header d-flex align-items-center justify-content-between">
                 <h5 class="mb-0"><i class="ph-duotone ph-calendar-check me-1"></i> Meetings: Created vs. Completed</h5>
-                <div class="dropdown">
-                    <a class="avtar avtar-xs btn-link-secondary dropdown-toggle arrow-none" href="#" data-bs-toggle="dropdown">
-                        <i class="ph-duotone ph-dots-three-outline-vertical f-18"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <a class="dropdown-item" href="#">This Week</a>
-                        <a class="dropdown-item" href="#">This Month</a>
-                        <a class="dropdown-item" href="#">Last 30 Days</a>
-                    </div>
-                </div>
+                
             </div>
             <div class="card-body">
                 <div class="row text-center">
