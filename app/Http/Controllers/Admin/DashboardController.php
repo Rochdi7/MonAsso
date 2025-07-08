@@ -11,6 +11,7 @@ use App\Models\Event;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {
@@ -20,7 +21,7 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-
+        $topAssociations = collect();
         if ($user->hasRole('superadmin')) {
             $data = $this->getSuperAdminDashboardData();
             return view('admin.dashboards.superadmin', $data);
@@ -108,37 +109,79 @@ class DashboardController extends Controller
         ];
 
         // Cashflow for charts
-        $cashflow = Cotisation::select(
+
+        // --- Last 30 days (daily sums) ---
+        $cashflow30 = Cotisation::select(
+            DB::raw("DATE_FORMAT(paid_at, '%Y-%m-%d') as day"),
+            DB::raw('SUM(amount) as total')
+        )
+            ->where('status', Cotisation::STATUS_PAID)
+            ->whereNotNull('paid_at')
+            ->where('paid_at', '>=', $now->copy()->subDays(30)->startOfDay())
+            ->groupBy('day')
+            ->orderBy('day')
+            ->get();
+
+        $days30 = $cashflow30->pluck('day')->toArray();
+        $totals30 = $cashflow30->pluck('total')->toArray();
+
+        // --- Last 6 months (monthly sums) ---
+        $cashflow180 = Cotisation::select(
             DB::raw("DATE_FORMAT(paid_at, '%Y-%m') as month"),
             DB::raw('SUM(amount) as total')
         )
             ->where('status', Cotisation::STATUS_PAID)
             ->whereNotNull('paid_at')
-            ->where('paid_at', '>=', $now->copy()->subMonths(12)->startOfMonth())
+            ->where('paid_at', '>=', $now->copy()->subMonths(6)->startOfMonth())
             ->groupBy('month')
             ->orderBy('month')
             ->get();
 
-        $cashflowMonths = $cashflow->pluck('month')->toArray();
-        $cashflowTotals = $cashflow->pluck('total')->toArray();
+        $months180 = $cashflow180->pluck('month')->toArray();
+        $totals180 = $cashflow180->pluck('total')->toArray();
+
+        // --- Last 365 days (monthly sums) ---
+        $cashflow365 = Cotisation::select(
+            DB::raw("DATE_FORMAT(paid_at, '%Y-%m') as month"),
+            DB::raw('SUM(amount) as total')
+        )
+            ->where('status', Cotisation::STATUS_PAID)
+            ->whereNotNull('paid_at')
+            ->where('paid_at', '>=', $now->copy()->subDays(365)->startOfMonth())
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $months365 = $cashflow365->pluck('month')->toArray();
+        $totals365 = $cashflow365->pluck('total')->toArray();
 
         $cashflowData = [
-            '180' => [
-                'categories' => $cashflowMonths,
+            '30' => [
+                'categories' => $days30,
                 'series' => [
                     [
                         'name' => 'Cotisations',
-                        'data' => $cashflowTotals,
+                        'data' => $totals30,
                     ]
                 ],
             ],
-            '30' => [
-                'categories' => [],
-                'series' => [[]],
+            '180' => [
+                'categories' => $months180,
+                'series' => [
+                    [
+                        'name' => 'Cotisations',
+                        'data' => $totals180,
+                    ]
+                ],
             ],
             '365' => [
-                'categories' => [],
-                'series' => [[]],
+                'categories' => $months365,
+                'series' => [
+                    [
+                        'name' => 'Cotisations',
+                        'data' => $totals365,
+                    ]
+                ],
             ],
         ];
 
@@ -617,102 +660,109 @@ class DashboardController extends Controller
      * Get Member Dashboard data.
      */
     protected function getMemberDashboardData(): array
-{
-    $auth = auth()->user();
+    {
+        $auth = auth()->user();
 
-    // --- 1) Cotisation Summary ---
-    // Load from statistics table
-    $cotisationStatusRaw = DB::table('statistics')
-        ->where('key', 'member_cotisation_status')
-        ->value('value');
+        // --- 1) Cotisation Summary ---
+        $paidTotal = Cotisation::where('user_id', $auth->id)
+            ->where('status', Cotisation::STATUS_PAID)
+            ->sum('amount');
 
-    $cotisationStatus = $cotisationStatusRaw
-        ? json_decode($cotisationStatusRaw, true)
-        : ['Paid' => 0, 'Unpaid' => 0];
+        $pendingTotal = Cotisation::where('user_id', $auth->id)
+            ->where('status', Cotisation::STATUS_PENDING)
+            ->sum('amount');
 
-    $paidTotal = $cotisationStatus['Paid'] ?? 0;
-    $pendingTotal = $cotisationStatus['Unpaid'] ?? 0;
-    $overdueTotal = 0; // optional for now
+        $overdueTotal = Cotisation::where('user_id', $auth->id)
+            ->where('status', Cotisation::STATUS_OVERDUE)
+            ->sum('amount');
 
-    // --- 2) Profile completeness ---
-    $profileRaw = DB::table('statistics')
-        ->where('key', 'member_profile_completeness')
-        ->value('value');
+        // --- 2) Profile completeness (dummy calculation) ---
+        // Compute from user's actual filled fields instead of statistics table
+        $fields = [
+            $auth->name,
+            $auth->email,
+            $auth->phone,
+            $auth->address,
+        ];
 
-    $profileData = $profileRaw
-        ? json_decode($profileRaw, true)
-        : ['completion' => 0];
+        $filled = collect($fields)->filter(fn($v) => !empty($v))->count();
+        $total = count($fields);
 
-    $profileCompletion = $profileData['completion'];
+        $profileCompletion = $total > 0
+            ? round(($filled / $total) * 100, 1)
+            : 0;
 
-    // --- 3) Cotisation Chart ---
-    $chartRaw = DB::table('statistics')
-        ->where('key', 'member_cotisation_history_chart')
-        ->value('value');
+        // --- 3) Cotisation Chart (Last 6 months) ---
+        $cashflow = Cotisation::select(
+            DB::raw("DATE_FORMAT(paid_at, '%Y-%m') as month"),
+            DB::raw("SUM(amount) as total")
+        )
+            ->where('user_id', $auth->id)
+            ->where('status', Cotisation::STATUS_PAID)
+            ->whereNotNull('paid_at')
+            ->where('paid_at', '>=', now()->copy()->subMonths(6)->startOfMonth())
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
 
-    $chartData = $chartRaw
-        ? json_decode($chartRaw, true)
-        : [];
+        $cashflowLabels = $cashflow->pluck('month')->toArray();
+        $cashflowValues = $cashflow->pluck('total')->toArray();
 
-    $cashflowLabels = $chartData['6']['categories'] ?? [];
-    $cashflowValues = $chartData['6']['series'][0]['data'] ?? [];
+        // --- 4) My Cotisation History ---
+        $myCotisationsList = Cotisation::where('user_id', $auth->id)
+            ->select([
+                DB::raw('year as cycle'),
+                'amount',
+                DB::raw('IFNULL(paid_at, "N/A") as due_date'),
+                'status',
+            ])
+            ->orderByDesc('year')
+            ->limit(10)
+            ->get();
 
-    // --- 4) My Cotisation History ---
-    // Replacing invalid columns with existing fields
-    $myCotisationsList = Cotisation::where('user_id', $auth->id)
-        ->select([
-            DB::raw('year as cycle'),
-            'amount',
-            DB::raw('IFNULL(paid_at, "N/A") as due_date'),
-            'status',
-        ])
-        ->orderByDesc('year')
-        ->limit(10)
-        ->get();
+        // --- 5) Upcoming Meetings & Events ---
+        $upcomingMeetingsEvents = collect([
+            [
+                'title' => 'Quarterly Review',
+                'date' => now()->addDays(7)->format('M d, Y'),
+                'location' => 'Main Hall',
+                'time_diff' => 'in 7 days',
+                'link' => route('admin.meetings.index'),
+            ],
+            [
+                'title' => 'Annual Charity Gala',
+                'date' => now()->addDays(15)->format('M d, Y'),
+                'location' => 'Conference Center',
+                'time_diff' => 'in 15 days',
+                'link' => route('membre.events.index'),
+            ],
+        ]);
 
-    // --- 5) Upcoming Meetings & Events (dummy for now) ---
-    $upcomingMeetingsEvents = collect([
-        [
-            'title' => 'Quarterly Review',
-            'date' => now()->addDays(7)->format('M d, Y'),
-            'location' => 'Main Hall',
-            'time_diff' => 'in 7 days',
-            'link' => route('admin.meetings.index'),
-        ],
-        [
-            'title' => 'Annual Charity Gala',
-            'date' => now()->addDays(15)->format('M d, Y'),
-            'location' => 'Conference Center',
-            'time_diff' => 'in 15 days',
-            'link' => route('membre.events.index'),
-        ],
-    ]);
+        // --- 6) Recent Activities (dummy) ---
+        $recentActivities = collect([
+            (object)[
+                'date' => now()->subDays(2)->format('Y-m-d'),
+                'type' => 'Paid Cotisation',
+                'details' => 'Annual Dues 2024',
+            ],
+            (object)[
+                'date' => now()->subDays(5)->format('Y-m-d'),
+                'type' => 'Joined Event',
+                'details' => 'Community Workshop',
+            ],
+        ]);
 
-    $recentActivities = collect([
-        (object)[
-            'date' => now()->subDays(2)->format('Y-m-d'),
-            'type' => 'Paid Cotisation',
-            'details' => 'Annual Dues 2024',
-        ],
-        (object)[
-            'date' => now()->subDays(5)->format('Y-m-d'),
-            'type' => 'Joined Event',
-            'details' => 'Community Workshop',
-        ],
-    ]);
-
-    return [
-        'user' => $auth,
-        'profileCompletion' => $profileCompletion,
-        'paidTotal' => $paidTotal,
-        'pendingTotal' => $pendingTotal,
-        'overdueTotal' => $overdueTotal,
-        'cashflowLabels' => $cashflowLabels,
-        'cashflowValues' => $cashflowValues,
-        'myCotisationsList' => $myCotisationsList,
-        'upcomingMeetingsEvents' => $upcomingMeetingsEvents,
-        'recentActivities' => $recentActivities,
-    ];
-}
-
+        return [
+            'user' => $auth,
+            'profileCompletion' => $profileCompletion,
+            'paidTotal' => $paidTotal,
+            'pendingTotal' => $pendingTotal,
+            'overdueTotal' => $overdueTotal,
+            'cashflowLabels' => $cashflowLabels,
+            'cashflowValues' => $cashflowValues,
+            'myCotisationsList' => $myCotisationsList,
+            'upcomingMeetingsEvents' => $upcomingMeetingsEvents,
+            'recentActivities' => $recentActivities,
+        ];
+    }
 }

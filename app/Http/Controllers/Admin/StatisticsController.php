@@ -44,6 +44,26 @@ class StatisticsController extends Controller
             return view('admin.statistics.member', $data);
         }
 
+        $upcomingMeetings = [
+        [
+            'title' => 'Quarterly Review',
+            'date' => 'Thu, Apr 18, 2024 - 06:00 PM',
+            'location' => 'Main Office',
+            'time_diff' => Carbon::parse('2024-04-18 18:00')->diffForHumans(),
+            'link' => route('admin.meetings.index'),
+        ],
+    ];
+
+    $upcomingEvents = [
+        [
+            'title' => 'Annual Charity Gala',
+            'date' => 'Sat, Jun 15, 2024',
+            'location' => 'Grand Ballroom',
+            'time_diff' => Carbon::parse('2024-06-15')->diffForHumans(),
+            'link' => route('membre.events.index'),
+        ],
+    ];
+
         abort(403, 'Unauthorized access.');
     }
 
@@ -52,17 +72,96 @@ class StatisticsController extends Controller
      */
     protected function getSuperAdminStatisticsData(): array
     {
-        $base = $this->buildStatisticsBaseData();
+        // Total active members
+        $totalActiveMembers = \App\Models\User::role('member')
+            ->where('is_active', true)
+            ->count();
 
-        $totalAssociations = Association::count();
-        $pendingAssociations = Association::where('is_validated', false)->count();
+        // New members registered this year
+        $memberGrowthThisYear = \App\Models\User::role('member')
+            ->whereYear('created_at', now()->year)
+            ->count();
 
-        $base['superadminDetails'] = [
-            'totalAssociations' => $totalAssociations,
-            'pendingAssociations' => $pendingAssociations,
+        // Generate chart data
+        $memberGrowthChartData = $this->generateMemberGrowthData();
+
+        // Cotisations
+        $cotisationsPaidMAD = \App\Models\Cotisation::where('status', 1)->sum('amount');
+        $cotisationsPendingMAD = \App\Models\Cotisation::where('status', 0)->sum('amount');
+        $cotisationsOverdueRejectedMAD = \App\Models\Cotisation::whereIn('status', [2, 3])->sum('amount');
+
+        // Contributions & expenses
+        $totalInflowMAD = \App\Models\Contribution::sum('amount');
+        $totalOutflowMAD = \App\Models\Expense::sum('amount');
+
+        // Associations
+        $associationsTotal = \App\Models\Association::where('is_validated', true)->count();
+        $associationsGrowthThisYear = \App\Models\Association::where('is_validated', true)
+            ->whereYear('validation_date', now()->year)
+            ->count();
+
+        // Cotisations grouped by association
+        $cotisationsByAssociation = \App\Models\Cotisation::select([
+            'associations.name as association',
+            \DB::raw('SUM(cotisations.amount) as total')
+        ])
+            ->join('associations', 'cotisations.association_id', '=', 'associations.id')
+            ->groupBy('associations.id', 'associations.name')
+            ->orderBy('associations.name')
+            ->get();
+
+        // Users by roles
+        $rolesCounts = [
+            'member' => \App\Models\User::role('member')->count(),
+            'admin' => \App\Models\User::role('admin')->count(),
+            'board' => \App\Models\User::role('board')->count(),
+            'superadmin' => \App\Models\User::role('superadmin')->count(),
         ];
 
-        return $base;
+        return [
+            'totalActiveMembers' => $totalActiveMembers,
+            'memberGrowthThisYear' => $memberGrowthThisYear,
+            'memberGrowthChartData' => $memberGrowthChartData,
+            'cotisationsPaidMAD' => $cotisationsPaidMAD,
+            'cotisationsPendingMAD' => $cotisationsPendingMAD,
+            'cotisationsOverdueRejectedMAD' => $cotisationsOverdueRejectedMAD,
+            'totalInflowMAD' => $totalInflowMAD,
+            'totalOutflowMAD' => $totalOutflowMAD,
+            'associationsTotal' => $associationsTotal,
+            'associationsGrowthThisYear' => $associationsGrowthThisYear,
+            'cotisationsByAssociation' => $cotisationsByAssociation,
+            'rolesCounts' => $rolesCounts,
+        ];
+    }
+
+    private function generateMemberGrowthData()
+    {
+        $data = [];
+
+        foreach ([3, 6, 12] as $months) {
+            $labels = [];
+            $values = [];
+
+            for ($i = $months - 1; $i >= 0; $i--) {
+                $monthStart = now()->startOfMonth()->subMonths($i);
+                $monthEnd = $monthStart->copy()->endOfMonth();
+
+                $count = \App\Models\User::role('member')
+                    ->where('is_active', true)
+                    ->whereBetween('created_at', [$monthStart, $monthEnd])
+                    ->count();
+
+                $labels[] = $monthStart->format('M Y');
+                $values[] = $count;
+            }
+
+            $data[$months] = [
+                'categories' => $labels,
+                'data' => $values,
+            ];
+        }
+
+        return $data;
     }
 
     /**
@@ -71,104 +170,133 @@ class StatisticsController extends Controller
     protected function getAdminStatisticsData(): array
     {
         $auth = auth()->user();
-        $associationId = $auth->association_id;
-        $now = Carbon::now();
 
-        // Members
-        $totalActiveMembers = User::where('association_id', $associationId)
+        $associationId = $auth->association_id;
+
+        // Total members in this admin's association
+        $totalMembers = \App\Models\User::where('association_id', $associationId)
             ->where('is_active', true)
             ->count();
 
-        $totalInactiveMembers = User::where('association_id', $associationId)
-            ->where('is_active', false)
+        // Member growth this year
+        $memberGrowthThisYear = \App\Models\User::where('association_id', $associationId)
+            ->whereYear('created_at', now()->year)
             ->count();
 
-        $totalMembers = $totalActiveMembers + $totalInactiveMembers;
+        // Member growth chart data
+        $memberGrowthChartData = $this->generateAdminMemberGrowthData($associationId);
 
-        // Cotisations
-        $cotisationsPaidMAD = Cotisation::where('association_id', $associationId)
-            ->where('status', Cotisation::STATUS_PAID)
+        // Cotisations sums
+        $cotisationsPaidMAD = \App\Models\Cotisation::where('association_id', $associationId)
+            ->where('status', 1)
             ->sum('amount');
 
-        $cotisationsPendingMAD = Cotisation::where('association_id', $associationId)
-            ->where('status', Cotisation::STATUS_PENDING)
+        $cotisationsPendingMAD = \App\Models\Cotisation::where('association_id', $associationId)
+            ->where('status', 0)
             ->sum('amount');
 
-        $cotisationsOverdueRejectedMAD = Cotisation::where('association_id', $associationId)
-            ->whereIn('status', [
-                Cotisation::STATUS_OVERDUE,
-                Cotisation::STATUS_REJECTED
+        $cotisationsOverdueRejectedMAD = \App\Models\Cotisation::where('association_id', $associationId)
+            ->whereIn('status', [2, 3])
+            ->sum('amount');
+
+        // Cotisation cashflow last 6 months
+        $months = 6;
+        $cashflowLabels = [];
+        $cashflowValues = [];
+
+        for ($i = $months - 1; $i >= 0; $i--) {
+            $monthStart = now()->startOfMonth()->subMonths($i);
+            $monthEnd = $monthStart->copy()->endOfMonth();
+
+            $sum = \App\Models\Cotisation::where('association_id', $associationId)
+                ->where('status', 1)
+                ->whereBetween('paid_at', [$monthStart, $monthEnd])
+                ->sum('amount');
+
+            $cashflowLabels[] = $monthStart->format('M Y');
+            $cashflowValues[] = $sum;
+        }
+
+        // Monthly expenses (last 6 months)
+        $totalOutflowMAD = \App\Models\Expense::where('association_id', $associationId)
+            ->whereBetween('spent_at', [
+                now()->subMonths(6)->startOfMonth(),
+                now()->endOfMonth()
             ])
             ->sum('amount');
 
-        // Inflow/Outflow
-        $totalInflowMAD = Contribution::where('association_id', $associationId)->sum('amount');
-        $totalOutflowMAD = Expense::where('association_id', $associationId)->sum('amount');
-
-        // Member growth chart
-        $memberGrowthChartData = $this->buildMemberGrowthChart($associationId);
-
-        // Cashflow
-        $cashflowDataQuery = Cotisation::select(
-            DB::raw('SUM(amount) as total'),
-            DB::raw("DATE_FORMAT(paid_at, '%b') as month")
-        )
-            ->where('association_id', $associationId)
-            ->where('status', Cotisation::STATUS_PAID)
-            ->where('paid_at', '>=', $now->copy()->subMonths(6)->startOfMonth())
-            ->groupBy('month')
-            ->orderByRaw("MIN(paid_at) ASC")
-            ->get();
-
-        $cashflowLabels = $cashflowDataQuery->pluck('month');
-        $cashflowValues = $cashflowDataQuery->pluck('total');
-
-        // New users chart
-        $newUsersDataQuery = User::select(
-            DB::raw('COUNT(id) as count'),
-            DB::raw("DATE_FORMAT(created_at, '%b') as month")
-        )
-            ->where('association_id', $associationId)
-            ->where('created_at', '>=', $now->copy()->subMonths(6)->startOfMonth())
-            ->groupBy('month')
-            ->orderByRaw("MIN(created_at) ASC")
-            ->get();
-
-        $newUserLabels = $newUsersDataQuery->pluck('month');
-        $newUserValues = $newUsersDataQuery->pluck('count');
-
-        // Cotisation status breakdown
-        $statusCounts = [
-            'paid' => Cotisation::where('association_id', $associationId)
-                ->where('status', Cotisation::STATUS_PAID)
-                ->count(),
-            'pending' => Cotisation::where('association_id', $associationId)
-                ->where('status', Cotisation::STATUS_PENDING)
-                ->count(),
-            'overdue' => Cotisation::where('association_id', $associationId)
-                ->where('status', Cotisation::STATUS_OVERDUE)
-                ->count(),
-            'rejected' => Cotisation::where('association_id', $associationId)
-                ->where('status', Cotisation::STATUS_REJECTED)
-                ->count(),
-        ];
+        // Contributions (this year)
+        $totalInflowMAD = \App\Models\Contribution::where('association_id', $associationId)
+            ->whereYear('received_at', now()->year)
+            ->sum('amount');
 
         return [
-            'totalActiveMembers' => $totalActiveMembers,
-            'totalInactiveMembers' => $totalInactiveMembers,
             'totalMembers' => $totalMembers,
+            'memberGrowthThisYear' => $memberGrowthThisYear,
+            'memberGrowthChartData' => $memberGrowthChartData,
             'cotisationsPaidMAD' => $cotisationsPaidMAD,
             'cotisationsPendingMAD' => $cotisationsPendingMAD,
             'cotisationsOverdueRejectedMAD' => $cotisationsOverdueRejectedMAD,
-            'totalInflowMAD' => $totalInflowMAD,
-            'totalOutflowMAD' => $totalOutflowMAD,
-            'memberGrowthChartData' => $memberGrowthChartData,
             'cashflowLabels' => $cashflowLabels,
-            'cashflowValues' => $cashflowValues,
-            'newUserLabels' => $newUserLabels,
-            'newUserValues' => $newUserValues,
-            'statusCounts' => $statusCounts,
+            'cashflowValues' => collect($cashflowValues),
+            'totalOutflowMAD' => $totalOutflowMAD,
+            'totalInflowMAD' => $totalInflowMAD,
         ];
+    }
+
+    protected function generateAdminMemberGrowthData(int $associationId): array
+    {
+        $data = [];
+
+        foreach ([6, 12, 'all'] as $range) {
+            $labels = [];
+            $values = [];
+
+            if ($range === 'all') {
+                $firstMember = \App\Models\User::where('association_id', $associationId)
+                    ->orderBy('created_at')
+                    ->first();
+
+                $start = $firstMember
+                    ? $firstMember->created_at->copy()->startOfMonth()
+                    : now()->startOfMonth();
+
+                $end = now()->startOfMonth();
+
+                $monthsDiff = $start->diffInMonths($end) + 1;
+
+                for ($i = 0; $i < $monthsDiff; $i++) {
+                    $monthStart = $start->copy()->addMonths($i);
+                    $monthEnd = $monthStart->copy()->endOfMonth();
+
+                    $count = \App\Models\User::where('association_id', $associationId)
+                        ->whereBetween('created_at', [$monthStart, $monthEnd])
+                        ->count();
+
+                    $labels[] = $monthStart->format('M Y');
+                    $values[] = $count;
+                }
+            } else {
+                for ($i = $range - 1; $i >= 0; $i--) {
+                    $monthStart = now()->startOfMonth()->subMonths($i);
+                    $monthEnd = $monthStart->copy()->endOfMonth();
+
+                    $count = \App\Models\User::where('association_id', $associationId)
+                        ->whereBetween('created_at', [$monthStart, $monthEnd])
+                        ->count();
+
+                    $labels[] = $monthStart->format('M Y');
+                    $values[] = $count;
+                }
+            }
+
+            $data[$range] = [
+                'categories' => $labels,
+                'data' => $values,
+            ];
+        }
+
+        return $data;
     }
 
     /**
@@ -178,105 +306,118 @@ class StatisticsController extends Controller
     {
         $auth = auth()->user();
         $associationId = $auth->association_id;
-        $now = Carbon::now();
 
-        // Members
-        $totalActiveMembers = User::where('association_id', $associationId)
+        // Total active members
+        $totalActiveMembers = \App\Models\User::where('association_id', $associationId)
             ->where('is_active', true)
             ->count();
 
-        $totalInactiveMembers = User::where('association_id', $associationId)
-            ->where('is_active', false)
+        // Member growth chart data
+        $memberGrowthChartData = $this->generateAdminMemberGrowthData($associationId);
+
+        // Cotisations sums (this year)
+        $cotisationsPaidMAD = \App\Models\Cotisation::where('association_id', $associationId)
+            ->where('status', 1)
+            ->whereYear('paid_at', now()->year)
+            ->sum('amount');
+
+        $cotisationsPendingMAD = \App\Models\Cotisation::where('association_id', $associationId)
+            ->where('status', 0)
+            ->whereYear('created_at', now()->year)
+            ->sum('amount');
+
+        $cotisationsOverdueRejectedMAD = \App\Models\Cotisation::where('association_id', $associationId)
+            ->whereIn('status', [2, 3])
+            ->whereYear('created_at', now()->year)
+            ->sum('amount');
+
+        // Cotisation cashflow this year
+        $cashflowLabels = [];
+        $cashflowValues = [];
+
+        for ($i = 11; $i >= 0; $i--) {
+            $monthStart = now()->startOfMonth()->subMonths($i);
+            $monthEnd = $monthStart->copy()->endOfMonth();
+
+            $sum = \App\Models\Cotisation::where('association_id', $associationId)
+                ->where('status', 1)
+                ->whereBetween('paid_at', [$monthStart, $monthEnd])
+                ->sum('amount');
+
+            $cashflowLabels[] = $monthStart->format('M Y');
+            $cashflowValues[] = $sum;
+        }
+
+        // Active events count (this year)
+        $activeEvents = \App\Models\Event::where('association_id', $associationId)
+            ->whereYear('start_datetime', now()->year)
             ->count();
-
-        $totalMembers = $totalActiveMembers + $totalInactiveMembers;
-
-        // Cotisations
-        $cotisationsPaidMAD = Cotisation::where('association_id', $associationId)
-            ->where('status', Cotisation::STATUS_PAID)
-            ->sum('amount');
-
-        $cotisationsPendingMAD = Cotisation::where('association_id', $associationId)
-            ->where('status', Cotisation::STATUS_PENDING)
-            ->sum('amount');
-
-        $cotisationsOverdueRejectedMAD = Cotisation::where('association_id', $associationId)
-            ->whereIn('status', [
-                Cotisation::STATUS_OVERDUE,
-                Cotisation::STATUS_REJECTED
-            ])
-            ->sum('amount');
-
-        // Inflow/Outflow
-        $totalInflowMAD = Contribution::where('association_id', $associationId)->sum('amount');
-        $totalOutflowMAD = Expense::where('association_id', $associationId)->sum('amount');
-
-        // Member growth chart
-        $memberGrowthChartData = $this->buildMemberGrowthChart($associationId);
-
-        // Cashflow
-        $cashflowDataQuery = Cotisation::select(
-            DB::raw('SUM(amount) as total'),
-            DB::raw("DATE_FORMAT(paid_at, '%b') as month")
-        )
-            ->where('association_id', $associationId)
-            ->where('status', Cotisation::STATUS_PAID)
-            ->where('paid_at', '>=', $now->copy()->subMonths(6)->startOfMonth())
-            ->groupBy('month')
-            ->orderByRaw("MIN(paid_at) ASC")
-            ->get();
-
-        $cashflowLabels = $cashflowDataQuery->pluck('month');
-        $cashflowValues = $cashflowDataQuery->pluck('total');
-
-        // New users chart
-        $newUsersDataQuery = User::select(
-            DB::raw('COUNT(id) as count'),
-            DB::raw("DATE_FORMAT(created_at, '%b') as month")
-        )
-            ->where('association_id', $associationId)
-            ->where('created_at', '>=', $now->copy()->subMonths(6)->startOfMonth())
-            ->groupBy('month')
-            ->orderByRaw("MIN(created_at) ASC")
-            ->get();
-
-        $newUserLabels = $newUsersDataQuery->pluck('month');
-        $newUserValues = $newUsersDataQuery->pluck('count');
-
-        // Cotisation status breakdown
-        $statusCounts = [
-            'paid' => Cotisation::where('association_id', $associationId)
-                ->where('status', Cotisation::STATUS_PAID)
-                ->count(),
-            'pending' => Cotisation::where('association_id', $associationId)
-                ->where('status', Cotisation::STATUS_PENDING)
-                ->count(),
-            'overdue' => Cotisation::where('association_id', $associationId)
-                ->where('status', Cotisation::STATUS_OVERDUE)
-                ->count(),
-            'rejected' => Cotisation::where('association_id', $associationId)
-                ->where('status', Cotisation::STATUS_REJECTED)
-                ->count(),
-        ];
 
         return [
             'totalActiveMembers' => $totalActiveMembers,
-            'totalInactiveMembers' => $totalInactiveMembers,
-            'totalMembers' => $totalMembers,
+            'memberGrowthChartData' => $memberGrowthChartData,
             'cotisationsPaidMAD' => $cotisationsPaidMAD,
             'cotisationsPendingMAD' => $cotisationsPendingMAD,
             'cotisationsOverdueRejectedMAD' => $cotisationsOverdueRejectedMAD,
-            'totalInflowMAD' => $totalInflowMAD,
-            'totalOutflowMAD' => $totalOutflowMAD,
-            'memberGrowthChartData' => $memberGrowthChartData,
             'cashflowLabels' => $cashflowLabels,
-            'cashflowValues' => $cashflowValues,
-            'newUserLabels' => $newUserLabels,
-            'newUserValues' => $newUserValues,
-            'statusCounts' => $statusCounts,
+            'cashflowValues' => collect($cashflowValues),
+            'activeEvents' => $activeEvents,
         ];
     }
+    protected function generateBoardMemberGrowthData(int $associationId): array
+    {
+        $data = [];
 
+        foreach ([6, 12, 'all'] as $range) {
+            $labels = [];
+            $values = [];
+
+            if ($range === 'all') {
+                $firstMember = \App\Models\User::where('association_id', $associationId)
+                    ->orderBy('created_at')
+                    ->first();
+
+                $start = $firstMember
+                    ? $firstMember->created_at->copy()->startOfMonth()
+                    : now()->startOfMonth();
+
+                $end = now()->startOfMonth();
+
+                $monthsDiff = $start->diffInMonths($end) + 1;
+
+                for ($i = 0; $i < $monthsDiff; $i++) {
+                    $monthStart = $start->copy()->addMonths($i);
+                    $monthEnd = $monthStart->copy()->endOfMonth();
+
+                    $count = \App\Models\User::where('association_id', $associationId)
+                        ->whereBetween('created_at', [$monthStart, $monthEnd])
+                        ->count();
+
+                    $labels[] = $monthStart->format('M Y');
+                    $values[] = $count;
+                }
+            } else {
+                for ($i = $range - 1; $i >= 0; $i--) {
+                    $monthStart = now()->startOfMonth()->subMonths($i);
+                    $monthEnd = $monthStart->copy()->endOfMonth();
+
+                    $count = \App\Models\User::where('association_id', $associationId)
+                        ->whereBetween('created_at', [$monthStart, $monthEnd])
+                        ->count();
+
+                    $labels[] = $monthStart->format('M Y');
+                    $values[] = $count;
+                }
+            }
+
+            $data[$range] = [
+                'categories' => $labels,
+                'data' => $values,
+            ];
+        }
+
+        return $data;
+    }
 
     /**
      * Supervisor statistics data.
@@ -285,111 +426,123 @@ class StatisticsController extends Controller
     {
         $auth = auth()->user();
         $associationId = $auth->association_id;
-        $now = Carbon::now();
 
-        // Members
-        $totalActiveMembers = User::where('association_id', $associationId)
+        // ✅ New members over the last 6 months (default)
+        $months = 6;
+        $currentPeriodCount = \App\Models\User::where('association_id', $associationId)
             ->where('is_active', true)
-            ->count();
-
-        $totalInactiveMembers = User::where('association_id', $associationId)
-            ->where('is_active', false)
-            ->count();
-
-        $totalMembers = $totalActiveMembers + $totalInactiveMembers;
-
-        // Cotisations
-        $cotisationsPaidMAD = Cotisation::where('association_id', $associationId)
-            ->where('status', Cotisation::STATUS_PAID)
-            ->sum('amount');
-
-        $cotisationsPendingMAD = Cotisation::where('association_id', $associationId)
-            ->where('status', Cotisation::STATUS_PENDING)
-            ->sum('amount');
-
-        $cotisationsOverdueRejectedMAD = Cotisation::where('association_id', $associationId)
-            ->whereIn('status', [
-                Cotisation::STATUS_OVERDUE,
-                Cotisation::STATUS_REJECTED
+            ->whereBetween('created_at', [
+                now()->startOfMonth()->subMonths($months - 1),
+                now()->endOfMonth()
             ])
-            ->sum('amount');
+            ->count();
 
-        // Inflow/Outflow
-        $totalInflowMAD = Contribution::where('association_id', $associationId)->sum('amount');
-        $totalOutflowMAD = Expense::where('association_id', $associationId)->sum('amount');
+        // Previous period for growth %
+        $previousPeriodCount = \App\Models\User::where('association_id', $associationId)
+            ->where('is_active', true)
+            ->whereBetween('created_at', [
+                now()->startOfMonth()->subMonths($months * 2 - 1),
+                now()->startOfMonth()->subMonths($months)
+            ])
+            ->count();
 
-        // Member growth chart
-        $memberGrowthChartData = $this->buildMemberGrowthChart($associationId);
+        $growthPercent = $previousPeriodCount > 0
+            ? round((($currentPeriodCount - $previousPeriodCount) / $previousPeriodCount) * 100, 1)
+            : ($currentPeriodCount > 0 ? 100 : 0);
 
-        // Cashflow
-        $cashflowDataQuery = Cotisation::select(
-            DB::raw('SUM(amount) as total'),
-            DB::raw("DATE_FORMAT(paid_at, '%b') as month")
-        )
-            ->where('association_id', $associationId)
-            ->where('status', Cotisation::STATUS_PAID)
-            ->where('paid_at', '>=', $now->copy()->subMonths(6)->startOfMonth())
-            ->groupBy('month')
-            ->orderByRaw("MIN(paid_at) ASC")
-            ->get();
+        // ✅ Member growth chart data (3, 6, 12 months)
+        $memberGrowthChartData = $this->generateSupervisorMemberGrowthData($associationId);
 
-        $cashflowLabels = $cashflowDataQuery->pluck('month');
-        $cashflowValues = $cashflowDataQuery->pluck('total');
+        // ✅ Meetings created/completed (this year)
+        $createdMeetings = \App\Models\Meeting::where('association_id', $associationId)
+            ->whereYear('datetime', now()->year)
+            ->count();
 
-        // New users chart
-        $newUsersDataQuery = User::select(
-            DB::raw('COUNT(id) as count'),
-            DB::raw("DATE_FORMAT(created_at, '%b') as month")
-        )
-            ->where('association_id', $associationId)
-            ->where('created_at', '>=', $now->copy()->subMonths(6)->startOfMonth())
-            ->groupBy('month')
-            ->orderByRaw("MIN(created_at) ASC")
-            ->get();
-
-        $newUserLabels = $newUsersDataQuery->pluck('month');
-        $newUserValues = $newUsersDataQuery->pluck('count');
-
-        // Cotisation status breakdown
-        $statusCounts = [
-            'paid' => Cotisation::where('association_id', $associationId)
-                ->where('status', Cotisation::STATUS_PAID)
-                ->count(),
-            'pending' => Cotisation::where('association_id', $associationId)
-                ->where('status', Cotisation::STATUS_PENDING)
-                ->count(),
-            'overdue' => Cotisation::where('association_id', $associationId)
-                ->where('status', Cotisation::STATUS_OVERDUE)
-                ->count(),
-            'rejected' => Cotisation::where('association_id', $associationId)
-                ->where('status', Cotisation::STATUS_REJECTED)
-                ->count(),
-        ];
-
-        // Active events
-        $activeEvents = Event::where('association_id', $associationId)
+        $completedMeetings = \App\Models\Meeting::where('association_id', $associationId)
+            ->whereYear('datetime', now()->year)
             ->where('status', 1)
             ->count();
 
+        // ✅ Total events (no type grouping)
+        $totalEvents = \App\Models\Event::where('association_id', $associationId)
+            ->whereYear('start_datetime', now()->year)
+            ->count();
+
+        $eventTypes = [
+            'All Events' => $totalEvents,
+        ];
+
+        $eventTypeColors = [
+            'All Events' => 'primary',
+        ];
+
+        // ✅ Documents uploaded to meetings (this year)
+        $documentsUploaded = \App\Models\MeetingDocument::whereHas('meeting', function ($q) use ($associationId) {
+            $q->where('association_id', $associationId)
+                ->whereYear('created_at', now()->year);
+        })->count();
+
+        // ✅ Monthly documents chart
+        $cashflowLabels = [];
+        $cashflowValues = [];
+
+        for ($i = 11; $i >= 0; $i--) {
+            $monthStart = now()->startOfMonth()->subMonths($i);
+            $monthEnd = $monthStart->copy()->endOfMonth();
+
+            $count = \App\Models\MeetingDocument::whereHas('meeting', function ($q) use ($associationId, $monthStart, $monthEnd) {
+                $q->where('association_id', $associationId)
+                    ->whereBetween('created_at', [$monthStart, $monthEnd]);
+            })->count();
+
+            $cashflowLabels[] = $monthStart->format('M Y');
+            $cashflowValues[] = $count;
+        }
+
         return [
-            'totalActiveMembers' => $totalActiveMembers,
-            'totalInactiveMembers' => $totalInactiveMembers,
-            'totalMembers' => $totalMembers,
-            'cotisationsPaidMAD' => $cotisationsPaidMAD,
-            'cotisationsPendingMAD' => $cotisationsPendingMAD,
-            'cotisationsOverdueRejectedMAD' => $cotisationsOverdueRejectedMAD,
-            'totalInflowMAD' => $totalInflowMAD,
-            'totalOutflowMAD' => $totalOutflowMAD,
+            'totalNewMembers' => $currentPeriodCount,
+            'growthPercent' => $growthPercent,
             'memberGrowthChartData' => $memberGrowthChartData,
+            'createdMeetings' => $createdMeetings,
+            'completedMeetings' => $completedMeetings,
+            'eventTypes' => $eventTypes,
+            'eventTypeColors' => $eventTypeColors,
+            'documentsUploaded' => $documentsUploaded,
             'cashflowLabels' => $cashflowLabels,
-            'cashflowValues' => $cashflowValues,
-            'newUserLabels' => $newUserLabels,
-            'newUserValues' => $newUserValues,
-            'statusCounts' => $statusCounts,
-            'activeEvents' => $activeEvents,
+            'cashflowValues' => collect($cashflowValues),
         ];
     }
 
+
+    protected function generateSupervisorMemberGrowthData(int $associationId): array
+    {
+        $data = [];
+
+        foreach ([3, 6, 12] as $months) {
+            $labels = [];
+            $values = [];
+
+            for ($i = $months - 1; $i >= 0; $i--) {
+                $monthStart = now()->startOfMonth()->subMonths($i);
+                $monthEnd = $monthStart->copy()->endOfMonth();
+
+                $count = \App\Models\User::where('association_id', $associationId)
+                    ->where('is_active', true)
+                    ->whereBetween('created_at', [$monthStart, $monthEnd])
+                    ->count();
+
+                $labels[] = $monthStart->format('M Y');
+                $values[] = $count;
+            }
+
+            $data[$months] = [
+                'categories' => $labels,
+                'data' => $values,
+            ];
+        }
+
+        return $data;
+    }
 
     /**
      * Member statistics data.
@@ -398,70 +551,106 @@ class StatisticsController extends Controller
     {
         $auth = auth()->user();
 
-        // Dummy cotisations
-        $myCotisationsList = collect([
-            (object)[
-                'cycle' => '2024 Annual',
-                'amount' => 1200,
-                'due_date' => now()->addDays(15)->format('Y-m-d'),
-                'status' => 'pending',
-            ],
-            (object)[
-                'cycle' => '2023 Annual',
-                'amount' => 1200,
-                'due_date' => now()->subMonths(2)->format('Y-m-d'),
-                'status' => 'paid',
-            ],
-        ]);
+        // 1️⃣ Cotisations totals this year
+        $cotisations = \App\Models\Cotisation::where('user_id', $auth->id)
+            ->whereYear('paid_at', now()->year)
+            ->get();
 
-        $paidTotal = 2400;
-        $pendingTotal = 1200;
-        $overdueTotal = 0;
+        $totals = [
+            'paid' => $cotisations->where('status', 1)->sum('amount'),
+            'pending' => $cotisations->where('status', 0)->sum('amount'),
+            'overdue' => $cotisations->where('status', 2)->sum('amount'),
+            'rejected' => $cotisations->where('status', 3)->sum('amount'),
+        ];
 
-        $cashflowLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-        $cashflowValues = [300, 200, 250, 100, 500, 400];
+        // 2️⃣ Cotisation cashflow (last 12 months)
+        $cashflowLabels = [];
+        $cashflowValues = [];
 
-        // ✅ New dummy data for meetings & events
-        $upcomingMeetingsEvents = collect([
-            [
-                'title' => 'Quarterly Review',
-                'date' => now()->addDays(7)->format('M d, Y'),
-                'location' => 'Main Hall',
-                'time_diff' => 'in 7 days',
-                'link' => route('admin.meetings.index'),
-            ],
-            [
-                'title' => 'Annual Charity Gala',
-                'date' => now()->addDays(15)->format('M d, Y'),
-                'location' => 'Conference Center',
-                'time_diff' => 'in 15 days',
-                'link' => route('membre.events.index'),
-            ],
-        ]);
+        for ($i = 11; $i >= 0; $i--) {
+            $monthStart = now()->startOfMonth()->subMonths($i);
+            $monthEnd = $monthStart->copy()->endOfMonth();
 
-        $recentActivities = collect([
-            (object)[
-                'date' => now()->subDays(2)->format('Y-m-d'),
-                'type' => 'Paid Cotisation',
-                'details' => 'Annual Dues 2024',
-            ],
-            (object)[
-                'date' => now()->subDays(5)->format('Y-m-d'),
-                'type' => 'Joined Event',
-                'details' => 'Community Workshop',
-            ],
-        ]);
+            $sum = \App\Models\Cotisation::where('user_id', $auth->id)
+                ->where('status', 1)
+                ->whereBetween('paid_at', [$monthStart, $monthEnd])
+                ->sum('amount');
+
+            $cashflowLabels[] = $monthStart->format('M Y');
+            $cashflowValues[] = $sum;
+        }
+
+        // 3️⃣ Upcoming meetings & events
+        $upcomingMeetings = \App\Models\Meeting::where('association_id', $auth->association_id)
+            ->where('datetime', '>', now())
+            ->orderBy('datetime')
+            ->take(5)
+            ->get()
+            ->map(function ($meeting) {
+                return [
+                    'title' => $meeting->title,
+                    'date' => $meeting->datetime->format('d M Y H:i'),
+                    'location' => $meeting->location,
+                    'time_diff' => $meeting->datetime->diffForHumans(),
+                    'link' => route('admin.meetings.show', $meeting->id),
+                ];
+            })
+            ->toArray();
+
+
+        $upcomingEvents = \App\Models\Event::where('association_id', $auth->association_id)
+            ->where('start_datetime', '>', now())
+            ->orderBy('start_datetime')
+            ->take(5)
+            ->get()
+            ->map(function ($event) {
+                return [
+                    'title' => $event->title,
+                    'date' => $event->start_datetime->format('d M Y H:i'),
+                    'location' => $event->location,
+                    'time_diff' => $event->start_datetime->diffForHumans(),
+                    'link' => route('admin.events.show', $event->id),
+                ];
+            })->toArray();
+
+        $allUpcoming = collect([...$upcomingMeetings, ...$upcomingEvents])
+            ->sortBy('date')
+            ->values()
+            ->take(5)
+            ->toArray();
+
+        // 4️⃣ Prepare growth data for chart ranges
+        $cashflowGrowthData = [];
+
+        foreach ([6, 12] as $months) {
+            $labels = [];
+            $values = [];
+
+            for ($i = $months - 1; $i >= 0; $i--) {
+                $monthStart = now()->startOfMonth()->subMonths($i);
+                $monthEnd = $monthStart->copy()->endOfMonth();
+
+                $sum = \App\Models\Cotisation::where('user_id', $auth->id)
+                    ->where('status', 1)
+                    ->whereBetween('paid_at', [$monthStart, $monthEnd])
+                    ->sum('amount');
+
+                $labels[] = $monthStart->format('M Y');
+                $values[] = $sum;
+            }
+
+            $cashflowGrowthData[$months] = [
+                'categories' => $labels,
+                'data' => $values,
+            ];
+        }
 
         return [
-            'user' => $auth,
-            'myCotisationsList' => $myCotisationsList,
-            'paidTotal' => $paidTotal,
-            'pendingTotal' => $pendingTotal,
-            'overdueTotal' => $overdueTotal,
+            'myCotisations' => $totals,
             'cashflowLabels' => $cashflowLabels,
-            'cashflowValues' => $cashflowValues,
-            'upcomingMeetingsEvents' => $upcomingMeetingsEvents,
-            'recentActivities' => $recentActivities,
+            'cashflowValues' => collect($cashflowValues),
+            'upcomingMeetingsEvents' => $allUpcoming,
+            'cashflowGrowthData' => $cashflowGrowthData,
         ];
     }
 
