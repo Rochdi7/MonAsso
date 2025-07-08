@@ -23,6 +23,8 @@ class Meeting extends Model implements HasMedia
 
     protected $casts = [
         'datetime' => 'datetime',
+        'start_datetime' => 'datetime',
+        'end_datetime' => 'datetime',
     ];
 
     // Relationships
