@@ -24,11 +24,11 @@ class DatabaseSeeder extends Seeder
             MemberDashboardSeeder::class,
 
             // Statistics seeders
-            SuperAdminStatisticsSeeder::class,
-            AdminStatisticsSeeder::class,
-            BoardStatisticsSeeder::class,
-            SupervisorStatisticsSeeder::class,
-            MemberStatisticsSeeder::class,
+            // SuperAdminStatisticsSeeder::class,
+            // AdminStatisticsSeeder::class,
+            // BoardStatisticsSeeder::class,
+            // SupervisorStatisticsSeeder::class,
+            // MemberStatisticsSeeder::class,
         ]);
     }
 }

@@ -31,7 +31,7 @@ class AdminDashboardSeeder extends Seeder
         foreach (range(1, 5) as $i) {
             // Check if association already exists
             $association = Association::firstOrCreate(
-                ['email' => "admin_assoc$i@example.com"],
+                ['email' => "admin_assoc$i@monasso.com"],
                 [
                     'name' => "Admin Assoc $i",
                     'address' => $faker->address,
@@ -44,7 +44,7 @@ class AdminDashboardSeeder extends Seeder
 
             // SuperAdmin
             $superAdmin = User::firstOrCreate(
-                ['email' => "superadmin_user$i@example.com"],
+                ['email' => "superadmin_user$i@monasso.com"],
                 [
                     'name' => "SuperAdmin User $i",
                     'password' => Hash::make('password'),
@@ -59,7 +59,7 @@ class AdminDashboardSeeder extends Seeder
 
             // Admin
             $admin = User::firstOrCreate(
-                ['email' => "admin_user$i@example.com"],
+                ['email' => "admin_user$i@monasso.com"],
                 [
                     'name' => "Admin User $i",
                     'password' => Hash::make('password'),
@@ -74,7 +74,7 @@ class AdminDashboardSeeder extends Seeder
 
             // Board
             $board = User::firstOrCreate(
-                ['email' => "board_user$i@example.com"],
+                ['email' => "board_user$i@monasso.com"],
                 [
                     'name' => "Board User $i",
                     'password' => Hash::make('password'),
@@ -89,7 +89,7 @@ class AdminDashboardSeeder extends Seeder
 
             // Supervisor
             $supervisor = User::firstOrCreate(
-                ['email' => "supervisor_user$i@example.com"],
+                ['email' => "supervisor_user$i@monasso.com"],
                 [
                     'name' => "Supervisor User $i",
                     'password' => Hash::make('password'),
@@ -106,7 +106,7 @@ class AdminDashboardSeeder extends Seeder
             $members = [];
             foreach (range(1, 10) as $j) {
                 $member = User::firstOrCreate(
-                    ['email' => "member{$i}_{$j}@example.com"],
+                    ['email' => "member{$i}_{$j}@monasso.com"],
                     [
                         'name' => "Member {$i}_{$j}",
                         'password' => Hash::make('password'),

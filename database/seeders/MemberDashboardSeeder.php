@@ -22,7 +22,7 @@ class MemberDashboardSeeder extends Seeder
 
         // Create or get association
         $association = Association::firstOrCreate(
-            ['email' => 'member_dashboard_asso@example.com'],
+            ['email' => 'member_dashboard_asso@monasso.com'],
             [
                 'name' => 'Member Dashboard Association',
                 'address' => $faker->address,
@@ -35,7 +35,7 @@ class MemberDashboardSeeder extends Seeder
 
         // Create or get the member user
         $member = User::firstOrCreate(
-            ['email' => 'member_dashboard_user@example.com'],
+            ['email' => 'member_dashboard_user@monasso.com'],
             [
                 'name' => 'Member User',
                 'password' => Hash::make('password'),

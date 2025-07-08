@@ -23,7 +23,7 @@ class SuperAdminDashboardSeeder extends Seeder
 
         foreach (range(1, 5) as $i) {
             $association = Association::firstOrCreate(
-                ['email' => "association$i@example.com"],
+                ['email' => "association$i@monasso.com"],
                 [
                     'name' => "Association $i",
                     'address' => $faker->address,
@@ -37,7 +37,7 @@ class SuperAdminDashboardSeeder extends Seeder
             $members = [];
             foreach (range(1, 10) as $j) {
                 $user = User::firstOrCreate(
-                    ['email' => "member{$i}_{$j}@example.com"],
+                    ['email' => "member{$i}_{$j}@monasso.com"],
                     [
                         'name' => "Member {$i}-{$j}",
                         'password' => Hash::make('password'),
