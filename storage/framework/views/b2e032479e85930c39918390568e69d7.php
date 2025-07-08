@@ -119,4 +119,4 @@
 <script src="<?php echo e(URL::asset('build/js/widgets/overview-bar-chart.js')); ?>"></script>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Outlaw\Desktop\Projects\MonAsso\resources\views\admin\statistics\supervisor.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Outlaw\Desktop\Projects\MonAsso\resources\views/admin/statistics/supervisor.blade.php ENDPATH**/ ?>

@@ -44,21 +44,6 @@
                     </div>
                 </li>
 
-                <script>
-                    function layout_change(theme) {
-                        if (theme === 'dark') {
-                            document.body.classList.add('dark-mode');
-                        } else {
-                            document.body.classList.remove('dark-mode');
-                        }
-                        localStorage.setItem('theme', theme);
-                    }
-
-                    function layout_change_default() {
-                        document.body.classList.remove('dark-mode');
-                        localStorage.removeItem('theme');
-                    }
-                </script>
 
                 <li class="dropdown pc-h-item header-user-profile">
                     <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
