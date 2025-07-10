@@ -1,7 +1,7 @@
 /**
 =========================================================================
 =========================================================================
-Template Name: Light Able - Bootstrap Admin Template
+Template Name: Mon Asso
 Author: Rochdi & Halima
 Support: https://phoenixcoded.authordesk.app
 File: script.js

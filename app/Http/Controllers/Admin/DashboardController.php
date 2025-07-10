@@ -335,28 +335,12 @@ class DashboardController extends Controller
             ],
         ];
 
-        // Recent activities
-        $recentActivities = collect([
-            (object)[
-                'member_name'   => 'John Doe',
-                'action'        => 'Joined meeting',
-                'details'       => 'Annual Review',
-                'activity_time' => now()->subMinutes(15),
-            ],
-            (object)[
-                'member_name'   => 'Jane Smith',
-                'action'        => 'Paid cotisation',
-                'details'       => 'Amount: 1200 MAD',
-                'activity_time' => now()->subHours(2),
-            ],
-            (object)[
-                'member_name'   => 'Ahmed Ben',
-                'action'        => 'Created event',
-                'details'       => 'Summer Workshop',
-                'activity_time' => now()->subDays(1),
-            ],
-        ]);
-
+        // Recent cotisations
+        $recentCotisations = Cotisation::with('user')
+            ->where('association_id', $associationId)
+            ->orderByDesc('created_at')
+            ->take(4)
+            ->get();
 
         return compact(
             'association',
@@ -366,7 +350,7 @@ class DashboardController extends Controller
             'meetings',
             'events',
             'cashflowData',
-            'recentActivities'
+            'recentCotisations'
         );
     }
 

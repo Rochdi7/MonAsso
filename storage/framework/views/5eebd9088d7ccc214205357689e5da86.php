@@ -28,7 +28,7 @@
                     <img src="<?php echo e(asset('assets/images/logo/monasso.png')); ?>" alt="image"
                         class="footer-logo img-fluid mb-3" />
                     <p class="mb-4">Since 2014, over 6.3K developers have placed their trust in Rochdi & Halima's
-                        Templates. Light Able is managed by their
+                        Templates. Mon Asso is managed by their
                         experienced team of professionals.</p>
                 </div>
                 <div class="col-md-8">

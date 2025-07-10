@@ -7,12 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta
   name="description"
-  content="Light Able admin and dashboard template offer a variety of UI elements and pages, ensuring your admin panel is both fast and effective."
+  content="Mon Asso admin and dashboard template offer a variety of UI elements and pages, ensuring your admin panel is both fast and effective."
 />
 <meta name="author" content="phoenixcoded" />
 
     <!-- Site Tiltle -->
-    <title><?php echo $__env->yieldContent('title', 'Light Able Laravel 11 Admin & Dashboard Template'); ?></title>
+    <title><?php echo $__env->yieldContent('title', 'Mon Asso Laravel 11 Admin & Dashboard Template'); ?></title>
 
     <!-- Favicon Icon -->
     <link rel="shortcut icon" href="<?php echo e(URL::asset('build/images/favicon.ico')); ?>">

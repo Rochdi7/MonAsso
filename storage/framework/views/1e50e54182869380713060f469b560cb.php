@@ -132,39 +132,49 @@
                 </div>
             </div>
 
-            <!-- Recent Activity -->
+            <!-- Recent Cotisations -->
             <div class="card table-card mt-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Recent Member Activity</h5>
+                    <h5>Recent Cotisations</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <tbody>
-                                <?php $__empty_1 = true; $__currentLoopData = $recentActivities; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $activity): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                <?php $__empty_1 = true; $__currentLoopData = $recentCotisations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cotisation): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="avtar avtar-s bg-light-primary">
                                                     <i class="ti ti-user"></i>
                                                 </div>
-                                                <h6 class="mb-0 ms-3"><?php echo e($activity->member_name); ?></h6>
+                                                <h6 class="mb-0 ms-3">
+                                                    <?php echo e($cotisation->user?->name ?? 'Unknown'); ?>
+
+                                                </h6>
                                             </div>
                                         </td>
                                         <td>
-                                            <?php echo e($activity->action); ?>
+                                            Paid cotisation:
+                                            <span class="fw-bold">
+                                                <?php echo e(number_format($cotisation->amount, 2)); ?> MAD
+                                            </span>
+                                            <?php if($cotisation->status): ?>
+                                                <span class="badge bg-light ms-2 text-dark">
+                                                    <?php echo e(ucfirst($cotisation->status)); ?>
 
-                                            <?php if($activity->details): ?>
-                                                : <span class="fw-bold"><?php echo e($activity->details); ?></span>
+                                                </span>
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-end text-muted">
-                                            <small><?php echo e(\Carbon\Carbon::parse($activity->activity_time)->diffForHumans()); ?></small>
+                                            <small><?php echo e($cotisation->created_at->diffForHumans()); ?></small>
                                         </td>
                                     </tr>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                     <tr>
-                                        <td colspan="3" class="text-center">No recent activities found.</td>
+                                        <td colspan="3" class="text-center">
+                                            No recent cotisations found.
+                                        </td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
@@ -172,6 +182,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         <div class="col-lg-4">
