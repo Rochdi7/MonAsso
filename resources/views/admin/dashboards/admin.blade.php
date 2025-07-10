@@ -134,38 +134,47 @@
                 </div>
             </div>
 
-            <!-- Recent Activity -->
+            <!-- Recent Cotisations -->
             <div class="card table-card mt-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Recent Member Activity</h5>
+                    <h5>Recent Cotisations</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <tbody>
-                                @forelse($recentActivities as $activity)
+                                @forelse($recentCotisations as $cotisation)
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="avtar avtar-s bg-light-primary">
                                                     <i class="ti ti-user"></i>
                                                 </div>
-                                                <h6 class="mb-0 ms-3">{{ $activity->member_name }}</h6>
+                                                <h6 class="mb-0 ms-3">
+                                                    {{ $cotisation->user?->name ?? 'Unknown' }}
+                                                </h6>
                                             </div>
                                         </td>
                                         <td>
-                                            {{ $activity->action }}
-                                            @if ($activity->details)
-                                                : <span class="fw-bold">{{ $activity->details }}</span>
+                                            Paid cotisation:
+                                            <span class="fw-bold">
+                                                {{ number_format($cotisation->amount, 2) }} MAD
+                                            </span>
+                                            @if ($cotisation->status)
+                                                <span class="badge bg-light ms-2 text-dark">
+                                                    {{ ucfirst($cotisation->status) }}
+                                                </span>
                                             @endif
                                         </td>
                                         <td class="text-end text-muted">
-                                            <small>{{ \Carbon\Carbon::parse($activity->activity_time)->diffForHumans() }}</small>
+                                            <small>{{ $cotisation->created_at->diffForHumans() }}</small>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="text-center">No recent activities found.</td>
+                                        <td colspan="3" class="text-center">
+                                            No recent cotisations found.
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -173,6 +182,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         <div class="col-lg-4">
