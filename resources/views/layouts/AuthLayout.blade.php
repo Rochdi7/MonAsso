@@ -2,13 +2,13 @@
 <html lang="en">
 
 <head>
-    <title>@yield('title') | Light Able Laravel 11 Admin & Dashboard Template</title>
+    <title>@yield('title') | Mon Asso Laravel 11 Admin & Dashboard Template</title>
     <!-- [Meta] -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description"
-        content="Light Able is trending dashboard template made using Laravel 11 &  Bootstrap 5 design framework. Light Able is available in Bootstrap, React, CodeIgniter, Angular,  and .net Technologies.">
+        content="Mon Asso is trending dashboard template made using Laravel 11 &  Bootstrap 5 design framework. Mon Asso is available in Bootstrap, React, CodeIgniter, Angular,  and .net Technologies.">
     <meta name="keywords"
         content="Laravel 11 Bootstrap admin template, Dashboard UI Kit, Dashboard Template, Backend Panel, react dashboard, angular dashboard">
     <meta name="author" content="phoenixcoded">
