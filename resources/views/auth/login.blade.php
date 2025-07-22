@@ -16,6 +16,23 @@
                 </p>
             </div>
 
+            {{-- Connexion rapide pour les rôles --}}
+            <div class="mb-4 text-center">
+                <p class="mb-2 text-muted">Connexion rapide pour test</p>
+                <div class="d-flex justify-content-center flex-wrap gap-2">
+                    <button type="button" class="btn btn-outline-primary quick-login"
+                        data-email="superadmin1@monasso.com">Super Admin</button>
+                    <button type="button" class="btn btn-outline-success quick-login"
+                        data-email="admin1@monasso.com">Admin</button>
+                    <button type="button" class="btn btn-outline-info quick-login"
+                        data-email="board1@monasso.com">Board</button>
+                    <button type="button" class="btn btn-outline-warning quick-login"
+                        data-email="supervisor1@monasso.com">Supervisor</button>
+                    <button type="button" class="btn btn-outline-dark quick-login"
+                        data-email="member1_1@monasso.com">Member</button>
+                </div>
+            </div>
+
             <form method="POST" action="{{ route('login') }}">
                 @csrf
 
@@ -58,9 +75,24 @@
                     <button type="submit" class="btn btn-primary">Connexion</button>
                 </div>
             </form>
-
-            
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.querySelectorAll('.quick-login').forEach(button => {
+        button.addEventListener('click', function () {
+            const email = this.dataset.email;
+            const loginInput = document.getElementById('login');
+            const passwordInput = document.getElementById('password');
+            const form = this.closest('form');
+
+            loginInput.value = email;
+            passwordInput.value = 'password';
+            form.submit();
+        });
+    });
+</script>
 @endsection
