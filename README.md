@@ -1,66 +1,133 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎯 MonAsso – SaaS Platform for Association Management
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**MonAsso** is a modern and responsive SaaS web platform built to simplify the management of non-profit associations. It empowers associations to manage their members, meetings, contributions, events, documents, expenses, and statistics — all in one place.
 
-## About Laravel
+Built with **Laravel**, the system features modular design, dynamic dashboards, role-based access control, and a user-friendly admin panel.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🖼️ Screenshots
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Capture | Description |
+|--------|-------------|
+| ![Capture 1](screenshots/Capture.PNG) | landing Page |
+| ![Capture 2](screenshots/Capture2.PNG) | 🖥️ Dashboard with stats and charts |
+| ![Capture 3](screenshots/Capture3.PNG) | 📊 Statistics module with filters |
+| ![Capture 4](screenshots/Capture4.PNG) | 👥 Edit Profile 
 
-## Learning Laravel
+## 🚀 Key Features
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 🔐 Role-Based Access Control
+Each user role has tailored access:
+- **Super Admin** – Full system access across all associations
+- **Admin** – Manages their own association (CRUD access)
+- **Board Member** – Supervises without delete permissions
+- **Supervisor** – Can create members, meetings, events, documents
+- **Member** – Views their own profile, meetings, and payments
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🧩 Modules Overview
 
-## Laravel Sponsors
+| Module         | Description                                                |
+|----------------|------------------------------------------------------------|
+| 👥 Members      | Add/edit members, upload photos, assign roles              |
+| 💰 Contributions | Record membership fees per year per user                  |
+| 📅 Meetings     | Schedule meetings with files and statuses                  |
+| 📁 Documents     | Manage attachments using Spatie MediaLibrary              |
+| 🎉 Events        | Create and manage association events                      |
+| 📊 Statistics    | View performance insights with dynamic ApexCharts         |
+| 💸 Expenses      | Track association expenses and budgets                    |
+| 🔐 Permissions   | Fine-grained access control using Spatie Permission       |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## ⚙️ Tech Stack
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- **Framework**: Laravel 10+
+- **Frontend**: Blade, Bootstrap 5, Animate.css
+- **Charts**: ApexCharts.js
+- **File Uploads**: Spatie MediaLibrary
+- **Authentication**: Laravel Auth + Email Verification
+- **Roles/Permissions**: Spatie Laravel-Permission
+- **Database**: MySQL
+- **Deployment**: Optimized for Shared Hosting & VPS
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 💻 Local Installation
 
-## Code of Conduct
+```bash
+# 1. Clone the project
+git clone https://github.com/Rochdi7/MonAsso.git
+cd monasso
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# 2. Install dependencies
+composer install
 
-## Security Vulnerabilities
+# 3. Copy environment config and generate app key
+cp .env.example .env
+php artisan key:generate
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 4. Configure your .env (DB credentials, mail, etc.)
 
-## License
+# 5. Migrate and seed database
+php artisan migrate --seed
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# 6. Link storage (for profile photos/documents)
+php artisan storage:link
+
+# 7. Install frontend assets
+npm install && npm run build
+
+# 8. Start the local server
+php artisan serve
+```
+
+---
+
+## 🧪 Default Admin Accounts
+
+| Role         | Email                | Password  |
+|--------------|----------------------|-----------|
+| Super Admin  | super@monasso.com    | password  |
+| Admin        | admin@monasso.com    | password  |
+
+> You can customize these in the seeders or directly in the database.
+
+---
+
+## 📈 Dashboard Features
+
+Each role sees a personalized dashboard:
+- **Admins**: Members, donations, meetings, cotisations, top contributors
+- **Super Admin**: All associations' global stats
+- **Board Members**: Read-only KPIs & decision summaries
+- **Members**: Their own data, meeting participation, payment history
+
+---
+
+## 🤝 Credits
+
+Project by:  
+**Rochdi Karouali** & **Halima Dakir**  
+🎓 Final Year Project – École Racine Marrakech  
+🧑‍🏫 Supervised by Mr. Abdelhamid Boukhrisse
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## 🌍 Live Demo
+
+> Coming soon at [monasso.yourdomain.com](https://monasso.yourdomain.com)
+
+---
+
+## 👏 Contributions
+
+Pull requests, feature suggestions, and feedback are welcome!
