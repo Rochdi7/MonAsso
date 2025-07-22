@@ -37,28 +37,43 @@
 
                             <div class="mb-3 col-md-6">
                                 <label for="name" class="form-label">Full Name</label>
-                                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
+                                <input type="text" name="name"
+                                    class="form-control @error('name') is-invalid @enderror"
                                     value="{{ old('name', $user->name) }}" required>
                                 <div class="invalid-feedback">
-                                    @error('name') {{ $message }} @else Please enter the member's name. @enderror
+                                    @error('name')
+                                        {{ $message }}
+                                    @else
+                                        Please enter the member's name.
+                                    @enderror
                                 </div>
                             </div>
 
                             <div class="mb-3 col-md-6">
                                 <label for="phone" class="form-label">Phone Number</label>
-                                <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror"
+                                <input type="text" name="phone"
+                                    class="form-control @error('phone') is-invalid @enderror"
                                     value="{{ old('phone', $user->phone) }}" required>
                                 <div class="invalid-feedback">
-                                    @error('phone') {{ $message }} @else Please enter a valid phone number. @enderror
+                                    @error('phone')
+                                        {{ $message }}
+                                    @else
+                                        Please enter a valid phone number.
+                                    @enderror
                                 </div>
                             </div>
 
                             <div class="mb-3 col-md-6">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                                <input type="email" name="email"
+                                    class="form-control @error('email') is-invalid @enderror"
                                     value="{{ old('email', $user->email) }}" required>
                                 <div class="invalid-feedback">
-                                    @error('email') {{ $message }} @else Please enter a valid email address. @enderror
+                                    @error('email')
+                                        {{ $message }}
+                                    @else
+                                        Please enter a valid email address.
+                                    @enderror
                                 </div>
                             </div>
 
@@ -67,11 +82,9 @@
                                 <label for="role" class="form-label">Role</label>
                                 <select name="assign_role" class="form-select @error('assign_role') is-invalid @enderror"
                                     required>
-                                    @php
-                                        $currentRole = $user->getRoleNames()->first();
-                                        $roles = ['admin', 'board', 'supervisor', 'member'];
-                                    @endphp
-                                    @foreach($roles as $role)
+                                    @php $currentRole = $user->getRoleNames()->first(); @endphp
+
+                                    @foreach ($roles as $role)
                                         <option value="{{ $role }}" @selected($currentRole == $role)>
                                             {{ ucfirst($role) }}
                                         </option>
@@ -82,15 +95,16 @@
                                 @enderror
                             </div>
 
+
                             {{-- ASSOCIATION FIELD --}}
                             @php $auth = auth()->user(); @endphp
-                            @if($auth->hasRole('superadmin'))
+                            @if ($auth->hasRole('superadmin'))
                                 <div class="mb-3 col-md-6">
                                     <label for="association_id" class="form-label">Association</label>
                                     <select name="association_id"
                                         class="form-select @error('association_id') is-invalid @enderror" required>
                                         <option value="">Select Association</option>
-                                        @foreach($associations as $id => $name)
+                                        @foreach ($associations as $id => $name)
                                             <option value="{{ $id }}" @selected(old('association_id', $user->association_id) == $id)>
                                                 {{ $name }}
                                             </option>
@@ -113,10 +127,14 @@
                                     <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
 
-                                @if($user->getFirstMedia('profile_photo'))
+                                @if ($user->getFirstMedia('profile_photo'))
                                     @php
                                         $media = $user->getFirstMedia('profile_photo');
-                                        $short = \Illuminate\Support\Str::limit(pathinfo($media->file_name, PATHINFO_FILENAME), 8, '');
+                                        $short = \Illuminate\Support\Str::limit(
+                                            pathinfo($media->file_name, PATHINFO_FILENAME),
+                                            8,
+                                            '',
+                                        );
                                     @endphp
                                     <small class="text-muted d-block mt-2">
                                         Current:
@@ -133,14 +151,12 @@
 
                             <div class="mb-3 col-md-6">
                                 <label for="availability" class="form-label">Availability</label>
-                                <textarea name="availability" class="form-control"
-                                    rows="2">{{ old('availability', $user->availability) }}</textarea>
+                                <textarea name="availability" class="form-control" rows="2">{{ old('availability', $user->availability) }}</textarea>
                             </div>
 
                             <div class="mb-3 col-md-6">
                                 <label for="skills" class="form-label">Skills</label>
-                                <textarea name="skills" class="form-control"
-                                    rows="2">{{ old('skills', $user->skills) }}</textarea>
+                                <textarea name="skills" class="form-control" rows="2">{{ old('skills', $user->skills) }}</textarea>
                             </div>
 
                             <div class="mb-3 col-md-6">
@@ -177,12 +193,12 @@
 
 @section('scripts')
     <script>
-        (function () {
+        (function() {
             'use strict';
-            window.addEventListener('load', function () {
+            window.addEventListener('load', function() {
                 const forms = document.getElementsByClassName('needs-validation');
-                Array.prototype.forEach.call(forms, function (form) {
-                    form.addEventListener('submit', function (event) {
+                Array.prototype.forEach.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
                         if (!form.checkValidity()) {
                             event.preventDefault();
                             event.stopPropagation();

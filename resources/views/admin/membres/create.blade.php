@@ -90,16 +90,15 @@
                             </div>
 
                             {{-- ROLE DROPDOWN --}}
+                            {{-- ROLE DROPDOWN --}}
                             <div class="mb-3 col-md-6">
                                 <label for="assign_role" class="form-label">Role</label>
                                 <select name="assign_role" class="form-select @error('assign_role') is-invalid @enderror"
                                     required>
                                     <option value="">Choose...</option>
-                                    @php
-                                        $allowedRoles = ['supervisor', 'admin', 'member', 'board'];
-                                    @endphp
 
-                                    @foreach ($allowedRoles as $role)
+                                    {{-- ✅ Et utilise plutôt : --}}
+                                    @foreach ($roles as $role)
                                         <option value="{{ $role }}" @selected(old('assign_role') == $role)>
                                             {{ ucfirst($role) }}
                                         </option>
@@ -110,6 +109,7 @@
                                     <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
+
 
                             {{-- ASSOCIATION FIELD --}}
                             @php $auth = auth()->user(); @endphp
