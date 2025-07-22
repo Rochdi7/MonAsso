@@ -79,12 +79,6 @@ Route::middleware(['auth'])->group(function () {
             Route::get('statistics', [StatisticsController::class, 'index'])->name('statistics.index');
         });
 
-        // ✅ Member access: view-only for meetings (index and show)
-        Route::middleware('role:admin|superadmin|board|supervisor|member')->group(function () {
-            Route::get('meetings', [MeetingController::class, 'index'])->name('meetings.index');
-            Route::get('meetings/{meeting}', [MeetingController::class, 'show'])->name('meetings.show');
-        });
-
         // ✅ Management routes for higher roles only
         Route::middleware('role:admin|superadmin|board|supervisor')->group(function () {
             Route::resource('meetings', MeetingController::class)->except(['index', 'show']);
@@ -97,6 +91,12 @@ Route::middleware(['auth'])->group(function () {
                     'membres' => 'user:id'
                 ]
             ]);
+        });
+
+        // ✅ Member access: view-only for meetings (index and show)
+        Route::middleware('role:admin|superadmin|board|supervisor|member')->group(function () {
+            Route::get('meetings', [MeetingController::class, 'index'])->name('meetings.index');
+            Route::get('meetings/{meeting}', [MeetingController::class, 'show'])->name('meetings.show');
         });
 
     });
