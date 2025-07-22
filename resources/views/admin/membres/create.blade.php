@@ -90,7 +90,6 @@
                             </div>
 
                             {{-- ROLE DROPDOWN --}}
-                            {{-- ROLE DROPDOWN --}}
                             <div class="mb-3 col-md-6">
                                 <label for="assign_role" class="form-label">Role</label>
                                 <select name="assign_role" class="form-select @error('assign_role') is-invalid @enderror"
