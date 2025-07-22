@@ -10,10 +10,10 @@ Built with **Laravel**, the system features modular design, dynamic dashboards, 
 
 | Capture | Description |
 |--------|-------------|
-| ![Capture 1](screenshots/Capture.PNG)   | 🏠 Landing Page |
-| ![Capture 2](screenshots/Capture2.PNG)  | 🖥️ Dashboard with stats and charts |
-| ![Capture 3](screenshots/Capture3.PNG)  | 📊 Statistics module with filters |
-| ![Capture 4](screenshots/Capture4.PNG)  | 👥 Edit Profile |
+| ![Capture 1](https://raw.githubusercontent.com/Rochdi7/MonAsso/main/screenshots/Capture.PNG)   | 🏠 Landing Page |
+| ![Capture 2](https://raw.githubusercontent.com/Rochdi7/MonAsso/main/screenshots/Capture2.PNG)  | 🖥️ Dashboard with stats and charts |
+| ![Capture 3](https://raw.githubusercontent.com/Rochdi7/MonAsso/main/screenshots/Capture3.PNG)  | 📊 Statistics module with filters |
+| ![Capture 4](https://raw.githubusercontent.com/Rochdi7/MonAsso/main/screenshots/Capture4.PNG)  | 👥 Edit Profile |
 
 ## 🚀 Key Features
 
