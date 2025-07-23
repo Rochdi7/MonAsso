@@ -130,7 +130,7 @@
         <div class="col-lg-4">
 
             {{-- Membership Status Card --}}
-            {{-- <div class="card mb-4 {{ auth()->user()->is_active ? 'bg-light-success' : 'bg-light-danger' }}">
+            <div class="card mb-4 {{ auth()->user()->is_active ? 'bg-light-success' : 'bg-light-danger' }}">
                 <div class="card-body text-center">
                     <h5 class="mb-2">Membership Status</h5>
                     <h3 class="{{ auth()->user()->is_active ? 'text-success' : 'text-danger' }}">
@@ -140,7 +140,7 @@
                         {{ auth()->user()->is_active ? 'Your payments are up to date. Thank you!' : 'Your membership is currently inactive. Please settle your dues.' }}
                     </p>
                 </div>
-            </div> --}}
+            </div>
 
             {{-- My Documents --}}
             <div class="card mb-4">
@@ -182,24 +182,19 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Upcoming Meetings</h5>
-                    <a href="{{ route('admin.meetings.index') }}" class="btn btn-sm btn-link-primary">
-                        View All
-                    </a>
+                    <a href="{{ route('admin.meetings.index') }}" class="btn btn-sm btn-link-primary">View All</a>
                 </div>
                 <div class="card-body p-0">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex align-items-center">
                             <div class="flex-shrink-0">
-                                <div class="avtar avtar-s bg-light-primary">
-                                    <i class="ti ti-calendar-event f-20"></i>
-                                </div>
+                                <div class="avtar avtar-s bg-light-primary"><i class="ti ti-calendar-event f-20"></i></div>
                             </div>
                             <div class="flex-grow-1 ms-3">
                                 <h6 class="mb-0">Quarterly Review</h6>
                                 <small class="text-muted">Thu, Apr 18, 2024 - 06:00 PM</small>
                             </div>
-                            <a href="{{ route('admin.meetings.index') }}" class="btn btn-icon btn-light-secondary"
-                                title="View Meetings">
+                            <a href="{{ route('admin.meetings.index') }}" class="btn btn-icon btn-light-secondary">
                                 <i class="ti ti-arrow-right"></i>
                             </a>
                         </li>
@@ -207,7 +202,41 @@
                 </div>
             </div>
 
-
+            {{-- Upcoming Events --}}
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Upcoming Events</h5>
+                    <a href="{{ route('admin.events.index') }}" class="btn btn-sm btn-link-primary">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="avtar avtar-s bg-light-info"><i class="ti ti-ticket f-20"></i></div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-0">Annual Charity Gala</h6>
+                                <small class="text-muted">Sat, Jun 15, 2024</small>
+                            </div>
+                            <div class="flex-shrink-0 text-end">
+                                <span class="badge bg-light-success">Joined</span>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="avtar avtar-s bg-light-info"><i class="ti ti-users f-20"></i></div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-0">Community Workshop</h6>
+                                <small class="text-muted">Tue, Jul 09, 2024</small>
+                            </div>
+                            <div class="flex-shrink-0 text-end">
+                                <span class="badge bg-light-primary">Interested</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
         </div>
     </div>
