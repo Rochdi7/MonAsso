@@ -112,7 +112,7 @@ Each role sees a personalized dashboard:
 Project by:  
 **Rochdi Karouali** & **Halima Dakir**  
 🎓 Final Year Project – École Racine Marrakech  
-🧑‍🏫 Supervised by Mr. Abdelhamid Boukhrisse
+🧑‍🏫 Supervised by Mr. Abdeldhamid Boukhrisse
 
 ---
 
@@ -124,8 +124,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## 🌍 Live Demo
 
-> Coming soon at [monasso.yourdomain.com](https://monasso.yourdomain.com)
-
+> Coming soon
 ---
 
 ## 👏 Contributions

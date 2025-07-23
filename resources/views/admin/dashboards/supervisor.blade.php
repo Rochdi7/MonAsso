@@ -130,7 +130,7 @@
         <div class="col-lg-4">
 
             {{-- Membership Status Card --}}
-            <div class="card mb-4 {{ auth()->user()->is_active ? 'bg-light-success' : 'bg-light-danger' }}">
+            {{-- <div class="card mb-4 {{ auth()->user()->is_active ? 'bg-light-success' : 'bg-light-danger' }}">
                 <div class="card-body text-center">
                     <h5 class="mb-2">Membership Status</h5>
                     <h3 class="{{ auth()->user()->is_active ? 'text-success' : 'text-danger' }}">
@@ -140,7 +140,7 @@
                         {{ auth()->user()->is_active ? 'Your payments are up to date. Thank you!' : 'Your membership is currently inactive. Please settle your dues.' }}
                     </p>
                 </div>
-            </div>
+            </div> --}}
 
             {{-- My Documents --}}
             <div class="card mb-4">
