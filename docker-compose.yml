@@ -6,7 +6,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./:/var/www
       - ./storage:/var/www/storage
     depends_on:
       - db
