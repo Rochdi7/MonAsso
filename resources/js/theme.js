@@ -15,7 +15,7 @@ Description:  this file will contains overall theme setup and handle
 
 var rtl_flag = false;
 var dark_flag = false;
-const logoPath = '/assets/images/logo/monasso.png';
+const logoPath = '/assets/images/logo/villas.jpg';
 
 function layout_change_default() {
   // Determine the initial layout based on the user's system preference for color scheme

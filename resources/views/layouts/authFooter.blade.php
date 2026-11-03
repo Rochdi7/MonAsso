@@ -1,5 +1,6 @@
 <div class="auth-sidefooter">
-  <img src="{{ asset('assets/images/logo/villas.jpg') }}" class="img-brand img-fluid" alt="Villas Beach Tennis" />
+  <img src="{{ asset('assets/images/logo/villas.jpg') }}" class="img-brand" alt="Villas Beach Tennis"
+    style="max-height:72px;width:auto;" />
   <hr class="mb-3 mt-4" />
   <div class="row">
     <div class="col my-1">

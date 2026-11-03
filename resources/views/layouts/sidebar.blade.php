@@ -4,7 +4,8 @@
         <div class="m-header">
             <a href="{{ url('/') }}" class="b-brand text-primary">
                 <!-- ========   Change your logo from here   ============ -->
-                <img src="{{ asset('assets/images/logo/villas.jpg') }}" alt="Villas Beach Tennis" class="logo-lg">
+                <img src="{{ asset('assets/images/logo/villas.jpg') }}" alt="Villas Beach Tennis" class="logo-lg"
+                    style="height:36px;width:auto;">
             </a>
         </div>
         <div class="navbar-content">

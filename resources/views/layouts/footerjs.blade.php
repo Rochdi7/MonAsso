@@ -6,7 +6,7 @@
 <script src="{{ URL::asset('build/js/plugins/i18nextHttpBackend.min.js') }}"></script>
 <script src="{{ URL::asset('build/js/icon/custom-font.js') }}"></script>
 <script src="{{ URL::asset('build/js/script.js') }}"></script>
-<script src="{{ URL::asset('build/js/theme.js') }}"></script>
+<script src="{{ URL::asset('build/js/theme.js') }}?v=2"></script>
 <script src="{{ URL::asset('build/js/multi-lang.js') }}"></script>
 <script src="{{ URL::asset('build/js/plugins/feather.min.js') }}"></script>
 
