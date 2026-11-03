@@ -1,0 +1,13 @@
+cd ~/MonAsso
+cat > .dockerignore <<'EOF'
+vendor
+node_modules
+storage
+bootstrap/cache/*
+.env
+.DS_Store
+*.phpunit.xml
+*.swp
+.git
+.gitignore
+EOF
