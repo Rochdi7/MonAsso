@@ -2,10 +2,9 @@
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
         <div class="m-header">
-            <a href="//index" class="b-brand text-primary">
+            <a href="{{ url('/') }}" class="b-brand text-primary">
                 <!-- ========   Change your logo from here   ============ -->
-                <img src="{{ asset('assets/images/logo/monasso.png') }}" alt="logo image" class="logo-lg">
-                <span class="badge bg-brand-color-2 rounded-pill ms-1 theme-version">v1.0.0</span>
+                <img src="{{ asset('assets/images/logo/villas.jpg') }}" alt="Villas Beach Tennis" class="logo-lg">
             </a>
         </div>
         <div class="navbar-content">

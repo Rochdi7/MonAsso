@@ -20,7 +20,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\ContributionController;
 use App\Http\Controllers\Admin\ExpenseController;
 
-Auth::routes(['verify' => true]);
+Auth::routes(['verify' => true, 'register' => false]);
 
 Route::get('/media/{id}/{filename}', function ($id, $filename) {
     $media = Media::findOrFail($id);
@@ -43,7 +43,7 @@ Route::get('/user-guide', function () {
     return view('user-guide');
 })->name('user-guide')->middleware(['auth']);
 
-Route::get('/', fn() => view('index'))->name('home');
+Route::get('/', fn() => view('home'))->name('home');
 
 Route::middleware(['auth'])->group(function () {
 

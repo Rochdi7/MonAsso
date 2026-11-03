@@ -9,28 +9,8 @@
             <div class="text-center">
                 <img src="{{ URL::asset('build/images/authentication/img-auth-login.png') }}" alt="auth image"
                     class="img-fluid mb-3">
-                <h4 class="f-w-500 mb-1">Connectez-vous avec votre e-mail ou téléphone</h4>
-                <p class="mb-3">
-                    Vous n'avez pas encore de compte ?
-                    <a href="{{ route('register') }}" class="link-primary ms-1">Créer un compte</a>
-                </p>
-            </div>
-
-            {{-- Connexion rapide pour les rôles --}}
-            <div class="mb-4 text-center">
-                <p class="mb-2 text-muted">Connexion rapide pour test</p>
-                <div class="d-flex justify-content-center flex-wrap gap-2">
-                    <button type="button" class="btn btn-outline-primary quick-login"
-                        data-email="superadmin1@monasso.com">Super Admin</button>
-                    <button type="button" class="btn btn-outline-success quick-login"
-                        data-email="admin1@monasso.com">Admin</button>
-                    <button type="button" class="btn btn-outline-info quick-login"
-                        data-email="board1@monasso.com">Board</button>
-                    <button type="button" class="btn btn-outline-warning quick-login"
-                        data-email="supervisor1@monasso.com">Supervisor</button>
-                    <button type="button" class="btn btn-outline-dark quick-login"
-                        data-email="member1_1@monasso.com">Member</button>
-                </div>
+                <h4 class="f-w-500 mb-1">Acesse sua conta</h4>
+                <p class="mb-3">Use o e-mail ou telefone cadastrado no clube.</p>
             </div>
 
             <form method="POST" action="{{ route('login') }}">
@@ -39,8 +19,8 @@
                 <div class="form-floating mb-3">
                     <input type="text" name="login" id="login"
                         class="form-control @error('login') is-invalid @enderror"
-                        placeholder="E-mail ou téléphone" value="{{ old('login') }}" required autofocus>
-                    <label for="login">E-mail ou téléphone</label>
+                        placeholder="E-mail ou telefone" value="{{ old('login') }}" required autofocus>
+                    <label for="login">E-mail ou telefone</label>
                     @error('login')
                         <span class="invalid-feedback d-block" role="alert">
                             <strong>{{ $message }}</strong>
@@ -51,8 +31,8 @@
                 <div class="form-floating mb-3">
                     <input type="password" name="password" id="password"
                         class="form-control @error('password') is-invalid @enderror"
-                        placeholder="Mot de passe" required>
-                    <label for="password">Mot de passe</label>
+                        placeholder="Senha" required>
+                    <label for="password">Senha</label>
                     @error('password')
                         <span class="invalid-feedback d-block" role="alert">
                             <strong>{{ $message }}</strong>
@@ -64,35 +44,18 @@
                     <div class="form-check">
                         <input class="form-check-input input-primary" type="checkbox" name="remember" id="remember"
                             {{ old('remember') ? 'checked' : '' }}>
-                        <label class="form-check-label text-muted" for="remember">Se souvenir de moi</label>
+                        <label class="form-check-label text-muted" for="remember">Lembrar de mim</label>
                     </div>
                     <a href="{{ route('password.request') }}">
-                        <h6 class="f-w-400 mb-0">Mot de passe oublié ?</h6>
+                        <h6 class="f-w-400 mb-0">Esqueci minha senha</h6>
                     </a>
                 </div>
 
                 <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-primary">Connexion</button>
+                    <button type="submit" class="btn btn-primary">Entrar</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-@endsection
-
-@section('scripts')
-<script>
-    document.querySelectorAll('.quick-login').forEach(button => {
-        button.addEventListener('click', function () {
-            const email = this.dataset.email;
-            const loginInput = document.getElementById('login');
-            const passwordInput = document.getElementById('password');
-            const form = this.closest('form');
-
-            loginInput.value = email;
-            passwordInput.value = 'password';
-            form.submit();
-        });
-    });
-</script>
 @endsection

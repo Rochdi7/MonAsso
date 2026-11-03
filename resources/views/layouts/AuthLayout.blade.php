@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>@yield('title') | Mon Asso Laravel 11 Admin & Dashboard Template</title>
+    <title>@yield('title') | Villas Beach Tennis</title>
     <!-- [Meta] -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
