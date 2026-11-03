@@ -24,7 +24,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 WORKDIR /var/www
 
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Substitua a linha do composer por esta:
+RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction --verbose
 
 COPY . .
 
