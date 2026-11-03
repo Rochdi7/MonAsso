@@ -52,7 +52,7 @@ class LoginController extends Controller
         }
 
         return back()->withErrors([
-            'login' => 'Identifiants invalides.',
+            'login' => 'E-mail/telefone ou senha inválidos.',
         ])->onlyInput('login');
     }
 
