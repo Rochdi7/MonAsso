@@ -1,12 +1,27 @@
-version: "3.9"
 services:
   app:
     build:
       context: .
     env_file:
       - .env
+    environment:
+      APP_NAME: ${APP_NAME:-MonAsso}
+      APP_ENV: ${APP_ENV:-production}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      APP_URL: ${APP_URL:-https://villas.rcmasters.com.br}
+      APP_KEY: ${APP_KEY:?APP_KEY nao definida nas variaveis do Coolify}
+      LOG_CHANNEL: ${LOG_CHANNEL:-stderr}
+      DB_CONNECTION: ${DB_CONNECTION:-mysql}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_DATABASE: ${DB_DATABASE:-monasso}
+      DB_USERNAME: ${DB_USERNAME:-monasso}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD nao definida nas variaveis do Coolify}
+      SESSION_DRIVER: ${SESSION_DRIVER:-file}
+      CACHE_STORE: ${CACHE_STORE:-file}
+      QUEUE_CONNECTION: ${QUEUE_CONNECTION:-sync}
     volumes:
-      - ./storage:/var/www/storage
+      - storage-data:/var/www/storage
     depends_on:
       - db
     restart: unless-stopped
@@ -37,7 +52,8 @@ services:
       interval: 15s
       timeout: 5s
       retries: 5
-      start_period: 20s
+      start_period: 30s
 
 volumes:
   mysql-data:
+  storage-data:
