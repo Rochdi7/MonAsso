@@ -1,5 +1,8 @@
 FROM php:8.2-fpm-alpine
 
+RUN mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache/data storage/logs bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache
+    
 # Instala dependências do sistema e bibliotecas necessárias
 RUN apk add --no-cache \
     libzip-dev \
@@ -18,6 +21,8 @@ RUN apk add --no-cache \
 # Configura e instala as extensões PHP essenciais para o Laravel
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip opcache
+
+    
 
 # Copia o Composer oficial
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
