@@ -43,7 +43,7 @@ Route::get('/user-guide', function () {
     return view('user-guide');
 })->name('user-guide')->middleware(['auth']);
 
-Route::get('/', fn() => view('index'))->name('home');
+Route::get('/', fn() => view('home'))->name('home');
 
 Route::middleware(['auth'])->group(function () {
 
