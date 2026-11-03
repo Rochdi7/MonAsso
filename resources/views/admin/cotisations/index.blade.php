@@ -62,7 +62,7 @@
                                     <tr>
                                         @unless($isMember)<td>{{ $cotisation->user->name ?? '—' }}</td>@endunless
                                         <td>{{ $cotisation->year }}</td>
-                                        <td>{{ number_format($cotisation->amount, 2) }} MAD</td>
+                                        <td>{{ number_format($cotisation->amount, 2, ',', '.') }} BRL</td>
                                         <td class="text-center fs-5">
                                             @if($cotisation->status == 1)
                                                 <span class="text-success">✔</span>

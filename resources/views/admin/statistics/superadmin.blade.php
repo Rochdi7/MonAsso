@@ -22,11 +22,11 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-1">
                         <h3 class="mb-0">
-                            {{ number_format($totalActiveMembers) }}
+                            {{ number_format($totalActiveMembers, 0, ',', '.') }}
                             <small class="text-muted">/ total active members</small>
                         </h3>
                         <span class="badge bg-light-success ms-2">
-                            +{{ number_format($memberGrowthThisYear) }} this year
+                            +{{ number_format($memberGrowthThisYear, 0, ',', '.') }} this year
                         </span>
                     </div>
                     <p>New member registrations across all associations.</p>
@@ -46,15 +46,15 @@
                     </div>
                     <div class="bg-body mt-4 py-2 px-3 rounded d-flex align-items-center justify-content-between">
                         <p class="mb-0"><i class="ph-duotone ph-circle text-success f-12"></i> Paid</p>
-                        <h5 class="mb-0 ms-1">{{ number_format($cotisationsPaidMAD, 0) }} MAD</h5>
+                        <h5 class="mb-0 ms-1">{{ number_format($cotisationsPaidMAD, 0, ',', '.') }} BRL</h5>
                     </div>
                     <div class="bg-body mt-1 py-2 px-3 rounded d-flex align-items-center justify-content-between">
                         <p class="mb-0"><i class="ph-duotone ph-circle text-warning f-12"></i> Pending</p>
-                        <h5 class="mb-0 ms-1">{{ number_format($cotisationsPendingMAD, 0) }} MAD</h5>
+                        <h5 class="mb-0 ms-1">{{ number_format($cotisationsPendingMAD, 0, ',', '.') }} BRL</h5>
                     </div>
                     <div class="bg-body mt-1 py-2 px-3 rounded d-flex align-items-center justify-content-between">
                         <p class="mb-0"><i class="ph-duotone ph-circle text-danger f-12"></i> Overdue / Rejected</p>
-                        <h5 class="mb-0 ms-1">{{ number_format($cotisationsOverdueRejectedMAD, 0) }} MAD</h5>
+                        <h5 class="mb-0 ms-1">{{ number_format($cotisationsOverdueRejectedMAD, 0, ',', '.') }} BRL</h5>
                     </div>
                 </div>
             </div>
@@ -82,7 +82,7 @@
                         <div class="text-center">
                             <div class="d-inline-flex align-items-center m-1">
                                 <p class="mb-0"><i class="ph-duotone ph-circle text-primary f-12"></i> Members</p>
-                                <span class="badge bg-light-secondary ms-1">{{ number_format($totalActiveMembers) }}</span>
+                                <span class="badge bg-light-secondary ms-1">{{ number_format($totalActiveMembers, 0, ',', '.') }}</span>
                             </div>
                             <div class="d-inline-flex align-items-center m-1">
                                 <p class="mb-0"><i class="ph-duotone ph-circle text-success f-12"></i> Admins</p>
@@ -112,12 +112,12 @@
                             <div class="col-6">
                                 <p class="text-muted mb-1"><i class="ph-duotone ph-circle text-success f-12"></i> Total
                                     Inflow</p>
-                                <h4 class="mb-0">{{ number_format($totalInflowMAD, 0) }} MAD</h4>
+                                <h4 class="mb-0">{{ number_format($totalInflowMAD, 0, ',', '.') }} BRL</h4>
                             </div>
                             <div class="col-6">
                                 <p class="text-muted mb-1"><i class="ph-duotone ph-circle text-danger f-12"></i> Total
                                     Outflow</p>
-                                <h4 class="mb-0">{{ number_format($totalOutflowMAD, 0) }} MAD</h4>
+                                <h4 class="mb-0">{{ number_format($totalOutflowMAD, 0, ',', '.') }} BRL</h4>
                             </div>
                         </div>
                     </div>
@@ -139,7 +139,7 @@
                         <div>
                             <p>Total active associations on the platform</p>
                             <h3 class="mb-3">
-                                {{ number_format($associationsTotal) }}
+                                {{ number_format($associationsTotal, 0, ',', '.') }}
                                 <span class="badge bg-light-success ms-2">
                                     +{{ $associationsGrowthThisYear }} this year
                                 </span>

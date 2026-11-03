@@ -55,19 +55,19 @@
                     <p class="mb-0">
                         <i class="ph-duotone ph-circle text-success f-12"></i> Paid
                     </p>
-                    <h5 class="mb-0">{{ number_format($cotisationsPaidMAD, 2, '.', ' ') }} MAD</h5>
+                    <h5 class="mb-0">{{ number_format($cotisationsPaidMAD, 2, ',', '.') }} BRL</h5>
                 </div>
                 <div class="bg-body mt-2 py-2 px-3 rounded d-flex justify-content-between">
                     <p class="mb-0">
                         <i class="ph-duotone ph-circle text-warning f-12"></i> Pending
                     </p>
-                    <h5 class="mb-0">{{ number_format($cotisationsPendingMAD, 2, '.', ' ') }} MAD</h5>
+                    <h5 class="mb-0">{{ number_format($cotisationsPendingMAD, 2, ',', '.') }} BRL</h5>
                 </div>
                 <div class="bg-body mt-2 py-2 px-3 rounded d-flex justify-content-between">
                     <p class="mb-0">
                         <i class="ph-duotone ph-circle text-danger f-12"></i> Overdue / Rejected
                     </p>
-                    <h5 class="mb-0">{{ number_format($cotisationsOverdueRejectedMAD, 2, '.', ' ') }} MAD</h5>
+                    <h5 class="mb-0">{{ number_format($cotisationsOverdueRejectedMAD, 2, ',', '.') }} BRL</h5>
                 </div>
             </div>
         </div>
@@ -85,7 +85,7 @@
             <div class="card-body">
                 <p>Total paid cotisations (last 6 months)</p>
                 <h4 class="fw-semibold">
-                    {{ number_format(array_sum($cashflowValues->toArray()), 2, '.', ' ') }} MAD
+                    {{ number_format(array_sum($cashflowValues->toArray()), 2, ',', '.') }} BRL
                 </h4>
                 <div id="monthly-report-graph"></div>
             </div>
@@ -104,7 +104,7 @@
             <div class="card-body">
                 <p>Recorded expenses (last 6 months)</p>
                 <h4 class="fw-semibold">
-                    {{ number_format($totalOutflowMAD, 2, '.', ' ') }} MAD
+                    {{ number_format($totalOutflowMAD, 2, ',', '.') }} BRL
                 </h4>
                 <div id="yearly-summary-chart"></div>
             </div>
@@ -132,7 +132,7 @@
                             Subventions
                         </p>
                         <h5 class="mb-0">
-                            {{ number_format($totalInflowMAD, 2, '.', ' ') }} MAD
+                            {{ number_format($totalInflowMAD, 2, ',', '.') }} BRL
                         </h5>
                     </div>
                     <div class="col-md-4">
@@ -148,7 +148,7 @@
                             Cotisations Paid
                         </p>
                         <h5 class="mb-0">
-                            {{ number_format($cotisationsPaidMAD, 2, '.', ' ') }} MAD
+                            {{ number_format($cotisationsPaidMAD, 2, ',', '.') }} BRL
                         </h5>
                     </div>
                 </div>
@@ -215,7 +215,7 @@
         xaxis: { categories: cashflowData.categories },
         yaxis: {
             labels: {
-                formatter: (val) => `${Number(val).toLocaleString()} MAD`
+                formatter: (val) => `${Number(val).toLocaleString('pt-BR')} BRL`
             }
         }
     });

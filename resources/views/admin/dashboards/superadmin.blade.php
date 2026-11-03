@@ -70,7 +70,7 @@
                     <h5 class="mb-4 text-white">Total Cotisations (Global)</h5>
                     <div class="d-flex align-items-center mt-3">
                         <h3 class="text-white f-w-300 d-flex align-items-center m-b-0">
-                            {{ number_format($cotisations['total'], 2) }} MAD {{-- UPDATED --}}
+                            {{ number_format($cotisations['total'], 2, ',', '.') }} BRL {{-- UPDATED --}}
                         </h3>
                     </div>
                     <p class="text-white text-opacity-75 mb-2 text-sm mt-3">All Payments Received</p>
@@ -211,7 +211,7 @@
                                         <h6 class="mb-0">{{ $assoc['name'] }}</h6>
                                     </td>
                                     <td>{{ $assoc['members'] }}</td>
-                                    <td>{{ number_format($assoc['cotisations'], 2) }} MAD</td>
+                                    <td>{{ number_format($assoc['cotisations'], 2, ',', '.') }} BRL</td>
                                     <td>{{ $assoc['meetings'] }}</td>
                                     <td>
                                         <span class="badge bg-light-{{ $assoc['status_color'] }}">
@@ -284,7 +284,7 @@
             },
             yaxis: {
                 labels: {
-                    formatter: (val) => `${val / 1000}k MAD` // UPDATED
+                    formatter: (val) => `${val / 1000}k BRL` // UPDATED
                 }
             }
         });

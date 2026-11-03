@@ -69,7 +69,7 @@
                                 @forelse($myCotisationsList as $cotisation)
                                     <tr>
                                         <td>{{ $cotisation->cycle }}</td>
-                                        <td>{{ number_format($cotisation->amount, 2) }} MAD</td>
+                                        <td>{{ number_format($cotisation->amount, 2, ',', '.') }} BRL</td>
                                         <td>
                                             @if (!empty($cotisation->due_date) && $cotisation->due_date !== 'N/A')
                                                 {{ \Carbon\Carbon::parse($cotisation->due_date)->format('M d, Y') }}

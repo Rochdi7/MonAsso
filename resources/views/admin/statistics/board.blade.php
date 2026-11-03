@@ -47,15 +47,15 @@
                     <div id="overview-bar-chart"></div>
                     <div class="bg-body mt-3 py-2 px-3 rounded d-flex align-items-center justify-content-between">
                         <p class="mb-0"><i class="ph-duotone ph-circle text-success f-12"></i> Paid</p>
-                        <h5 class="mb-0 ms-1">{{ number_format($cotisationsPaidMAD, 0, '.', ' ') }} MAD</h5>
+                        <h5 class="mb-0 ms-1">{{ number_format($cotisationsPaidMAD, 0, ',', '.') }} BRL</h5>
                     </div>
                     <div class="bg-body mt-1 py-2 px-3 rounded d-flex align-items-center justify-content-between">
                         <p class="mb-0"><i class="ph-duotone ph-circle text-warning f-12"></i> Pending</p>
-                        <h5 class="mb-0 ms-1">{{ number_format($cotisationsPendingMAD, 0, '.', ' ') }} MAD</h5>
+                        <h5 class="mb-0 ms-1">{{ number_format($cotisationsPendingMAD, 0, ',', '.') }} BRL</h5>
                     </div>
                     <div class="bg-body mt-1 py-2 px-3 rounded d-flex align-items-center justify-content-between">
                         <p class="mb-0"><i class="ph-duotone ph-circle text-danger f-12"></i> Overdue/Rejected</p>
-                        <h5 class="mb-0 ms-1">{{ number_format($cotisationsOverdueRejectedMAD, 0, '.', ' ') }} MAD</h5>
+                        <h5 class="mb-0 ms-1">{{ number_format($cotisationsOverdueRejectedMAD, 0, ',', '.') }} BRL</h5>
                     </div>
                 </div>
             </div>
@@ -70,7 +70,7 @@
                 </div>
                 <div class="card-body">
                     <p class="mb-0">Total amount collected per month</p>
-                    <h4>{{ number_format(array_sum($cashflowValues->toArray()), 0, '.', ' ') }} MAD
+                    <h4>{{ number_format(array_sum($cashflowValues->toArray()), 0, ',', '.') }} BRL
                         <small class="text-muted">/ this year</small>
                     </h4>
                     <div id="monthly-report-graph"></div>
@@ -190,7 +190,7 @@
                 height: 180
             },
             series: [{
-                name: 'MAD',
+                name: 'BRL',
                 data: [
                     {{ $cotisationsPaidMAD }},
                     {{ $cotisationsPendingMAD }},

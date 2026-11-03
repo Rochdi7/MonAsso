@@ -52,8 +52,8 @@
                         <h6 class="ms-3 mb-0">Cotisations (YTD)</h6>
                     </div>
                     <h4 class="mt-3 mb-0">
-                        {{ number_format($cotisations['total'], 0, '.', ' ') }} MAD
-                        <span class="text-success text-sm fw-normal">/ 50,000 MAD Target</span>
+                        {{ number_format($cotisations['total'], 0, ',', '.') }} BRL
+                        <span class="text-success text-sm fw-normal">/ 50,000 BRL Target</span>
                     </h4>
                     @php
                         $target = 50000;
@@ -158,7 +158,7 @@
                                         <td>
                                             Paid cotisation:
                                             <span class="fw-bold">
-                                                {{ number_format($cotisation->amount, 2) }} MAD
+                                                {{ number_format($cotisation->amount, 2, ',', '.') }} BRL
                                             </span>
                                             @if ($cotisation->status)
                                                 <span class="badge bg-light ms-2 text-dark">
@@ -290,7 +290,7 @@
             },
             yaxis: {
                 labels: {
-                    formatter: (val) => `${Number(val).toLocaleString()} MAD`
+                    formatter: (val) => `${Number(val).toLocaleString('pt-BR')} BRL`
                 }
             }
         });
