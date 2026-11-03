@@ -1,5 +1,6 @@
 FROM php:8.2-fpm-alpine
 
+# Instala dependências do sistema e bibliotecas para o GD
 RUN apk add --no-cache \
     libzip-dev \
     zip \
@@ -8,10 +9,16 @@ RUN apk add --no-cache \
     git \
     curl \
     nodejs \
-    npm
+    npm \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev
 
+# Configura e instala as extensões PHP
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
+# Instala o Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /var/www
