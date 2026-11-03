@@ -101,7 +101,7 @@
                                                 <span
                                                     class="text-muted text-sm d-block">{{ $cotisation->created_at->format('h:i A') }}</span>
                                             </td>
-                                            <td>{{ number_format($cotisation->amount, 2) }} MAD</td>
+                                            <td>{{ number_format($cotisation->amount, 2, ',', '.') }} BRL</td>
                                             <td>
                                                 @php
                                                     $statusLabels = [

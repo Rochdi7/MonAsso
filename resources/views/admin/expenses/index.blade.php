@@ -54,7 +54,7 @@
                             @forelse($expenses as $expense)
                             <tr>
                                 <td>{{ $expense->title }}</td>
-                                <td>{{ number_format($expense->amount, 2) }} MAD</td>
+                                <td>{{ number_format($expense->amount, 2, ',', '.') }} BRL</td>
                                 <td>{{ optional($expense->spent_at)->format('Y-m-d') ?? '—' }}</td>
                                 <td>{{ $expense->association->name ?? '—' }}</td>
                                 <td>{{ $expense->description ?? '—' }}</td>

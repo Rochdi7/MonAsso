@@ -71,7 +71,7 @@
                     <h5 class="mb-4 text-white">Total Cotisations</h5>
                     <div class="d-flex align-items-center mt-3">
                         <h3 class="text-white f-w-300 d-flex align-items-center m-b-0">
-                            ${{ number_format($totalCotisations, 2) }}
+                            ${{ number_format($totalCotisations, 2, ',', '.') }}
                         </h3>
                     </div>
                     <p class="text-white text-opacity-75 mb-2 text-sm mt-3">Total Payments</p>

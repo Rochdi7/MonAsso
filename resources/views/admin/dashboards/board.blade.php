@@ -62,8 +62,8 @@
                         </div>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">
-                        <h4 class="mb-0">{{ number_format($cotisations['total'], 0, '.', ' ') }} MAD</h4>
-                        <span class="badge bg-light-secondary">Target: 100,000 MAD</span>
+                        <h4 class="mb-0">{{ number_format($cotisations['total'], 0, ',', '.') }} BRL</h4>
+                        <span class="badge bg-light-secondary">Target: 100,000 BRL</span>
                     </div>
                 </div>
             </div>
@@ -223,7 +223,7 @@
                 },
                 yaxis: {
                     labels: {
-                        formatter: (val) => `${val.toLocaleString()} MAD`
+                        formatter: (val) => `${val.toLocaleString('pt-BR')} BRL`
                     }
                 },
                 colors: ['var(--bs-success)'],

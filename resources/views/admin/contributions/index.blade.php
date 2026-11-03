@@ -64,7 +64,7 @@
                                         <span class="badge bg-light-secondary text-muted">Unknown</span>
                                     @endif
                                 </td>
-                                <td>{{ number_format($contribution->amount, 2) }} MAD</td>
+                                <td>{{ number_format($contribution->amount, 2, ',', '.') }} BRL</td>
                                 <td>{{ $contribution->association->name ?? '—' }}</td>
                                 <td>{{ optional($contribution->received_at)->format('Y-m-d') ?? '—' }}</td>
                                 <td>{{ $contribution->description ?? '—' }}</td>

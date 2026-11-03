@@ -26,7 +26,7 @@
                             <i class="ph-duotone ph-circle text-success f-12"></i> Total Paid
                         </p>
                         <h5 class="mb-0">
-                            MAD {{ number_format($myCotisations['paid'] ?? 0, 2) }}
+                            BRL {{ number_format($myCotisations['paid'] ?? 0, 2, ',', '.') }}
                         </h5>
                     </div>
                     <div class="bg-body mt-2 py-2 px-3 rounded d-flex align-items-center justify-content-between">
@@ -34,7 +34,7 @@
                             <i class="ph-duotone ph-circle text-danger f-12"></i> Total Unpaid
                         </p>
                         <h5 class="mb-0">
-                            MAD {{
+                            BRL {{
                                 number_format(
                                     ($myCotisations['pending'] ?? 0)
                                     + ($myCotisations['overdue'] ?? 0)
@@ -105,7 +105,7 @@
             </div>
             <div class="card-body">
                 <p class="mb-0">Total paid this year</p>
-                <h4>MAD {{ number_format($myCotisations['paid'] ?? 0, 2) }}</h4>
+                <h4>BRL {{ number_format($myCotisations['paid'] ?? 0, 2, ',', '.') }}</h4>
                 <div id="monthly-report-graph"></div>
             </div>
         </div>

@@ -27,7 +27,7 @@
         <div class="alert alert-danger" role="alert">
             <i class="ti ti-file-invoice me-2"></i>
             You have unpaid cotisations totalling:
-            <strong>{{ number_format($overdueAmount + $pendingAmount, 2, '.', ' ') }} MAD</strong>.
+            <strong>{{ number_format($overdueAmount + $pendingAmount, 2, ',', '.') }} BRL</strong>.
             <a href="{{ route('admin.cotisations.index') }}" class="alert-link">Pay now</a> to remain active.
         </div>
     @endif
@@ -67,20 +67,20 @@
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span><i class="ti ti-circle-filled text-success me-2"></i> Paid</span>
                             <span
-                                class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_PAID] ?? 0, 2, '.', ' ') }}
-                                MAD</span>
+                                class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_PAID] ?? 0, 2, ',', '.') }}
+                                BRL</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span><i class="ti ti-circle-filled text-warning me-2"></i> Pending</span>
                             <span
-                                class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_PENDING] ?? 0, 2, '.', ' ') }}
-                                MAD</span>
+                                class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_PENDING] ?? 0, 2, ',', '.') }}
+                                BRL</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span><i class="ti ti-circle-filled text-danger me-2"></i> Overdue</span>
                             <span
-                                class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_OVERDUE] ?? 0, 2, '.', ' ') }}
-                                MAD</span>
+                                class="fw-bold">{{ number_format($myCotisations[\App\Models\Cotisation::STATUS_OVERDUE] ?? 0, 2, ',', '.') }}
+                                BRL</span>
                         </li>
                     </ul>
                 </div>
