@@ -28,7 +28,7 @@ WORKDIR /var/www
 COPY composer.json composer.lock ./
 
 # Instala as dependências do PHP sem erros de limite de memória
-RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction
+RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 # Copia o restante do código da aplicação
 COPY . .
